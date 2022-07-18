@@ -1,4 +1,8 @@
-drop database webdb;
+-- create user 'ssafy104'@'localhost' identified by 'ssafy1357';
+-- GRANT ALL PRIVILEGES ON webdb.* to ssafy104@localhost;
+-- flush privileges;
+
+drop database IF EXISTS webdb;
 create database webdb default character set utf8mb4;
 use webdb;
 DROP TABLE IF EXISTS `user`;
