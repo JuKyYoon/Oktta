@@ -1,17 +1,41 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
+
+// wraps dotenv and Webpack.DefinePlugin 라는데 써도 되는지 모름
+// const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: "development",
-  
+  // 엔트리 포인트
+  entry: "./src/index.js",
+
   output: {
+    filename: "main.js",
     path: path.join(__dirname, "/dist"),
-    filename: "index.bundle.js",
   },
+
+  resolve: {
+  // 파일 확장자 처리
+    extensions: [".js", ".jsx"],
+  },
+
+  plugins: [
+    new RefreshWebpackPlugin(),
+    // dotenv
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(dotenv.config().parsed),
+    }),
+
+    // new Dotenv()
+  ],
   
   devServer: {
     port: 3000,
-    liveReload: true,
+    compress: true,
+    hot: true,
+    historyApiFallback: true,
   },
   
   module: {
@@ -27,8 +51,10 @@ module.exports = {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.scss$/,
+        use: ["style-loader", 'css-loader', 'sass-loader'],
+      }
     ],
   },
-  
-  plugins: [new HtmlWebpackPlugin({ template: "./public/index.html" })],
 };
