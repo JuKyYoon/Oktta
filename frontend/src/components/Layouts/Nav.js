@@ -1,24 +1,20 @@
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import NavLoggedIn from './NavLoggedIn';
+import NavNotLoggedIn from './NavNotLoggedIn';
 
 const Nav = () => {
-  const navigate = useNavigate();
+  // store 연결해서 가져오기
+  const isLoggedIn = true;
 
-  const goHome = () => {
-    // 홈페이지로 이동
-    navigate('/');
-  };
-
-  const goBack = () => {
-    // 이전 페이지로 이동
-    navigate(-1);
-  };
-
+  // 로고 파일 교체 필요
   return (
-    <header style={{ background: 'lightgray', padding: 16, fontSize: 24 }}>
-      <button onClick={goHome}>홈</button>
-      <button onClick={goBack}>뒤로가기</button>
-    </header>
+    <nav>
+      <Link to="/">
+        <img src="assets/logo.png" class="logo" />
+      </Link>
+      {isLoggedIn ? <NavLoggedIn /> : <NavNotLoggedIn />}
+    </nav>
   );
 };
 

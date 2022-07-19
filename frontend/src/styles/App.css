@@ -1,7 +1,15 @@
-h1 {
-  color: #6667AB
+body {
+  margin: 0;
 }
 
-body {
-  margin: 0
+main {
+  padding: 10px;
+}
+
+a {
+  margin: 5px;
+}
+
+* {
+  font-family: sans-serif;
 }
