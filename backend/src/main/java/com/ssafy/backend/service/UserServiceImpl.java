@@ -1,7 +1,10 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
+import org.springframework.data.relational.core.sql.SQL;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -23,12 +26,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registUser(User user) {
-        User tmp = userRepository.findById(user.getId());
-        User newUser = null;
-        if(tmp == null)
-            newUser = userRepository.save(user);
-        return newUser;
+    public boolean registUser(UserDto user) throws SQLException {
+        String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
+        userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
+        return true;
     }
 
     @Override

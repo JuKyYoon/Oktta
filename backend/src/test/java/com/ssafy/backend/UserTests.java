@@ -3,6 +3,7 @@ package com.ssafy.backend;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.service.UserService;
+import com.ssafy.backend.service.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -41,9 +42,6 @@ class UserTests {
     public void getUserInfo() throws SQLException {
         assertNotNull(userService);
         User user = userService.findUser("testuser");
-        assertNotNull(user);
-        if(user != null){
-            System.out.println(user);
-        }
+
     }
 }
