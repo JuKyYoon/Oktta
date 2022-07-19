@@ -20,6 +20,7 @@ public class MyUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final User user = userRepository.findById(username); // Parameter username은 user의 ID이다.
 
+
         /**
          * Security Context에 저장될 Authentication 객체를 설정해준다.
          */
@@ -27,7 +28,7 @@ public class MyUserDetailService implements UserDetailsService {
             return org.springframework.security.core.userdetails.User.builder()
                     .username(user.getId())
                     .password(user.getPassword())
-                    .roles(user.getRole().getValue())
+                    .authorities(user.getRole().getValue()) // .role() 하면 ROLE_USER cannot start with ROLE_ (it is automatically added) 에러
                     .accountExpired(false)
                     .accountLocked(false)
                     .disabled(false)
