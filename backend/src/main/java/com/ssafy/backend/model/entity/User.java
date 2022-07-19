@@ -1,5 +1,6 @@
 package com.ssafy.backend.model.entity;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,11 +10,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table
+@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "LONG UNSIGNED")
     private Long idx;
 
     @Column(unique = true, nullable = false)
@@ -93,6 +96,10 @@ public class User {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public void updateInfo(String nickname) {
+        this.nickname = nickname;
     }
 
     // Builder 패턴 ( Not Lombok )
