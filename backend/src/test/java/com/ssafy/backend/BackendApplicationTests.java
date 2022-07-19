@@ -2,41 +2,36 @@ package com.ssafy.backend;
 
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@RunWith(SpringRunner.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BackendApplicationTests {
 
     @Autowired
     private UserRepository userRepository;
 
-    @AfterEach
+    @AfterAll
     public void cleanup() {
         // 삭제 왜 안됄까
         userRepository.deleteAllInBatch();
     }
 
-//    @Test
+    @Test
+    @Order(1)
     public void insertUser() {
             // 연결된 MySQL에 들어감
             userRepository.save(
@@ -52,6 +47,7 @@ class BackendApplicationTests {
 
 
     @Test
+    @Order(2)
     public void updateUser() {
         String id = "testuser";
         User user = userRepository.findById(id);
@@ -66,7 +62,6 @@ class BackendApplicationTests {
             List<User> userList = userRepository.findAll();
             user = userList.get(0);
             assertThat(user.getId(), is("testuser"));
-        } else {
         }
 
     }
