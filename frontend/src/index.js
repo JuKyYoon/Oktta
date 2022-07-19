@@ -1,11 +1,11 @@
-import React, { PropTypes } from "react"
-import ReactDom from "react-dom"
+import React, { PropTypes } from 'react';
+import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { BrowserRouter } from "react-router-dom";
-import App from "./App"
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
 import rootReducer from './modules';
-import "./App.css"
+import './styles/App.css';
 
 const store = createStore(rootReducer);
 
