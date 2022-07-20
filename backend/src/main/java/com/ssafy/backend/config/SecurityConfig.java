@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -19,14 +21,29 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
 
     /**
+     * 인증 실패 처리 핸들러
+     */
+    private final AuthenticationEntryPoint authenticationEntryPointHandler;
+
+    /**
+     * 권한 거부 처리 핸들러
+     */
+    private final AccessDeniedHandler webAccessDeniedHandler;
+
+    /**
      * 인증이 필요없는 URI
      */
     private static final String[] PUBLIC_URI = {
             "/users/signup",
+            "/auth/signin",
+            "/v3/api-docs",
+            "/swagger*/**"
     };
 
-    public SecurityConfig(JwtProvider jwtProvider) {
+    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
         this.jwtProvider = jwtProvider;
+        this.authenticationEntryPointHandler = authenticationEntryPointHandler;
+        this.webAccessDeniedHandler = webAccessDeniedHandler;
     }
 
     /**
@@ -44,12 +61,17 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                        .anyRequest().authenticated();
+                        .anyRequest().hasAnyRole("USER", "ADMIN");
 
 
         http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http
+                .exceptionHandling()
+                        .authenticationEntryPoint(authenticationEntryPointHandler)
+                                .accessDeniedHandler(webAccessDeniedHandler);
 
         http
                 .apply(new JwtSecurityConfig(jwtProvider));
