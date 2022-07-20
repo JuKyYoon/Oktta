@@ -1,3 +1,4 @@
+/* App css */
 body {
   margin: 0;
 }
@@ -12,4 +13,22 @@ a {
 
 * {
   font-family: sans-serif;
+}
+
+/* Nav css */
+nav {
+  border-bottom: 1px solid black;
+  padding: 5px;
+}
+
+.logo {
+  border: 1px solid black;
+  height: 1.5rem;
+}
+
+/* 로그인 입력 폼과 비밀번호 찾기 폼 정렬 */
+.loginform, .findpw {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
