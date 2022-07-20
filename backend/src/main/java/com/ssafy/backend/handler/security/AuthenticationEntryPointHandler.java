@@ -6,7 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ssafy.backend.security.JwtProvider;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -18,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint {
-
+    private static Logger logger = LoggerFactory.getLogger(AuthenticationEntryPointHandler.class);
     /**
      * 401 처리하기 위한 메소드
      */
@@ -27,7 +30,7 @@ public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint
                          AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute("exception");
 
-        // 토큰 없다
+        // 토큰 없거나 DB에 아이디 없다.
         if(exception == null) {
             set403Response(response, "403");
             return;
