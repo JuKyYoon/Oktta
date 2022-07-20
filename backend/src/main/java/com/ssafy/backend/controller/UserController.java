@@ -1,16 +1,20 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.BaseResponseBody;
+import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/users")
@@ -18,21 +22,19 @@ public class UserController {
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     private final UserService userService;
     private final ModelMapper modelMapper;
-    public UserController(ModelMapper modelMapper, UserService userService){
+
+    public UserController(UserRepository userRepository, UserService userService, ModelMapper modelMapper) {
+        this.userRepository = userRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
 
+
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername());
         logger.debug(user.getId());
         logger.debug(user.getNickname());
@@ -41,17 +43,33 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<? extends  BaseResponseBody> signup(@RequestBody UserDto user) {
-        try{
+    public ResponseEntity<? extends BaseResponseBody> signup(@RequestBody UserDto user) {
+        try {
             userService.registUser(user);
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200,"success"));
-        }catch(SQLException e){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+        } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
+    }
 
+    @PostMapping("/modifypw")
+    public ResponseEntity<? extends BaseResponseBody> modifypw(@RequestBody PasswordDto pwtoken) {
+        try {
+            // true 반환 : 성공
+            if (userService.modifyPassword(id, pwtoken))
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+            else    // false 반환 : 기존 비밀번호 오류
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "check your original password"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(new BaseResponseBody.of(200, "fail2"));
+        }
     }
 }
