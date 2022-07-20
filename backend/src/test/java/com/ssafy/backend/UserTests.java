@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("UserService 테스트")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,7 +37,6 @@ class UserTests {
 //        userRepository.deleteAllInBatch();
 //    }
     @Test
-    @DisplayName("getUserInfo() 테스트")
     public void getUserInfo() throws SQLException {
         assertNotNull(userService);
         User user = userService.findUser("testuser");
