@@ -1,16 +1,20 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.BaseResponseBody;
+import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.service.MailService;
+import com.ssafy.backend.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/users")
@@ -19,15 +23,14 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     private final UserService userService;
     private final ModelMapper modelMapper;
-    public UserController(ModelMapper modelMapper, UserService userService){
+    private final MailService mailService;
+    public UserController(UserRepository userRepository, ModelMapper modelMapper, UserService userService, MailService mailService){
+        this.userRepository = userRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.mailService = mailService;
     }
 
     @GetMapping("")
@@ -54,4 +57,5 @@ public class UserController {
         }
 
     }
+
 }

@@ -2,6 +2,7 @@ package com.ssafy.backend;
 
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.service.MailService;
 import com.ssafy.backend.service.UserService;
 import com.ssafy.backend.service.UserServiceImpl;
 import org.junit.jupiter.api.*;
@@ -32,14 +33,22 @@ class UserTests {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MailService mailService;
+
 //    @AfterAll
 //    public void cleanup(){
 //        userRepository.deleteAllInBatch();
 //    }
-    @Test
+//    @Test
     public void getUserInfo() throws SQLException {
         assertNotNull(userService);
         User user = userService.findUser("testuser");
 
+    }
+
+    @Test
+    public void sendAuthMail() throws Exception {
+        mailService.sendAuthMail("engks4619@naver.com");
     }
 }
