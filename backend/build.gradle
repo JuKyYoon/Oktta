@@ -35,6 +35,9 @@ dependencies {
 
 // smtp 설정
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.0'
+// 메일 인증 관련 라이브러리 설정
+    implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.21'
 
 }
 
