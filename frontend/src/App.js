@@ -3,23 +3,18 @@ import { Route, Routes } from 'react-router-dom';
 import Layout from './pages/Layout';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import User from './routes/User';
+import Board from './routes/Board';
+import Article from './routes/Article';
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="/signup" element={<Home />} />
-        <Route path="/login" element={<Home />} />
-        <Route path="/pwInquiry" element={<Home />} />
-        <Route path="/myPage" element={<Home />} />
-        <Route path="/noticeBoard" element={<Home />} />
-        <Route path="/generalBoard" element={<Home />} />
-        <Route path="/article/list" element={<Home />} />
-        <Route path="/article/create" element={<Home />} />
-        <Route path="/article/popular" element={<Home />} />
-        <Route path="/article/:id" element={<Home />} />
-        <Route path="/article/:id/share" element={<Home />} />
+        <Route path="/user/*" element={<User />} />
+        <Route path="/board/*" element={<Board />} />
+        <Route path="/article/*" element={<Article />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
