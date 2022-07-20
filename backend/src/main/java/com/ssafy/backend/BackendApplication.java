@@ -11,7 +11,6 @@ import java.util.TimeZone;
 
 @EnableJpaAuditing
 @SpringBootApplication
-@ComponentScan(basePackages={"org.modelmapper"})
 public class BackendApplication {
 
     public static void main(String[] args) {
