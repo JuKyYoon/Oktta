@@ -23,6 +23,8 @@ public class SecurityConfig {
      */
     private static final String[] PUBLIC_URI = {
             "/users/signup",
+            "/v3/api-docs",
+            "/swagger*/**"
     };
 
     public SecurityConfig(JwtProvider jwtProvider) {

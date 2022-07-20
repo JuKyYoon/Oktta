@@ -42,7 +42,7 @@ public class User {
     private int profileImg;
 
     @Column(name = "email_auth")
-    private Boolean emailAuth;
+    private boolean emailAuth;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
