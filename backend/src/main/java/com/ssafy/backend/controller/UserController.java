@@ -23,6 +23,13 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    private final UserService userService;
+    private final ModelMapper modelMapper;
+    public UserController(ModelMapper modelMapper, UserService userService){
+        this.userService = userService;
+        this.modelMapper = modelMapper;
+    }
+
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -31,5 +38,20 @@ public class UserController {
         logger.debug(user.getNickname());
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<? extends  BaseResponseBody> signup(@RequestBody UserDto user) {
+        try{
+            userService.registUser(user);
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200,"success"));
+        }catch(SQLException e){
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
+        }
+
     }
 }

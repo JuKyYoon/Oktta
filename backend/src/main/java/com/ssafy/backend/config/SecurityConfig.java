@@ -35,7 +35,9 @@ public class SecurityConfig {
      */
     private static final String[] PUBLIC_URI = {
             "/users/signup",
-            "/auth/signin"
+            "/auth/signin",
+            "/v3/api-docs",
+            "/swagger*/**"
     };
 
     public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
