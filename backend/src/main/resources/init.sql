@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     `modify_date` TIMESTAMP NULL,
     `sns_type` tinyint NOT NULL DEFAULT 0,
     `profile_img` INT NULL,
-    `email_auth` BOOLEAN DEFAULT 0,
-    `role` enum('ROLE_USER','ROLE_ADMIN') DEFAULT 'ROLE_USER',
+    `role` enum('ROLE_USER','ROLE_ADMIN','ROLE_GUEST') DEFAULT 'ROLE_GUEST',
     PRIMARY KEY (`idx`)
 );
 
@@ -148,7 +147,3 @@ CREATE TABLE IF NOT EXISTS `user_auth_token`(
     PRIMARY KEY(`user_id`),
     CONSTRAINT `fk_user_user_auth_token_idx_user_idx` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 );
-
-
-/* 테스트 데이터 */
--- insert into user (id, name, password, email, mobile, address, sns_type) values ("testid", "testname", "1234", "test@test.com", 01012345678, "test_address", 0);
