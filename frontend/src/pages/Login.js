@@ -1,12 +1,13 @@
 import { TextField } from '@mui/material';
 import { Box } from '@mui/material';
 import { Button } from '@mui/material';
-import Link from '@mui/material/Link';
+import { Link } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 
-
+// 색깔 생성 부분
 const theme = createTheme({
     palette: {
         veryperi: {
@@ -18,14 +19,14 @@ const theme = createTheme({
 
 function Login() {
     // 이메일 입력 부분
-    const [email, setEmail] = React.useState('');
-    const emailChange = (event) => {
+    const [email, setEmail] = useState('');
+    const onEmailHandler = (event) => {
         setEmail(event.target.value);
     };
 
     // 비밀번호 입력 부분
-    const [password, setPassword] = React.useState('');
-    const passwordChange = (event) => {
+    const [password, setPassword] = useState('');
+    const onPasswordHandler = (event) => {
         setPassword(event.target.value);
     };
 
@@ -33,7 +34,22 @@ function Login() {
     const print = () => {
         console.log(email)
         console.log(password)
-    }
+    };
+
+    const dispatch = useDispatch();
+
+    // 로그인 구현 부분
+    const onSubmitHandler = (event) => {
+        const data = {
+            id: email,
+            password: password,
+        };
+
+        dispatch(Login(data))
+            .then((res) => {
+                console.log(res);
+            })
+    };
 
     return (
         <>
@@ -46,14 +62,14 @@ function Login() {
                     <TextField
                         label="이메일"
                         value={email}
-                        onChange={emailChange}
+                        onChange={onEmailHandler}
                     />
                     <br />
                     <TextField
                         label="비밀번호"
                         type="password"
                         value={password}
-                        onChange={passwordChange}
+                        onChange={onPasswordHandler}
                         autoComplete="current-password"
                     />
                     <br />
