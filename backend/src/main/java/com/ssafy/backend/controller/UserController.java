@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.SQLException;
 
 @RestController
@@ -34,7 +33,7 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername());
         logger.debug(user.getId());
         logger.debug(user.getNickname());
@@ -43,14 +42,14 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<? extends BaseResponseBody> signup(@RequestBody UserDto user) {
-        try {
+    public ResponseEntity<? extends  BaseResponseBody> signup(@RequestBody UserDto user) {
+        try{
             userService.registUser(user);
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
-        } catch (SQLException e) {
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200,"success"));
+        }catch(SQLException e){
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
