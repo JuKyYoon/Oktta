@@ -21,5 +21,5 @@ public interface UserService {
 
     public User findPassword(User user) throws  SQLException;
 
-    public boolean modifyPassword(String id, PasswordDto pwtoken) throws SQLException;
+    public int modifyPassword(String id, PasswordDto passwords) throws SQLException;
 }

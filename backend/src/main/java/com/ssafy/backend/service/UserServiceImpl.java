@@ -57,20 +57,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean modifyPassword(String id, PasswordDto pwtoken) throws SQLException {
+    public int modifyPassword(String id, PasswordDto passwords) throws SQLException {
         User user = userRepository.findById(id);
-        String oldPassword = pwtoken.getOldPassword();
-        String newPassword = pwtoken.getNewPassword();
+        String oldPassword = passwords.getOldPassword();
+        String newPassword = passwords.getNewPassword();
 
         // 기존 비밀번호가 맞지 않을 경우 false
         if(!BCrypt.checkpw(oldPassword, user.getPassword()))
-            return false;
+            return -1;
         else {
 
             // 새로운 비밀번호로 저장
             String encrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-            userRepository.updatePassword(encrypt, user.getId());
-            return true;
+            return userRepository.updatePassword(encrypt, user.getId());
         }
     }
 }

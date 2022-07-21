@@ -5,10 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
+
 public interface UserRepository extends JpaRepository<User, Long> {
     User findById(String id);
 
+    // update와 delete에는 @Transactional 추가 필수
+    // Modifying의 return은 void or int(Integer)만 가능
+    @Transactional
     @Modifying
     @Query("UPDATE User user SET user.password = :password WHERE user.id = :id")
-    boolean updatePassword(String password, String id);
+    int updatePassword(String password, String id);
 }

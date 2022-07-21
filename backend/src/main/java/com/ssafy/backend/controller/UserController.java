@@ -57,19 +57,25 @@ public class UserController {
     }
 
     @PostMapping("/modifypw")
-    public ResponseEntity<? extends BaseResponseBody> modifypw(@RequestBody PasswordDto pwtoken) {
+    public ResponseEntity<? extends BaseResponseBody> modifypw(@RequestBody PasswordDto passwords) {
+
+        // access token에서 id 부분
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername());
+        String id = user.getId();
+        logger.debug(id);
+
         try {
-            // true 반환 : 성공
-            if (userService.modifyPassword(id, pwtoken))
+            if (userService.modifyPassword(id, passwords) != -1)
                 return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
-            else    // false 반환 : 기존 비밀번호 오류
+            else    // -1은 기존 비밀번호 틀렸을 경우
                 return ResponseEntity.status(200).body(BaseResponseBody.of(200, "check your original password"));
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(200).body(new BaseResponseBody.of(200, "fail2"));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
     }
 }
