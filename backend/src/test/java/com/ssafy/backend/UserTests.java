@@ -47,8 +47,13 @@ class UserTests {
 
     }
 
-    @Test
+//    @Test
+    public void singUp() throws Exception{
+//        userService.registUser();
+    }
+
+//    @Test
     public void sendAuthMail() throws Exception {
-        mailService.sendAuthMail("engks4619@naver.com");
+//        mailService.sendAuthMail("engks4619@naver.com");
     }
 }

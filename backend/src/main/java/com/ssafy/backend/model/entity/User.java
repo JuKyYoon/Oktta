@@ -102,6 +102,10 @@ public class User {
         this.nickname = nickname;
     }
 
+    public void updateEmailAuth(boolean flag){
+        this.emailAuth = flag;
+    }
+
     // Builder 패턴 ( Not Lombok )
     public static class Builder {
         // Required Parameter

@@ -3,6 +3,9 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.model.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.UserAuthToken;
+import com.ssafy.backend.model.exception.ExpiredTokenException;
+import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.service.MailService;
 import com.ssafy.backend.service.UserService;
@@ -56,6 +59,21 @@ public class UserController {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
 
+    }
+
+    @GetMapping("/signupConfirm")
+    public ResponseEntity<? extends BaseResponseBody> signupConfirm(@RequestParam("authKey") String authKey) {
+        logger.info("signupConfirm");
+        try {
+            userService.authUser(authKey);
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+        }catch (ExpiredTokenException e){
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200,"expired key"));
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(500, "fail"));
+        }
     }
 
 }
