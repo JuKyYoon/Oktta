@@ -40,6 +40,10 @@ dependencies {
     implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
     implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.21'
 
+// apache commons lang 랜덤 문자열 생성용
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+
 }
 
 
