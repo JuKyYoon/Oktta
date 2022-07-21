@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findById(String id);
+    Optional<User> findById(String id);
 
     // update와 delete에는 @Transactional 추가 필수
     // Modifying의 return은 void or int(Integer)만 가능

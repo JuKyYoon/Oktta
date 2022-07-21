@@ -1,7 +1,6 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.BaseResponseBody;
-import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
@@ -34,7 +33,7 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername());
+        User user = userRepository.findById(principal.getUsername()).orElse(null);
         logger.debug(user.getId());
         logger.debug(user.getNickname());
 

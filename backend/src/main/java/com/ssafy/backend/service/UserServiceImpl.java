@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(String id) throws SQLException {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
