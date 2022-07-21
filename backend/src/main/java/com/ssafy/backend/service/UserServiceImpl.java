@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int modifyPassword(String id, PasswordDto passwords) throws SQLException {
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id).orElse(null);
         String oldPassword = passwords.getOldPassword();
         String newPassword = passwords.getNewPassword();
 

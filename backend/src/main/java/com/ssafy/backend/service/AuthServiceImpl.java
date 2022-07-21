@@ -66,9 +66,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtProvider.generateRefreshToken(userId);
 
         result.put("accessToken", accessToken);
-        
-        // 줄 필요 없음
-        // result.put("refreshToken", refreshToken);
+        result.put("refreshToken", refreshToken);
 
         return result;
     }

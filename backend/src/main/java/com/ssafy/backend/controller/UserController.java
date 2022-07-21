@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
@@ -59,7 +60,10 @@ public class UserController {
 
         // access token에서 id 부분
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername());
+        User user = userRepository.findById(principal.getUsername()).orElse(null);
+        if (user != null) {
+
+        }
         String id = user.getId();
         logger.debug(id);
 
