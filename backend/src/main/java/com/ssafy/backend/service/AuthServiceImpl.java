@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
             String exception = (String) req.getAttribute("exception");
             Map<String, String> result = new HashMap<>();
             if("ExpiredJwtException".equals(exception)) {
-                result.put("fail", "time");
+                result.put("fail", "timeover");
             } else {
                 result.put("fail", "fail");
             }
@@ -66,7 +66,9 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtProvider.generateRefreshToken(userId);
 
         result.put("accessToken", accessToken);
-        result.put("refreshToken", refreshToken);
+        
+        // 줄 필요 없음
+        // result.put("refreshToken", refreshToken);
 
         return result;
     }

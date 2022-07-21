@@ -73,7 +73,7 @@ public class AuthController {
                     // RefreshToken 이 쿠키에 있는 경우
                     SetCookie.deleteRefreshTokenCookie(response);
                     Map<String, String> result = authService.refresh(request, userId, refreshToken);
-                    if("time".equals(result.get(FAIL_MSG))) {
+                    if("timeover".equals(result.get(FAIL_MSG))) {
                         logger.debug("Token Expired");
                         return ResponseEntity.status(200).body(MessageResponse.of(200, FAIL_MSG, "time expired"));
                     } else if(FAIL_MSG.equals(result.get(FAIL_MSG))) {

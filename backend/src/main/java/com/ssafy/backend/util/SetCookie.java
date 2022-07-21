@@ -7,7 +7,7 @@ public class SetCookie {
         Cookie cookie = new Cookie("refreshToken", token);
 
         // 1 week
-        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setMaxAge(14 * 24 * 60 * 60);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         res.addCookie(cookie);
