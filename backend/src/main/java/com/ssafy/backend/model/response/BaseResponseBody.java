@@ -1,4 +1,4 @@
-package com.ssafy.backend.model;
+package com.ssafy.backend.model.response;
 
 public class BaseResponseBody {
     String message = null;
