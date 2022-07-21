@@ -139,6 +139,16 @@ CREATE TABLE IF NOT EXISTS `debate_room_comment`(
     CONSTRAINT `fk_user_debate_room_comment_idx_user_idx` FOREIGN KEY (`user_idx`) REFERENCES `user` (`idx`) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS `user_auth_token`;
+CREATE TABLE IF NOT EXISTS `user_auth_token`(
+    `user_idx` INT NOT NULL,
+    `token` VARCHAR(50) NOT NULL,
+    `create_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `expire_date` TIMESTAMP NULL,
+    PRIMARY KEY(`user_idx`),
+    CONSTRAINT `fk_user_user_auth_token_idx_user_idx` FOREIGN KEY (`user_idx`) REFERENCES `user` (`idx`) ON DELETE CASCADE
+    );
+
 
 /* 테스트 데이터 */
 -- insert into user (id, name, password, email, mobile, address, sns_type) values ("testid", "testname", "1234", "test@test.com", 01012345678, "test_address", 0);

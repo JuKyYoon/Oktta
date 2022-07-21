@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import rootReducer from './modules';
 import './styles/App.css';
+import './styles/Nav.css';
 
 const store = createStore(rootReducer);
 

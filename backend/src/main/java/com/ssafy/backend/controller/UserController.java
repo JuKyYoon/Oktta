@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.SQLException;
 
 @RestController
@@ -23,11 +22,13 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    public UserController(UserRepository userRepository, ModelMapper modelMapper, UserService userService){
+
+    public UserController(UserRepository userRepository, UserService userService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
+
 
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
@@ -51,6 +52,28 @@ public class UserController {
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
+    }
 
+    @PostMapping("/modifypw")
+    public ResponseEntity<? extends BaseResponseBody> modifypw(@RequestBody PasswordDto passwords) {
+
+        // access token에서 id 부분
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername());
+        String id = user.getId();
+        logger.debug(id);
+
+        try {
+            if (userService.modifyPassword(id, passwords) != -1)
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+            else    // -1은 기존 비밀번호 틀렸을 경우
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "check your original password"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
+        }
     }
 }
