@@ -50,7 +50,7 @@ class BackendApplicationTests {
     @Order(2)
     public void updateUser() {
         String id = "testuser";
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id).orElse(null);
 
         assertNotNull(user);
 
