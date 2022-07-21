@@ -27,7 +27,7 @@ public class User {
 
     private String password;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CreatedDate
     private LocalDateTime createDate;
 

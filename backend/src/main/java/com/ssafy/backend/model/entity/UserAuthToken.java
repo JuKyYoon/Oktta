@@ -1,6 +1,7 @@
 package com.ssafy.backend.model.entity;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 @DynamicInsert
+@DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class UserAuthToken {
     @Id
@@ -32,6 +34,7 @@ public class UserAuthToken {
     private UserAuthToken(Builder builder){
         this.userId = builder.userId;
         this.token = builder.token;
+        this.createDate = builder.createDate;
         this.expireDate = builder.expireDate;
     }
 
@@ -61,11 +64,13 @@ public class UserAuthToken {
     public static class Builder {
         private final String userId;
         private final String token;
+        private final LocalDateTime createDate;
         private final LocalDateTime expireDate;
 
-        public Builder(String userId, String token, LocalDateTime expireDate) {
+        public Builder(String userId, String token, LocalDateTime createDate, LocalDateTime expireDate) {
             this.userId = userId;
             this.token = token;
+            this.createDate = createDate;
             this.expireDate = expireDate;
         }
 

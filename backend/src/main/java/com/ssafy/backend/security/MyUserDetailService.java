@@ -18,7 +18,7 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userRepository.findById(username); // Parameter username은 user의 ID이다.
+        final User user = userRepository.findById(username).orElse(null); // Parameter username은 user의 ID이다.
 
 
         /**

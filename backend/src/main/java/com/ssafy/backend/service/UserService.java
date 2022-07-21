@@ -17,4 +17,5 @@ public interface UserService {
     public User findPassword(User user) throws SQLException;
 
     public void authUser(String authKey) throws Exception;
+
 }
