@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 
@@ -15,4 +16,6 @@ public interface UserService {
     public int deleteUser(String id) throws SQLException;
 
     public User findPassword(User user) throws  SQLException;
+
+    public int modifyPassword(String id, PasswordDto passwords) throws SQLException;
 }
