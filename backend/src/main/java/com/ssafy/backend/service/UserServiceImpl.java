@@ -3,6 +3,7 @@ package com.ssafy.backend.service;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.UserAuthToken;
+import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.DuplicatedTokenException;
 import com.ssafy.backend.model.exception.ExpiredTokenException;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
@@ -89,10 +90,10 @@ public class UserServiceImpl implements UserService {
     public void authUser(String authKey) throws Exception {
         UserAuthToken userAuthToken = userAuthTokenRepository.findByToken(authKey).orElse(null);
         if(LocalDateTime.now().isAfter(userAuthToken.getExpireDate())){
-            throw new ExpiredTokenException();
+            throw new ExpiredTokenException("만료된 인증 키입니다.");
         }
         User user = userRepository.findById(userAuthToken.getUserId()).orElse(null);
-        user.updateEmailAuth(true);
+        user.updateUserRole(UserRole.ROLE_USER);
         userRepository.save(user);
         userAuthTokenRepository.delete(userAuthToken);
     }
