@@ -16,8 +16,5 @@ public interface UserService {
     public User findPassword(User user) throws SQLException;
     public void authUser(String authKey) throws Exception;
     public boolean resendAuthMail(String userId) throws Exception;
-
-    public User findPassword(User user) throws  SQLException;
-
     public int modifyPassword(String id, PasswordDto passwords) throws SQLException;
 }
