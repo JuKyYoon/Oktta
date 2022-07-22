@@ -1,8 +1,13 @@
 import React, {useState} from 'react';
 import { FormControl, InputLabel, Input, FormHelperText, Container, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { checkEmailRequest, checkNicknameRequest} from '../services/userService';
+import { debounce } from 'lodash';
 
 
+
+const debounceFunc = debounce((value, func)=>{func(value)
+}, 1000)
 
 
 const Signup = () => {
@@ -18,35 +23,62 @@ const Signup = () => {
     });
 
 
-
+    
     // input값들 useState
     const [email, setEmail] = useState("");
+    const [isEmailValid, setIsEmailValid] = useState(false);
+    const [isNicknameValid, setIsNicknameValid] = useState(false);
+    const [isPwValid, setIsPwValid] = useState(false);
+    
+    
     const emailChange = (event) => {
         setEmail(event.target.value);
+        const regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+        setIsEmailValid(regEmail.test(event.target.value))
+        if (isEmailValid) {
+            setEmailChecked(debounceFunc(event.target.value, checkEmailRequest));
+        }
         
     }
 
     const [pw, setPw] = useState("");
     const pwChange = (event) => {
         setPw(event.target.value);
+        if(event.target.value){
+            setIsPwValid(event.target.value === pwCheck)
+        }
         
     }
 
     const [pwCheck, setPwCheck] = useState("");
     const pwCheckChange = (event) => {
         setPwCheck(event.target.value);
+        if(event.target.value){
+            setIsPwValid(pw === event.target.value)
+        }
         
     }
 
-    const [nickNm, setNickNm] = useState("");
-    const nickNmChange = (event) => {
-        setNickNm(event.target.value);
+
+
+    const [nickname, setNickname] = useState("");
+    const nicknameChange = (event) => {
+        setNickname(event.target.value);
+        
+        if(event.target.value){
+            const regNickname = /[^\w\sㄱ-힣]|[\_]/g;
+            setIsNicknameValid(!regNickname.test(event.target.value))
+            if(isNicknameValid){
+                setNicknameChecked(debounceFunc(event.target.value, checkNicknameRequest));
+            }
+        }
         
     }
 
     // 이메일, 닉네임 중복체크 useState
+    // 바뀔때마다 db에서 체크하는 기능 구현하기!!!!!!!!
     const [emailChecked, setEmailChecked] = useState(false);
-    const [nickNmChecked, setNickNmChecked] = useState(false);
+    const [nicknameChecked, setNicknameChecked] = useState(false);
 
 
     // 회원가입버튼 클릭시 함수
@@ -58,27 +90,13 @@ const Signup = () => {
         }
     }
 
-    // 이메일 중복체크
-    const verifyEmail = () =>{
-        // 중복된 이메일 체크 후!!
-        // 중복된 이메일이 없으면
-        setEmailChecked(true);
-        // 중복된 이메일이 있으면
-        alert("이메일이 중복되었습니다.")
-    }
+   
 
-    // 닉네임 중복체크
-    const verifyNickNm = () =>{
-        // 중복된 닉네임 체크 후!!
-        // 중복된 닉네임 없으면
-        setNickNmChecked(true);
-        // 중복된 닉네임이 있으면
-        alert("닉네임이 중복되었습니다.")
-    }
+  
     
     return (
         <div>
-        <img src="/assets/oktta_logo.jpg"></img>
+        
         <ThemeProvider theme={theme}>
         <Container maxWidth="sm">
             
@@ -89,7 +107,10 @@ const Signup = () => {
                 <Input id="email" aria-describedby="email-helper-text" color='veryperi' value={email} onChange={emailChange}/>
                 <FormHelperText id="email-helper-text">We'll never share your email.</FormHelperText>
             </FormControl>
-                <Button variant="outlined" color="veryperi" onClick={verifyEmail}>중복확인</Button>
+            <p>
+                {isEmailValid ? (emailChecked ? "중복됨!" : "사용할수 있음") : "이메일 형식에 맞춰주세요"}
+            </p>
+                
             </div>
             <br/>
             <div>
@@ -110,14 +131,17 @@ const Signup = () => {
             <br/>
             <div>
             <FormControl>
-                <InputLabel htmlFor="nickNm" color='veryperi'>닉네임</InputLabel>
-                <Input id="nickNm" aria-describedby="nickNm-helper-text"  color='veryperi' value={nickNm} onChange={nickNmChange}/>
+                <InputLabel htmlFor="nickname" color='veryperi'>닉네임</InputLabel>
+                <Input id="nickname" aria-describedby="nickNm-helper-text"  color='veryperi' value={nickname} onChange={nicknameChange}/>
+                <FormHelperText id="nickname-helper-text">특수문자를 제외한 닉네임을 입력해주세요</FormHelperText>
             </FormControl>
-                <Button variant="outlined" color="veryperi" onClick={verifyNickNm}>중복확인</Button>
+                <p>
+                    {isNicknameValid ? (nicknameChecked ? "중복됨!" : "사용할수 있음") : "닉네임 형식에 맞춰주세요"}
+                </p>
             </div>
             <br/><br/>
             <div>
-            <Button variant="contained" color="veryperi" onClick={handleSubmit}>회원가입하기</Button>
+            <Button variant="contained" color="veryperi" onClick={handleSubmit} disabled={ !isPwValid}>회원가입하기</Button>
             </div>
             
         </Container>
