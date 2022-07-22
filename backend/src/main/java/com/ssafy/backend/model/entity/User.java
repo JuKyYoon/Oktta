@@ -27,7 +27,7 @@ public class User {
 
     private String password;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CreatedDate
     private LocalDateTime createDate;
 
@@ -40,9 +40,6 @@ public class User {
 
     @Column(name = "profile_img")
     private int profileImg;
-
-    @Column(name = "email_auth")
-    private boolean emailAuth;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -90,16 +87,16 @@ public class User {
         return profileImg;
     }
 
-    public Boolean getEmailAuth() {
-        return emailAuth;
-    }
-
     public UserRole getRole() {
         return role;
     }
 
     public void updateInfo(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateUserRole(UserRole role){
+        this.role = role;
     }
 
     // Builder 패턴 ( Not Lombok )
