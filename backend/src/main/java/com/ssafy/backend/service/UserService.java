@@ -11,7 +11,7 @@ public interface UserService {
     boolean registUser(UserDto user) throws MessagingException;
     int modifyUser(User user);
     User findUser(String id);
-    boolean checkDuplicatedID(String id);
+    boolean checkDuplicatedID(String userId);
     int deleteUser(String id);
     User findPassword(User user);
     public void authUser(String authKey);

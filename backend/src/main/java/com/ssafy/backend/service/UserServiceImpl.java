@@ -81,9 +81,13 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    /**
+     * 유저 아이디 중복 체크
+     * @param userId 유저 아이디
+     */
     @Override
-    public boolean checkDuplicatedID(String id) {
-        User user = userRepository.findById(id).orElse(null);
+    public boolean checkDuplicatedID(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
         if(user != null){
             return true;
         }else{
