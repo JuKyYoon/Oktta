@@ -83,4 +83,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/remail")
+    public ResponseEntity<? extends BaseResponseBody> resendAuthMail() {
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElse(null);
+        try{
+            userService.resendAuthMail(user.getId());
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(500, "fail"));
+        }
+    }
 }

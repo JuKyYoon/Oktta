@@ -56,4 +56,9 @@ class UserTests {
     public void sendAuthMail() throws Exception {
 //        mailService.sendAuthMail("engks4619@naver.com");
     }
+
+//    @Test
+    public void resendAutMail() throws Exception {
+        userService.resendAuthMail("engks4619@naver.com");
+    }
 }

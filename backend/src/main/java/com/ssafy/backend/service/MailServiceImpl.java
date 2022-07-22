@@ -40,7 +40,6 @@ public class MailServiceImpl implements MailService{
         sendMail(email, message, mailContent);
     }
     @Override
-    @Async("mailExecutor")
     public void sendMail(String email, MimeMessage message, String mailContent) {
         try{
             message.setFrom(SENDER);

@@ -98,4 +98,19 @@ public class UserServiceImpl implements UserService {
         userAuthTokenRepository.delete(userAuthToken);
     }
 
+    @Override
+    public boolean resendAuthMail(String userId) throws Exception {
+        String authKey = RandomStringUtils.randomAlphanumeric(AUTH_KEY_SIZE);
+        logger.info("saveAuthKey");
+        try{
+            userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(), LocalDateTime.now().plusDays(EXPIRE_DAY)).build());
+        }catch (IllegalArgumentException e){
+            throw new DuplicatedTokenException("중복 토큰 발생!");
+        }
+        // 인증 메일 전송
+        logger.info("send mail start");
+        mailService.sendAuthMail(userId, authKey);
+        return true;
+    }
+
 }
