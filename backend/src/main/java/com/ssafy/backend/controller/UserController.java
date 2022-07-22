@@ -95,7 +95,7 @@ public class UserController {
     @GetMapping("/auth/{authKey}")
     public ResponseEntity<BaseResponseBody> signupConfirm(@PathVariable("authKey") String authKey) {
         userService.authUser(authKey);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
     /**
@@ -110,6 +110,6 @@ public class UserController {
         );
 
         userService.resendAuthMail(user.getId());
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }
