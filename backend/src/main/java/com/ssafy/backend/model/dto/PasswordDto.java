@@ -1,5 +1,9 @@
 package com.ssafy.backend.model.dto;
 
+/**
+ * 비밀번호 변경 시 사용.
+ * @author 유지태
+ */
 public class PasswordDto {
     String oldPassword;
     String newPassword;

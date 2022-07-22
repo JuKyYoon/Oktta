@@ -6,7 +6,8 @@ import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.UserAuthToken;
 import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.DuplicatedTokenException;
-import com.ssafy.backend.model.exception.ExpiredTokenException;
+import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -16,20 +17,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
+
     private final UserAuthTokenRepository userAuthTokenRepository;
+
     private final MailService mailService;
 
     @Value("${email.expire-day}")
-    private int EXPIRE_DAY;
+    private int expireDay;
+
     @Value("${email.auth-key-size}")
-    private int AUTH_KEY_SIZE;
+    private int authKeySize;
 
     public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService) {
         this.userRepository = userRepository;
@@ -37,85 +43,110 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
     }
 
-
     @Override
-    public User loginUser(User user) throws SQLException {
+    public User loginUser(User user){
         return null;
     }
 
+    /**
+     * 회원가입
+     * @param user { id, password, nickName }
+     */
     @Override
-    public boolean registUser(UserDto user) throws Exception {
+    public boolean registUser(UserDto user) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
-        logger.info("saveUser");
         userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
-        logger.info("getRandomKey");
-        String authKey = RandomStringUtils.randomAlphanumeric(AUTH_KEY_SIZE);
-        logger.info("saveAuthKey");
-        try{
-            userAuthTokenRepository.save(new UserAuthToken.Builder(user.getId(), authKey, LocalDateTime.now(), LocalDateTime.now().plusDays(EXPIRE_DAY)).build());
-        }catch (IllegalArgumentException e){
+        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+
+        try {
+            userAuthTokenRepository.save(new UserAuthToken.Builder(user.getId(), authKey, LocalDateTime.now(),
+                    LocalDateTime.now().plusDays(expireDay)).build());
+        } catch (IllegalArgumentException e){
             throw new DuplicatedTokenException("중복 토큰 발생!");
         }
+
         // 인증 메일 전송
-        logger.info("send mail start");
+        LOGGER.info("send mail start");
         mailService.sendAuthMail(user.getId(), authKey);
         return true;
     }
 
     @Override
-    public int modifyUser(User user) throws SQLException {
+    public int modifyUser(User user) {
         return 0;
     }
 
     @Override
-    public User findUser(String id) throws SQLException {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public int checkDuplicatedID(String id) throws SQLException {
-        return 0;
-    }
-
-    @Override
-    public int deleteUser(String id) throws SQLException {
-        return 0;
-    }
-
-    @Override
-    public User findPassword(User user) throws SQLException {
+    public User findUser(String id) {
         return null;
     }
 
     @Override
-    public void authUser(String authKey) throws Exception {
-        UserAuthToken userAuthToken = userAuthTokenRepository.findByToken(authKey).orElse(null);
+    public int checkDuplicatedID(String id) {
+        return 0;
+    }
+
+    @Override
+    public int deleteUser(String id) {
+        return 0;
+    }
+
+    @Override
+    public User findPassword(User user) {
+        return null;
+    }
+
+    /**
+     * 회원가입 한 유저 인증
+     * @param authKey 인증토큰
+     */
+    @Override
+    public void authUser(String authKey) {
+        // JPA 이용하는 거 줄여보기
+        UserAuthToken userAuthToken = userAuthTokenRepository.findByToken(authKey).orElseThrow(
+                () -> new UserNotFoundException("User Auth Token Not Found")
+        );
+
         if(LocalDateTime.now().isAfter(userAuthToken.getExpireDate())){
-            throw new ExpiredTokenException("만료된 인증 키입니다.");
+            throw new ExpiredEmailAuthKeyException("만료된 인증 키입니다.");
         }
-        User user = userRepository.findById(userAuthToken.getUserId()).orElse(null);
+        User user = userRepository.findById(userAuthToken.getUserId()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
         user.updateUserRole(UserRole.ROLE_USER);
         userRepository.save(user);
         userAuthTokenRepository.delete(userAuthToken);
     }
 
+    /**
+     * 로그인 한 사용자가, 이메일 재전송
+     * @param userId 유저아이디
+     */
     @Override
-    public boolean resendAuthMail(String userId) throws Exception {
-        String authKey = RandomStringUtils.randomAlphanumeric(AUTH_KEY_SIZE);
-        logger.info("saveAuthKey");
-        try{
-            userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(), LocalDateTime.now().plusDays(EXPIRE_DAY)).build());
-        }catch (IllegalArgumentException e){
+    public boolean resendAuthMail(String userId) throws MessagingException {
+        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        try {
+            userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(),
+                    LocalDateTime.now().plusDays(expireDay)).build());
+        } catch (IllegalArgumentException e){
             throw new DuplicatedTokenException("중복 토큰 발생!");
         }
+
         // 인증 메일 전송
-        logger.info("send mail start");
+        LOGGER.info("send mail start");
         mailService.sendAuthMail(userId, authKey);
         return true;
     }
 
-    public int modifyPassword(String id, PasswordDto passwords) throws SQLException {
-        User user = userRepository.findById(id).orElse(null);
+    /**
+     * 비밀번호 수정
+     * @param id 유저아이디
+     * @param passwords 비밀번호 Dto
+     */
+    public int modifyPassword(String id, PasswordDto passwords)  {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
         String oldPassword = passwords.getOldPassword();
         String newPassword = passwords.getNewPassword();
 
@@ -123,7 +154,6 @@ public class UserServiceImpl implements UserService {
         if(!BCrypt.checkpw(oldPassword, user.getPassword()))
             return -1;
         else {
-
             // 새로운 비밀번호로 저장
             String encrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             return userRepository.updatePassword(encrypt, user.getId());
