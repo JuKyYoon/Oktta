@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const DOMAIN = "http://localhost:8000";
+const DOMAIN = "http://localhost:8080";
 // axios.defaults.withCredentials = true; // CORS 에러?
 
 export const request = (method, url, data) => {

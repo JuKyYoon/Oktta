@@ -8,32 +8,43 @@ const SIGNUP = 'user/SIGNUP';
 const PW_INQUIRY = 'user/PW_INQUIRY';
 const UPDATE = 'user/UPDATE';
 
+
+/* 요청 URL*/
+const USER_URL = "/api/v1/users"
+
+
 /* 액션 함수 선언 */
-export const login = (id, password) => ({
-  type: LOGIN,
-  userInfo: {
-    id,
-    password
-  }
-});
+export const login = (dataToSubmit) => {
+  const data = request("post", USER_URL+"/login", dataToSubmit)
 
-export const logout = (id) => ({
-  type: LOGOUT,
-  userInfo: {
-    id
-    // 토큰?
+  return{
+    type: LOGIN,
+    data
   }
-});
+}
 
-export const signup = (id, password, nickname) => ({
-  type: SIGNUP,
-  userInfo: {
-    id,
-    password,
-    nickname
+
+
+export const logout = (dataToSubmit) => {
+  const data = request("post", USER_URL + "/logout", dataToSubmit)
+
+  return {
+    type: LOGOUT,
+    data,
   }
-});
+};
 
+export const signup = (dataToSubmit) => {
+  const data = request("post", USER_URL + "/signup", dataToSubmit)
+  
+  return {
+    type: SIGNUP,
+    data,
+  }
+}
+
+/////////////////////////////////
+/* 아직 구현하지 않은 부분
 export const pwInquiry = (id) => ({
   type: PW_INQUIRY,
   userInfo: {
@@ -51,6 +62,9 @@ export const update = (id, password, nickname) => ({
     // 토큰?
   }
 });
+*/
+//////////////////////////
+
 
 /* 초기 상태 선언 */
 const initialState  = {
@@ -69,40 +83,22 @@ const initialState  = {
 
 let response = {}
 
-export default function user(state = currentUser, action) {
+export default function user(state = initialState, action) {
   switch (action.type) {
     case LOGIN:
-      if (!state.currentUser.id) {
-        const data = action.userInfo;
-        const response = request('POST', '', data); // login API 물어보고 넣기
-        console.log(response)
-        
-        // if (응답 정상) {
-          // accessToken ??
-          // refreshToken ??
-          // return 받아온 유저 정보 담아서 새로운 state
-          // } else {
-            // 에러메세지
-            // return state 아니면 에러메세지;
-            // }
-          }
+      // 로그인 요청에 대한 응답으로 어떤 데이터가 오는지 확인해보고 state에 넣어주기
+      console.log("로그인 응답: " + action.data)
+      return {...state,}
 
     case LOGOUT:
-      if (state.currentUser.id) {
-        const data = action.userInfo;
-        const response = request('GET', '', data); // API 물어보고 넣기
-        console.log(response);
-        // return 새로운 state
-      } else {
-        // return 에러메세지
-      };
-      
+      console.log("로그아웃 응답: " + action.data)
+      return {...state,}
+
     case SIGNUP:
-      response = request('POST', '', action.userInfo); // API 물어보고 넣기
-      console.log(response);
-      // return 새로운 state     
-      return ;
-  
+         
+      return {...state, success: action.data};
+  //////////////////////////////////////////
+  /* 아직 구현하지 않은 부분
     case PW_INQUIRY:
       response = request('POST', '', action.userInfo); // API 물어보고 넣기
       console.log(response);
@@ -114,7 +110,8 @@ export default function user(state = currentUser, action) {
       console.log(response);
       // return 새로운 state
       return ;
-
+  */
+  ///////////////////////////////////////////
     default:
       return state;
   }
