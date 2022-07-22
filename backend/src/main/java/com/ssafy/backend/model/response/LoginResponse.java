@@ -1,6 +1,5 @@
 package com.ssafy.backend.model.response;
 
-
 import java.util.Map;
 
 public class LoginResponse extends BaseResponseBody {

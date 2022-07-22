@@ -5,12 +5,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisService {
+
     private final RedisTemplate<String, String> redisTemplate;
 
     public RedisService(RedisTemplate<String, String> redisTemplate) {
@@ -80,6 +80,12 @@ public class RedisService {
         return operations.get(key, hash);
     }
 
+    /**
+     * Set RefreshTokne to Redis
+     * @param key user.id
+     * @param token refreshToken
+     * @param expireDate expire date
+     */
     public void setRefreshToken(String key, String token, long expireDate) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(key, token, expireDate, TimeUnit.MILLISECONDS);
