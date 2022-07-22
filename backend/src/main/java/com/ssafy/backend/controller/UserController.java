@@ -1,6 +1,8 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.BaseResponseBody;
+
+import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.DuplicatedTokenException;
@@ -17,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 
@@ -39,6 +40,7 @@ public class UserController {
         this.modelMapper = modelMapper;
         this.mailService = mailService;
     }
+
 
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> test() {
@@ -65,7 +67,32 @@ public class UserController {
             e.printStackTrace();
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
         }
+    }
 
+    @PostMapping("/modifypw")
+    public ResponseEntity<? extends BaseResponseBody> modifypw(@RequestBody PasswordDto passwords) {
+
+        // access token에서 id 부분
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElse(null);
+        if (user != null) {
+
+        }
+        String id = user.getId();
+        logger.debug(id);
+
+        try {
+            if (userService.modifyPassword(id, passwords) != -1)
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "success"));
+            else    // -1은 기존 비밀번호 틀렸을 경우
+                return ResponseEntity.status(200).body(BaseResponseBody.of(200, "check your original password"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "fail2"));
+        }
     }
 
     @GetMapping("/signupConfirm/{authKey}")

@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.UserAuthToken;
@@ -113,4 +114,19 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    public int modifyPassword(String id, PasswordDto passwords) throws SQLException {
+        User user = userRepository.findById(id).orElse(null);
+        String oldPassword = passwords.getOldPassword();
+        String newPassword = passwords.getNewPassword();
+
+        // 기존 비밀번호가 맞지 않을 경우 false
+        if(!BCrypt.checkpw(oldPassword, user.getPassword()))
+            return -1;
+        else {
+
+            // 새로운 비밀번호로 저장
+            String encrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            return userRepository.updatePassword(encrypt, user.getId());
+        }
+    }
 }

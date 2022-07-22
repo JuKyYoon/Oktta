@@ -1,13 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import MainMenu from '../components/MainMenu';
 
 const Home = () => {
+
   return (
     <div>
-      <h1>홈</h1>
-      <p>홈 페이지 입니다.</p>
+      <MainMenu />
+      <h2>최근 HOT한 방</h2>
+      <h2>몇대몇</h2>
+      <h2>자유게시판</h2>
     </div>
   );
-}
+};
 
 export default Home;
