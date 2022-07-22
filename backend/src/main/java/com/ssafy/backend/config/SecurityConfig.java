@@ -34,14 +34,18 @@ public class SecurityConfig {
      * 인증이 필요없는 URI
      */
     private static final String[] PUBLIC_URI = {
-            "/users/signup",
-            "/users/signupConfirm/*",
+            "/user",
+            "/user/auth/*",
             "/auth/**",
             "/v3/api-docs",
             "/swagger*/**"
     };
 
-    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
+    /**
+     * Security Config Constructor Injection
+     */
+    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler,
+                          AccessDeniedHandler webAccessDeniedHandler) {
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.webAccessDeniedHandler = webAccessDeniedHandler;
@@ -49,11 +53,11 @@ public class SecurityConfig {
 
     /**
      * Spring 인증 과정 무시 URI
-     * @return
+     * @return Web Ignoring
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(PUBLIC_URI);
+        return web -> web.ignoring().antMatchers(PUBLIC_URI);
     }
 
     @Bean
@@ -62,8 +66,8 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                        .anyRequest().hasAnyRole("USER", "ADMIN");
-
+                .antMatchers("/user/reauth").hasRole("GUEST")
+                .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
                 .sessionManagement()
@@ -71,8 +75,8 @@ public class SecurityConfig {
 
         http
                 .exceptionHandling()
-                        .authenticationEntryPoint(authenticationEntryPointHandler)
-                                .accessDeniedHandler(webAccessDeniedHandler);
+                .authenticationEntryPoint(authenticationEntryPointHandler)
+                .accessDeniedHandler(webAccessDeniedHandler);
 
         http
                 .apply(new JwtSecurityConfig(jwtProvider));
@@ -86,11 +90,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
-
 
 }

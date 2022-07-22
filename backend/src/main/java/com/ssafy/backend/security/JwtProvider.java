@@ -23,7 +23,7 @@ public class JwtProvider {
     private static final String HEADER_TOKEN_PREFIX = "Bearer ";
 
     // Logger Setting
-    private static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtProvider.class);
 
     private final RedisService redisService;
 
@@ -66,7 +66,6 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-
 
     /**
      * Generate a RefreshToken
@@ -129,41 +128,41 @@ public class JwtProvider {
     public boolean validateToken(ServletRequest request, String token) {
         String attrName = "exception";
         try {
-            logger.debug("[JwtProvider.validateToken(token)]");
+            LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT Signature", e);
+            LOGGER.error("Invalid JWT Signature", e);
             request.setAttribute(attrName, "SignatureException");
             return false;
         } catch (MalformedJwtException e) {
-            logger.error("Invalid Jwt token", e);
+            LOGGER.error("Invalid Jwt token", e);
             request.setAttribute(attrName, "MalformedJwtException");
             return false;
         } catch (ExpiredJwtException e) {
-            logger.error("Expired Jwt token", e);
+            LOGGER.error("Expired Jwt token", e);
             request.setAttribute(attrName, "ExpiredJwtException");
             return false;
         } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT Token", e);
+            LOGGER.error("Unsupported JWT Token", e);
             request.setAttribute(attrName, "UnsupportedJwtException");
             return false;
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty", e);
+            LOGGER.error("JWT claims string is empty", e);
             request.setAttribute(attrName, "IllegalArgumentException");
             return false;
         } catch (Exception e) {
-            logger.error("JWT validation Fail", e);
+            LOGGER.error("JWT validation Fail", e);
             request.setAttribute(attrName, "Exception");
             return false;
         }
     }
 
     /**
-     * Redis에 토큰이 있는지 검사한다.
-     * @param userId
-     * @param token
-     * @return
+     * Redis에 refreshToken 이 있는지 유저 아이디로 탐색한다.
+     * @param userId 유저아이디
+     * @param token refreshToken
+     * @return True of False
      */
     public boolean checkRefreshToken(String userId, String token) {
         return token.equals(redisService.getStringValue(userId));

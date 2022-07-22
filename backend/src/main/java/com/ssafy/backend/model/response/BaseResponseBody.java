@@ -22,7 +22,6 @@ public class BaseResponseBody {
         return body;
     }
 
-
     public String getMessage() {
         return message;
     }
