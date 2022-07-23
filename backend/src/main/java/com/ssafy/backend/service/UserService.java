@@ -8,13 +8,14 @@ import javax.mail.MessagingException;
 
 public interface UserService {
     User loginUser(User user);
-    boolean registUser(UserDto user) throws MessagingException;
+    void registUser(UserDto user) throws MessagingException;
     int modifyUser(User user);
     User findUser(String id);
     boolean checkDuplicatedID(String userId);
+    boolean checkDuplicatedNickName(String nickName);
     int deleteUser(String id);
     User findPassword(User user);
     public void authUser(String authKey);
-    public boolean resendAuthMail(String userId) throws MessagingException;
+    public void resendAuthMail(String userId) throws MessagingException;
     public int modifyPassword(String id, PasswordDto passwords);
 }

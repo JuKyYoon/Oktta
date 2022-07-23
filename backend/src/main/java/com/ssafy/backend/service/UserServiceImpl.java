@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @Service
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
      * @param user { id, password, nickName }
      */
     @Override
-    public boolean registUser(UserDto user) throws MessagingException {
+    public void registUser(UserDto user) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
         String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
@@ -68,7 +67,6 @@ public class UserServiceImpl implements UserService {
         // 인증 메일 전송
         LOGGER.info("send mail start");
         mailService.sendAuthMail(user.getId(), authKey);
-        return true;
     }
 
     @Override
@@ -88,11 +86,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkDuplicatedID(String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if(user != null){
-            return true;
-        }else{
-            return false;
-        }
+        return user != null;
+    }
+
+    /**
+     * 유저 닉네임 중복 체크
+     * @param nickName 닉네임
+     */
+    @Override
+    public boolean checkDuplicatedNickName(String nickName) {
+        User user = userRepository.findByNickname(nickName).orElse(null);
+        return user != null;
     }
 
     @Override
@@ -132,7 +136,7 @@ public class UserServiceImpl implements UserService {
      * @param userId 유저아이디
      */
     @Override
-    public boolean resendAuthMail(String userId) throws MessagingException {
+    public void resendAuthMail(String userId) throws MessagingException {
         String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(),
@@ -144,7 +148,6 @@ public class UserServiceImpl implements UserService {
         // 인증 메일 전송
         LOGGER.info("send mail start");
         mailService.sendAuthMail(userId, authKey);
-        return true;
     }
 
     /**

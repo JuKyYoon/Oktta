@@ -36,6 +36,8 @@ public class SecurityConfig {
     private static final String[] PUBLIC_URI = {
             "/user",
             "/user/auth/*",
+            "/user/id/*",
+            "/user/name/*",
             "/auth/**",
             "/v3/api-docs",
             "/swagger*/**"
