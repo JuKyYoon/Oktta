@@ -5,6 +5,7 @@ import { Link } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import GoogleLogin from './GoogleLogin';
 
 
 // 색깔 생성 부분
@@ -80,7 +81,7 @@ function Login() {
                     {/* 임시 소셜 로그인 */}
                     <Link href="#" underline="none">네이버</Link>
                     <Link href="#" underline="none">카카오</Link>
-                    <Link href="#" underline="none">구글</Link>
+                    <GoogleLogin />
                     <br />
                     <Link href="pwInquiry" underline="none">비밀번호 찾기</Link>
                     <Link href="#" underline="none">회원가입</Link>
