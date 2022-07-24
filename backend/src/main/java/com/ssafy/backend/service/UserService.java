@@ -1,18 +1,21 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 
-import java.sql.SQLException;
+import javax.mail.MessagingException;
 
 public interface UserService {
-    public User loginUser(User user) throws SQLException;
-    public boolean registUser(UserDto user) throws SQLException;
-    public int modifyUser(User user) throws  SQLException;
-    public User findUser(String id) throws  SQLException;
-    public int checkDuplicatedID(String id) throws SQLException;
-
-    public int deleteUser(String id) throws SQLException;
-
-    public User findPassword(User user) throws  SQLException;
+    User loginUser(User user);
+    void registUser(UserDto user) throws MessagingException;
+    int modifyUser(User user);
+    User findUser(String id);
+    boolean checkDuplicatedID(String userId);
+    boolean checkDuplicatedNickName(String nickName);
+    void deleteUser(User user, String password);
+    User findPassword(User user);
+    public void authUser(String authKey);
+    public void resendAuthMail(String userId) throws MessagingException;
+    public int modifyPassword(String id, PasswordDto passwords);
 }

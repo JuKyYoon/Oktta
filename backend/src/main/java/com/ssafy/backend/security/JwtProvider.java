@@ -1,5 +1,6 @@
 package com.ssafy.backend.security;
 
+import com.ssafy.backend.util.RedisService;
 import io.jsonwebtoken.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -22,7 +23,9 @@ public class JwtProvider {
     private static final String HEADER_TOKEN_PREFIX = "Bearer ";
 
     // Logger Setting
-    private static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtProvider.class);
+
+    private final RedisService redisService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -36,6 +39,10 @@ public class JwtProvider {
     @Autowired
     private MyUserDetailService myUserDetailService;
 
+    public JwtProvider(RedisService redisService) {
+        this.redisService = redisService;
+    }
+
     /**
      * Key Encryption
      */
@@ -47,8 +54,8 @@ public class JwtProvider {
     /**
      * generate a AccessToken
      */
-    public String generateAccessToken(Authentication authentication) {
-        Claims claims = Jwts.claims().setSubject(authentication.getName());
+    public String generateAccessToken(String id) {
+        Claims claims = Jwts.claims().setSubject(id);
         Date now = new Date();
         Date expireTime = new Date(now.getTime() + accessTokenExpireTime);
 
@@ -58,6 +65,26 @@ public class JwtProvider {
                 .setExpiration(expireTime)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    /**
+     * Generate a RefreshToken
+     * @param id
+     * @return
+     */
+    public String generateRefreshToken(String id) {
+        Claims claims = Jwts.claims().setSubject(id);
+        Date now = new Date();
+        Date expireTime = new Date(now.getTime() + refreshTokenExpireTime);
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expireTime)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        redisService.setRefreshToken(id, refreshToken, refreshTokenExpireTime);
+        return refreshToken;
     }
 
     /**
@@ -101,34 +128,44 @@ public class JwtProvider {
     public boolean validateToken(ServletRequest request, String token) {
         String attrName = "exception";
         try {
-            logger.debug("[JwtProvider.validateToken(token)]");
+            LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT Signature", e);
+            LOGGER.error("Invalid JWT Signature", e);
             request.setAttribute(attrName, "SignatureException");
             return false;
         } catch (MalformedJwtException e) {
-            logger.error("Invalid Jwt token", e);
+            LOGGER.error("Invalid Jwt token", e);
             request.setAttribute(attrName, "MalformedJwtException");
             return false;
         } catch (ExpiredJwtException e) {
-            logger.error("Expired Jwt token", e);
+            LOGGER.error("Expired Jwt token", e);
             request.setAttribute(attrName, "ExpiredJwtException");
             return false;
         } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT Token", e);
+            LOGGER.error("Unsupported JWT Token", e);
             request.setAttribute(attrName, "UnsupportedJwtException");
             return false;
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty", e);
+            LOGGER.error("JWT claims string is empty", e);
             request.setAttribute(attrName, "IllegalArgumentException");
             return false;
         } catch (Exception e) {
-            logger.error("JWT validation Fail", e);
+            LOGGER.error("JWT validation Fail", e);
             request.setAttribute(attrName, "Exception");
             return false;
         }
+    }
+
+    /**
+     * Redis에 refreshToken 이 있는지 유저 아이디로 탐색한다.
+     * @param userId 유저아이디
+     * @param token refreshToken
+     * @return True of False
+     */
+    public boolean checkRefreshToken(String userId, String token) {
+        return token.equals(redisService.getStringValue(userId));
     }
 
 }

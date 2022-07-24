@@ -1,33 +1,39 @@
 package com.ssafy.backend.model.entity;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * User Entity
+ * @author 윤주경
+ */
 @Entity
 @Table
 @DynamicInsert
+@DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "LONG UNSIGNED")
+    @Column(name="idx", columnDefinition = "LONG UNSIGNED")
     private Long idx;
 
     @Column(unique = true, nullable = false)
     private String id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name="nickname", unique = true, nullable = false)
     private String nickname;
 
+    @Column(name="password")
     private String password;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CreatedDate
     private LocalDateTime createDate;
 
@@ -40,9 +46,6 @@ public class User {
 
     @Column(name = "profile_img")
     private int profileImg;
-
-    @Column(name = "email_auth")
-    private boolean emailAuth;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -90,10 +93,6 @@ public class User {
         return profileImg;
     }
 
-    public Boolean getEmailAuth() {
-        return emailAuth;
-    }
-
     public UserRole getRole() {
         return role;
     }
@@ -102,15 +101,25 @@ public class User {
         this.nickname = nickname;
     }
 
+    public void updateUserRole(UserRole role){
+        this.role = role;
+    }
+
     // Builder 패턴 ( Not Lombok )
     public static class Builder {
-        // Required Parameter
+
         private final String id;
         private final String nickname;
         private final String password;
+        private UserRole role;
 
         // Optional Parameter
+        public Builder role(String role) {
+            this.role = UserRole.valueOf(role);
+            return this;
+        }
 
+        // Required Parameter
         public Builder(String id, String nickname, String password) {
             this.id = id;
             this.nickname = nickname;

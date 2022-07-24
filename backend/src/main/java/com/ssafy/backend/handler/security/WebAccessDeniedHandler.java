@@ -1,11 +1,9 @@
 package com.ssafy.backend.handler.security;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.simple.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -27,7 +25,7 @@ public class WebAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         JSONObject json = new JSONObject();
         json.put("result", "403");
-        json.put("status", "fail");
+        json.put("status", "access denied");
         response.getWriter().print(json);
     }
 }

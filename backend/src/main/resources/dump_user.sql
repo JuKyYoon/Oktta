@@ -1,7 +1,10 @@
 use webdb;
 
-INSERT INTO `` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`email_auth`,`role`) VALUES (1,'ssafy@ssafy.com','ssafy','$2a$10$/i70cKgFOfkz/x267FDgbOoAIXGDQCVrHj/bHMK7.T6X46F3Ns50G','2022-07-20 02:21:37','2022-07-20 02:21:37',0,0,1,'ROLE_ADMIN');
-INSERT INTO `` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`email_auth`,`role`) VALUES (2,'yoojt233@gmail.com','오늘은설렁탕','$2a$10$t7DdnMwZGAivneFlXjSsyug6hVUh2VNDrP3u65DI9Njl8qAlhKWxi','2022-07-20 02:23:15','2022-07-20 02:23:15',0,0,0,'ROLE_USER');
-INSERT INTO `` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`email_auth`,`role`) VALUES (3,'asdf1001@naver.com','오징어덮밥','$2a$10$UzJ9U2mxFXidmI8.KliiHOMFSW7e.5dS/BCZ7rsuKClR0oAcLQvkO','2022-07-20 02:24:15','2022-07-20 02:24:15',0,0,0,'ROLE_USER');
+# 아이디: ssafy@ssafy.com, 비밀번호: ssafy, 권한: admin
+INSERT INTO `user` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`role`) VALUES (1,'ssafy@ssafy.com','ssafy','$2a$10$DLvNUEdt1B5OzeTNO22EAu0q9t/f9Md1IOyi8Uc5K.v3NcUhLXxym','2022-07-22 01:27:46','2022-07-22 01:27:46',0,0,'ROLE_ADMIN');
+# 아이디: user@user.com, 비밀번호: 1234, 권한: user
+INSERT INTO `user` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`role`) VALUES (2,'user@user.com','user','$2a$10$Etx4oDRo7FMJS0jXTryq7OZoWBKSoU/fCStrS5McbngbLdchZVprC','2022-07-22 01:28:39','2022-07-22 01:28:39',0,0,'ROLE_USER');
+# 아이디: guest@guest.com, 비밀번호: 1234, 권한: guest
+INSERT INTO `user` (`idx`,`id`,`nickname`,`password`,`create_date`,`modify_date`,`sns_type`,`profile_img`,`role`) VALUES (3,'guest@guest.com','guest','$2a$10$4SiDMrkBZFWhXFIeRPBlXeEl4KUmX9PIZ7OwFOyqqYu0Fb7FKxwBq','2022-07-22 01:28:49','2022-07-22 01:28:49',0,0,'ROLE_GUEST');
 
 select * from user;

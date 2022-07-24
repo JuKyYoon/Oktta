@@ -3,6 +3,7 @@ package com.ssafy.backend.config;
 import com.ssafy.backend.security.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,14 +34,27 @@ public class SecurityConfig {
     /**
      * 인증이 필요없는 URI
      */
-    private static final String[] PUBLIC_URI = {
-            "/users/signup",
-            "/auth/signin",
+    private static final String[] GET_PUBLIC_URI = {
+            "/user/auth/*",
+            "/user/id/*",
+            "/user/name/*",
+            "/auth/refresh/**",
             "/v3/api-docs",
             "/swagger*/**"
     };
 
-    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
+    private static final String[] POST_PUBLIC_URI = {
+            "/user",
+            "/auth/authorize",
+            "/v3/api-docs",
+            "/swagger*/**"
+    };
+
+    /**
+     * Security Config Constructor Injection
+     */
+    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler,
+                          AccessDeniedHandler webAccessDeniedHandler) {
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.webAccessDeniedHandler = webAccessDeniedHandler;
@@ -48,11 +62,11 @@ public class SecurityConfig {
 
     /**
      * Spring 인증 과정 무시 URI
-     * @return
+     * @return Web Ignoring
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(PUBLIC_URI);
+        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI);
     }
 
     @Bean
@@ -61,8 +75,8 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                        .anyRequest().hasAnyRole("USER", "ADMIN");
-
+                .antMatchers("/user/reauth").hasRole("GUEST")
+                .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
                 .sessionManagement()
@@ -70,8 +84,8 @@ public class SecurityConfig {
 
         http
                 .exceptionHandling()
-                        .authenticationEntryPoint(authenticationEntryPointHandler)
-                                .accessDeniedHandler(webAccessDeniedHandler);
+                .authenticationEntryPoint(authenticationEntryPointHandler)
+                .accessDeniedHandler(webAccessDeniedHandler);
 
         http
                 .apply(new JwtSecurityConfig(jwtProvider));
@@ -85,11 +99,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
-
 
 }
