@@ -1,6 +1,7 @@
 package com.ssafy.backend.util;
 
 import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
+import com.ssafy.backend.model.exception.PasswordNotMatchException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
@@ -25,6 +26,18 @@ public class BaseControllerAdvice {
     @Value("${response.fail}")
     private String failMsg;
 
+    @ExceptionHandler(PasswordNotMatchException.class)
+    public ResponseEntity<BaseResponseBody> passwordNotMatchException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Wrong Password");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(MessageResponse.of(200, failMsg, "Wrong Password"));
+    }
+
     @ExceptionHandler(ExpiredEmailAuthKeyException.class)
     public ResponseEntity<BaseResponseBody> emilaAuthExpireException(Exception e, HttpServletRequest req) {
         LOGGER.debug("Expired Email Auth");
@@ -34,7 +47,7 @@ public class BaseControllerAdvice {
         LOGGER.error(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(MessageResponse.of(200, failMsg, "User Not Found"));
+                .body(MessageResponse.of(200, failMsg, "Email Auth Expired"));
     }
 
     @ExceptionHandler(UserNotFoundException.class)

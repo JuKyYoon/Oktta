@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -109,11 +110,7 @@ public class UserController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        if(user.getRole() == UserRole.ROLE_GUEST){
-            userService.resendAuthMail(user.getId());
-        }else{
-            throw new MessagingException("User Already Authed");
-        }
+        userService.resendAuthMail(user.getId());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -147,13 +144,13 @@ public class UserController {
     /**
      * 회원 탈퇴 API
      */
-    @DeleteMapping("/id")
-    public ResponseEntity<BaseResponseBody> deleteUser(){
+    @DeleteMapping("")
+    public ResponseEntity<BaseResponseBody> deleteUser(@RequestBody Map<String, String> password){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        userService.deleteUser(user.getId());
+        userService.deleteUser(user, password.get("password").trim());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }

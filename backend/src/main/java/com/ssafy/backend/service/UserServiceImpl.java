@@ -7,6 +7,7 @@ import com.ssafy.backend.model.entity.UserAuthToken;
 import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.DuplicatedTokenException;
 import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
+import com.ssafy.backend.model.exception.PasswordNotMatchException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
@@ -99,12 +100,19 @@ public class UserServiceImpl implements UserService {
         return user != null;
     }
 
+    /**
+     * 회원 탈퇴
+     * @param user 로그인한 유저
+     * @param reqPassword 확인 비밀번호
+     */
     @Override
-    public void deleteUser(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("Login User Info Not Found")
-        );
-        userRepository.delete(user);
+    public void deleteUser(User user, String reqPassword) {
+        boolean isValidate = BCrypt.checkpw(reqPassword, user.getPassword());
+        if(isValidate) {
+            userRepository.delete(user);
+        } else {
+            throw new PasswordNotMatchException("Password is Not Match");
+        }
     }
 
     @Override
