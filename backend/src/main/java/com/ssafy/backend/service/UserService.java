@@ -13,7 +13,7 @@ public interface UserService {
     User findUser(String id);
     boolean checkDuplicatedID(String userId);
     boolean checkDuplicatedNickName(String nickName);
-    int deleteUser(String id);
+    void deleteUser(String userId);
     User findPassword(User user);
     public void authUser(String authKey);
     public void resendAuthMail(String userId) throws MessagingException;

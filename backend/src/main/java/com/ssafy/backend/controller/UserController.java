@@ -1,5 +1,6 @@
 package com.ssafy.backend.controller;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
@@ -138,5 +139,18 @@ public class UserController {
         }else{
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         }
+    }
+
+    /**
+     * 회원 탈퇴 API
+     */
+    @DeleteMapping("/id")
+    public ResponseEntity<BaseResponseBody> deleteUser(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        userService.deleteUser(user.getId());
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }
