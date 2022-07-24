@@ -2,7 +2,6 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.entity.UserRole;
-import com.ssafy.backend.model.exception.AlreadyAuthException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
