@@ -1,6 +1,5 @@
 package com.ssafy.backend.controller;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
