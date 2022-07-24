@@ -1,6 +1,8 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.entity.UserRole;
+import com.ssafy.backend.model.exception.AlreadyAuthException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
@@ -108,8 +110,11 @@ public class UserController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-
-        userService.resendAuthMail(user.getId());
+        if(user.getRole() == UserRole.ROLE_GUEST){
+            userService.resendAuthMail(user.getId());
+        }else{
+            throw new MessagingException("User Already Authed");
+        }
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
