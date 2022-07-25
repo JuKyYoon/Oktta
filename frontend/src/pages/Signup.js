@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Input, FormHelperText, Container, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { checkEmailRequest, checkNicknameRequest, signupRequest } from '../services/userService';
 import { debounce } from 'lodash';
 
-const debounceFunc = debounce((value, func) => {
-  return func(value)
-}, 1000)
+const debounceFunc = debounce((value, func, save) => {
+  save(func(value))
+}, 500);
 
 const Signup = () => {
   // 테마색 설정
@@ -18,7 +18,6 @@ const Signup = () => {
       },
     },
   });
-
   
   // input값들 useState
   const [email, setEmail] = useState('');
@@ -33,7 +32,6 @@ const Signup = () => {
   const [isNicknameValid, setIsNicknameValid] = useState(false);
   
   // 이메일, 닉네임 중복체크 useState
-  // 바뀔때마다 db에서 체크하는 기능 구현하기!!!!!!!!
   const [emailChecked, setEmailChecked] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
   
@@ -45,7 +43,7 @@ const Signup = () => {
     setIsEmailValid(isEmailValid)
 
     if (isEmailValid) {
-      setEmailChecked(debounceFunc(event.target.value, checkEmailRequest));
+      debounceFunc(event.target.value, checkEmailRequest, setEmailChecked);
     };
   };
 
@@ -71,10 +69,11 @@ const Signup = () => {
 
     if (event.target.value) {
       const regNickname = /[^\w\sㄱ-힣]|[\_]/g;
-      setIsNicknameValid(!regNickname.test(event.target.value))
+      const isNicknameValid = !regNickname.test(event.target.value)
+      setIsNicknameValid(isNicknameValid)
 
       if (isNicknameValid) {
-        setNicknameChecked(debounceFunc(event.target.value, checkNicknameRequest));
+        debounceFunc(event.target.value, checkNicknameRequest, setNicknameChecked);
       };
     };
   };
@@ -115,10 +114,11 @@ const Signup = () => {
             <FormControl>
               <InputLabel htmlFor="email" color="veryperi">이메일</InputLabel>
               <Input id="email" aria-describedby="email-helper-text" color="veryperi" value={email} onChange={emailChange} />
-              <FormHelperText id="email-helper-text" error={!!email && (!isEmailValid || emailChecked)}>
+              <FormHelperText id="email-helper-text" error={!!email && (!isEmailValid || !!emailChecked)}>
                 {email ? 
                   (isEmailValid ? 
-                    (emailChecked ? '이미 사용중인 이메일입니다.' : '사용 가능한 이메일입니다.') : '유효하지 않은 이메일입니다.')
+                    (emailChecked ? (emailChecked == 'fail' ? '이미 사용중인 이메일입니다.' : '사용 가능한 이메일입니다.')
+                      : '이메일 중복 여부를 확인중입니다.') : '유효하지 않은 이메일입니다.')
                     : '이메일을 입력해 주세요.'}
               </FormHelperText>
             </FormControl>
@@ -151,7 +151,8 @@ const Signup = () => {
               <FormHelperText id="nickname-helper-text" error={!!nickname && !isNicknameValid && !nicknameChecked}>
                 {nickname ?
                   (isNicknameValid ?
-                    (nicknameChecked ? '이미 사용 중인 닉네임입니다.' : '사용가능한 닉네임입니다.')
+                    (nicknameChecked ? (nicknameChecked == 'fail' ? '이미 사용중인 닉네임입니다.' : '사용 가능한 닉네임입니다.')
+                    : '닉네임 중복 여부를 확인중입니다.')
                   : '닉네임에 특수문자를 사용할 수 없습니다.')
                 : '특수문자를 제외한 닉네임을 입력해주세요.'}
               </FormHelperText>
@@ -163,7 +164,7 @@ const Signup = () => {
               variant="contained"
               color="veryperi"
               onClick={handleSubmit}
-              disabled={!isEmailValid || emailChecked || !isPasswordValid || !isPasswordSame || !isNicknameValid || nicknameChecked}
+              disabled={!isEmailValid || !!emailChecked || !isPasswordValid || !isPasswordSame || !isNicknameValid || !!nicknameChecked}
             >
               회원가입하기
             </Button>

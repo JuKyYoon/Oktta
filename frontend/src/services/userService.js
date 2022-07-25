@@ -22,15 +22,11 @@ export const logoutRequest = (dataToSubmit) => {
 // 이메일이 중복이면 fail, 이메일이 중복이 아니면 success
 export const checkEmailRequest =(dataToSubmit) => {
   const data = request("get", `${USER_URL}/id/${dataToSubmit}`);
-  // const data = {
-  //   "message": "fail",
-  //   "statusCode": 200
-  // }
-  return (data.message === 'fail');
+  return data.message;
 }
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest =(dataToSubmit) => {
   const data = request('get', `${USER_URL}/name/${dataToSubmit}`);
-  return (data.message === 'fail');
+  return data.message;
 }
