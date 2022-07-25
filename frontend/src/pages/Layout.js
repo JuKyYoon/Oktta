@@ -3,7 +3,7 @@ import { Outlet, Link } from 'react-router-dom';
 
 const Layout = () => {
 
-  const isLoggedIn = false;
+  const isLoggedIn = true;
   const summoner = false;
 
   const logout = () => {
@@ -23,15 +23,14 @@ const Layout = () => {
                 <div>
                   <p>티어</p>
                   <p>소환사명</p>
-                  <p>닉네임</p>
                 </div>
               ) : (
                 <div>
                   <Link to="/">티어 인증</Link>
-                  <p>닉네임</p>
                 </div>
               )
             }
+            <Link to="user/myPage">닉네임</Link>
             <button onClick={logout}>로그아웃</button>
           </div>
         ) : (

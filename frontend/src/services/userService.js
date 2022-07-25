@@ -9,6 +9,12 @@ export const signupRequest = (dataToSubmit) => {
   return data;
 }
 
+export const updateProfileRequest = (dataToSubmit) => {
+  const data = request('put', USER_URL, dataToSubmit);
+  // 헤더에 'Content-Type': 'multipart/form-data' 넣기
+  return data;
+}
+
 export const loginRequest = (dataToSubmit) => {
   const data = request('post', `${AUTH_URL}/authorize`, dataToSubmit);
   return data;

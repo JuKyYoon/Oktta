@@ -8,6 +8,8 @@ main {
 
 a {
   margin: 5px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 * {

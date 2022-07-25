@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FormControl, InputLabel, Input, FormHelperText, Container, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { checkEmailRequest, checkNicknameRequest, signupRequest } from '../services/userService';
@@ -79,12 +79,12 @@ const Signup = () => {
   };
 
   // 회원가입버튼 클릭시 함수
-  const handleSubmit = (event) => {
+  const handleSubmit = () => {
 
     if (!isEmailValid) {
       alert('유효하지 않은 이메일입니다.')
 
-    } else if (emailChecked) {
+    } else if (emailChecked === 'fail') {
       alert('이미 사용중인 이메일입니다.')
 
     } else if (!isPasswordSame) {
@@ -93,7 +93,7 @@ const Signup = () => {
     } else if (!isNicknameValid) {
       alert('닉네임에 특수문자를 사용할 수 없습니다..')
 
-    } else if (nicknameChecked) {
+    } else if (nicknameChecked === 'fail') {
       alert('이미 사용중인 닉네임입니다.')
 
     } else {
@@ -164,7 +164,7 @@ const Signup = () => {
               variant="contained"
               color="veryperi"
               onClick={handleSubmit}
-              disabled={!isEmailValid || !!emailChecked || !isPasswordValid || !isPasswordSame || !isNicknameValid || !!nicknameChecked}
+              disabled={!isEmailValid || !emailChecked || !isPasswordValid || !isPasswordSame || !isNicknameValid || !nicknameChecked}
             >
               회원가입하기
             </Button>
