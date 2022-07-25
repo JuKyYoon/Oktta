@@ -49,9 +49,8 @@ public class BoardController {
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto board){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElse(null);
-        logger.debug(user.getNickname());
 
-        boolean flag = boardService.createBoard(user.getNickname(), board);
+        boolean flag = boardService.createBoard(user.getIdx(), board);
         if(flag) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else {

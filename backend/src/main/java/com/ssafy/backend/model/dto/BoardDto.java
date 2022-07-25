@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema
 public class BoardDto {
     private Long userIdx;
-    private String nickname;
     private String title;
     private String content;
     private String createDate;
@@ -29,14 +28,6 @@ public class BoardDto {
 
     public void setUserIdx(String idx) {
         this.userIdx = userIdx;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
     }
 
     public String getTitle() {

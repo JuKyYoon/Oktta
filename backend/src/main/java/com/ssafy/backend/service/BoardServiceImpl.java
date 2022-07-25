@@ -21,9 +21,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean createBoard(String nickname, BoardDto board) {
-        logger.info("get userIdx from User table for nickname");
-        Long idx = userRepository.findByNickname(nickname);
+    public boolean createBoard(Long idx, BoardDto board) {
         logger.debug(String.valueOf(idx));
         logger.info("save board");
         try {
