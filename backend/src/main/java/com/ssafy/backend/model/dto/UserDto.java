@@ -2,6 +2,10 @@ package com.ssafy.backend.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * 유저 객체
+ * @author 이예찬
+ */
 @Schema
 public class UserDto {
     private String id;

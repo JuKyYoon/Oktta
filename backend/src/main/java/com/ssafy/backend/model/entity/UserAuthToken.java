@@ -2,10 +2,8 @@ package com.ssafy.backend.model.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -42,11 +40,9 @@ public class UserAuthToken {
         return userId;
     }
 
-
     public String getToken() {
         return token;
     }
-
 
     public LocalDateTime getCreateDate() {
         return createDate;
@@ -59,7 +55,6 @@ public class UserAuthToken {
     public void updateToken(String token) {
         this.token = token;
     }
-
 
     public static class Builder {
         private final String userId;

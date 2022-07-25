@@ -19,7 +19,7 @@ public class RedisConfig {
 
     /**
      * Factory 인터페이스를 통해 Bean 생성
-     * @return
+     * @return LettuceConnectionFactory
      */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -29,7 +29,7 @@ public class RedisConfig {
     /**
      * RedisTemplate를 통해 Redis 서버와 통신한다.
      * 키 Serialize 통해 데이터 조회 정상적으로 가능
-     * @return
+     * @return RedisTemplate Instance
      */
     @Bean
     public RedisTemplate<String, String> redisTemplate() {

@@ -1,12 +1,9 @@
 package com.ssafy.backend.handler.security;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.ssafy.backend.security.JwtProvider;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint {
-    private static Logger logger = LoggerFactory.getLogger(AuthenticationEntryPointHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationEntryPointHandler.class);
     /**
      * 401 처리하기 위한 메소드
      */
@@ -32,45 +29,28 @@ public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint
 
         // 토큰 없거나 DB에 아이디 없다.
         if(exception == null) {
-            set403Response(response, "403");
+            setResponse(response, "403", "no token");
             return;
         }
 
         // 만료된 경우에만 401보낸다.
         if(exception.contentEquals("ExpiredJwtException")) {
-            set401Response(response, "401");
-            return;
+            setResponse(response, "401", "unauthorized");
         } else {
-            set403Response(response, "403");
-            return;
+            setResponse(response, "403", "forbidden");
         }
-
     }
 
     /**
-     * 401은 인증 실패로 재요청 받아들인다.
-     * @param response
-     * @param code
-     * @throws IOException
+     * 인증 실패 시 에러 반환
      */
-    private void set401Response(HttpServletResponse response, String code) throws IOException {
+    private void setResponse(HttpServletResponse response, String code, String msg) throws IOException {
         JSONObject json = new JSONObject();
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        json.put("status", "unauthorized");
+        json.put("status", msg);
         json.put("result", code);
         response.getWriter().print(json);
     }
-
-    private void set403Response(HttpServletResponse response, String code) throws IOException {
-        JSONObject json = new JSONObject();
-        response.setContentType("application/json;charset=UTF-8");
-        response.setCharacterEncoding("utf-8");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        json.put("status", "forbidden");
-        json.put("result", code);
-        response.getWriter().print(json);
-    }
-
 }
