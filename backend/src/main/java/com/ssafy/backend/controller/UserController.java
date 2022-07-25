@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -108,8 +110,47 @@ public class UserController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-
         userService.resendAuthMail(user.getId());
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 아이디 중복 체크 API
+     * @param userId 회원 아이디
+     */
+    @GetMapping("/id/{id}")
+    public ResponseEntity<BaseResponseBody> checkDuplicateId(@PathVariable("id") String userId) {
+        boolean isDuplicatedId = userService.checkDuplicatedID(userId);
+        if(isDuplicatedId){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
+        }else{
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        }
+    }
+
+    /**
+     * 닉네임 중복 체크 API
+     */
+    @GetMapping("/name/{nickname}")
+    public ResponseEntity<BaseResponseBody> checkDuplicateNickName(@PathVariable("nickname") String nickName) {
+        boolean isDuplicatedNickName = userService.checkDuplicatedNickName(nickName);
+        if(isDuplicatedNickName){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
+        }else{
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        }
+    }
+
+    /**
+     * 회원 탈퇴 API
+     */
+    @DeleteMapping("")
+    public ResponseEntity<BaseResponseBody> deleteUser(@RequestBody Map<String, String> password){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        userService.deleteUser(user, password.get("password").trim());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }
