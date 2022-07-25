@@ -11,8 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(String id);
     Optional<User> findByNickname(String nickname);
 
-    Long findByNickname(String nickname);
-
     // update와 delete에는 @Transactional 추가 필수
     // Modifying의 return은 void or int(Integer)만 가능
     @Transactional
