@@ -5,7 +5,7 @@ import { checkEmailRequest, checkNicknameRequest, signupRequest } from '../servi
 import { debounce } from 'lodash';
 
 const debounceFunc = debounce((value, func) => {
-  func(value)
+  return func(value)
 }, 1000)
 
 const Signup = () => {
