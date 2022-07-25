@@ -1,4 +1,4 @@
-import { request } from '../utils/axios';
+import { loginRequest } from "../services/userService";
 
 
 /* 액션 타입 선언 */
@@ -15,33 +15,13 @@ const USER_URL = "/api/v1/users"
 
 /* 액션 함수 선언 */
 export const login = (dataToSubmit) => {
-  const data = request("post", USER_URL+"/login", dataToSubmit)
-
+  const data = loginRequest(dataToSubmit);
   return{
     type: LOGIN,
     data
   }
 }
 
-
-
-export const logout = (dataToSubmit) => {
-  const data = request("post", USER_URL + "/logout", dataToSubmit)
-
-  return {
-    type: LOGOUT,
-    data,
-  }
-};
-
-export const signup = (dataToSubmit) => {
-  const data = request("post", USER_URL + "/signup", dataToSubmit)
-  
-  return {
-    type: SIGNUP,
-    data,
-  }
-}
 
 /////////////////////////////////
 /* 아직 구현하지 않은 부분
@@ -81,22 +61,15 @@ const initialState  = {
   accessToken: '',
 }
 
-let response = {}
+
 
 export default function user(state = initialState, action) {
   switch (action.type) {
     case LOGIN:
       // 로그인 요청에 대한 응답으로 어떤 데이터가 오는지 확인해보고 state에 넣어주기
-      console.log("로그인 응답: " + action.data)
+      console.log("로그인 응답: " + action.data) // 확인용
       return {...state,}
 
-    case LOGOUT:
-      console.log("로그아웃 응답: " + action.data)
-      return {...state,}
-
-    case SIGNUP:
-         
-      return {...state, success: action.data};
   //////////////////////////////////////////
   /* 아직 구현하지 않은 부분
     case PW_INQUIRY:
