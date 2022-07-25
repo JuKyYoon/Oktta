@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { googleLoginRequest } from "../services/userService.js";
 
 const GoogleLogin = () => {
   const [user, setUser] = useState({});
   const src = "https://accounts.google.com/gsi/client";
 
+  const dispatch = useDispatch();
   const handleCallbackResponse = (response) => {
     // console.log("Encoded JWT ID token: " + response.credential);
-    var userObject = jwt_decode(response.credential);
+    dispatch(googleLoginRequest(response.credential));
+    // var userObject = jwt_decode(response.credential);
     // console.log(userObject);
-    setUser(userObject);
+    // setUser(userObject);
     document.getElementById("googleDiv").hidden = true;
   };
 

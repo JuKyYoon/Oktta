@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import GoogleLogin from "./GoogleLogin";
+import { loginRequest } from "../services/userService.js";
 
 // 색깔 생성 부분
 const theme = createTheme({
@@ -15,32 +16,39 @@ const theme = createTheme({
   },
 });
 
-function Login() {
-  // 이메일 입력 부분
+function Login(props) {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const onEmailHandler = (event) => {
     setEmail(event.target.value);
   };
 
-  // 비밀번호 입력 부분
-  const [password, setPassword] = useState("");
   const onPasswordHandler = (event) => {
     setPassword(event.target.value);
   };
 
   const dispatch = useDispatch();
-
   // 로그인 구현 부분
   const onSubmitHandler = (event) => {
-    const data = {
+    event.preventDefault();
+    const body = {
       id: email,
       password: password,
     };
-
-    // dispatch(Login(data))
-    //     .then((res) => {
-    //         console.log(res);
-    //     })
+    // console.log(dispatch(loginRequest(body)));
+    const res = dispatch(loginRequest(body));
+    // .then((res) => {
+    console.log(res);
+    //   if (res.data.statusCode == 200) {
+    //     // props.history.push("/");
+    //   } else {
+    //     alert(res.data.message);
+    //   }
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   };
 
   return (
