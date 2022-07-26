@@ -114,7 +114,7 @@ const Signup = () => {
             <FormControl>
               <InputLabel htmlFor="email" color="veryperi">이메일</InputLabel>
               <Input id="email" aria-describedby="email-helper-text" color="veryperi" value={email} onChange={emailChange} />
-              <FormHelperText id="email-helper-text" error={!!email && (!isEmailValid || !!emailChecked)}>
+              <FormHelperText id="email-helper-text" error={!!email && !isEmailValid && (emailChecked !== 'success')}>
                 {email ? 
                   (isEmailValid ? 
                     (emailChecked ? (emailChecked == 'fail' ? '이미 사용중인 이메일입니다.' : '사용 가능한 이메일입니다.')

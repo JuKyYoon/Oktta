@@ -1,7 +1,7 @@
 import {request} from './axios';
 
 /* 요청 URL*/
-const USER_URL = '/api/v1/users'
+const USER_URL = '/api/v1/user'
 const AUTH_URL = '/api/v1/auth'
 
 export const signupRequest = (dataToSubmit) => {
@@ -9,10 +9,16 @@ export const signupRequest = (dataToSubmit) => {
   return data;
 }
 
-export const updateProfileRequest = (dataToSubmit) => {
-  const data = request('put', USER_URL, dataToSubmit);
-  // 헤더에 'Content-Type': 'multipart/form-data' 넣기
-  return data;
+export const updateNicknameRequest = (dataToSubmit) => {
+  const message = request('put', USER_URL, dataToSubmit)
+    .then((data) => data?.message);;
+  return message? message : 'fail';
+}
+
+export const updatePasswordRequest = (dataToSubmit) => {
+  const message = request('patch', `${USER_URL}/password`, dataToSubmit)
+    .then((data) => data?.message);;
+  return message;
 }
 
 export const loginRequest = (dataToSubmit) => {
@@ -27,12 +33,14 @@ export const logoutRequest = (dataToSubmit) => {
 
 // 이메일이 중복이면 fail, 이메일이 중복이 아니면 success
 export const checkEmailRequest =(dataToSubmit) => {
-  const data = request("get", `${USER_URL}/id/${dataToSubmit}`);
-  return data.message;
+  const message = request("get", `${USER_URL}/id/${dataToSubmit}`)
+    .then((data) => data?.message);
+  return message;
 }
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest =(dataToSubmit) => {
-  const data = request('get', `${USER_URL}/name/${dataToSubmit}`);
-  return data.message;
+  const message = request('get', `${USER_URL}/name/${dataToSubmit}`)
+    .then((data) => data?.message);
+  return message;
 }
