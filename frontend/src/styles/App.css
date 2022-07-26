@@ -27,11 +27,20 @@ nav {
 }
 
 /* 로그인 입력 폼과 비밀번호 찾기 폼 정렬 */
-.loginform {
+.form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 10px;
-  /* border: 1px solid gray; */
+  margin-top: 10%;
+}
+
+.error_message {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -.5px;
+  color: #ff003e;
+  vertical-align: middle;
 }
