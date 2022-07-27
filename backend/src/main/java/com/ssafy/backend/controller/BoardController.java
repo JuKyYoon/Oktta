@@ -2,6 +2,7 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
@@ -48,14 +49,10 @@ public class BoardController {
     @PostMapping("/create")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto board){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElse(null);
-
-        boolean flag = boardService.createBoard(user.getIdx(), board);
-        if(flag) {
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
-        } else {
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
-        }
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        boardService.createBoard(user.getIdx(), board);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
-
 }

@@ -21,14 +21,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean createBoard(Long idx, BoardDto board) {
-        logger.debug(String.valueOf(idx));
-        logger.info("save board");
-        try {
-            boardRepository.save(new Board.Builder(idx, board.getTitle(), board.getContent(), board.getCategory()).build());
-            return true;
-        } catch(Exception e){
-            return false;
-        }
+    public void createBoard(Long idx, BoardDto board) {
+        boardRepository.save(new Board.Builder(idx, board.getTitle(), board.getContent(), board.getCategory()).build());
     }
 }
