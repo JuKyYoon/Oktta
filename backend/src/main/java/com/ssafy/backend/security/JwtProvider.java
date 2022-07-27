@@ -168,4 +168,7 @@ public class JwtProvider {
         return token.equals(redisService.getStringValue(userId));
     }
 
+    public long getAccessTokenExpireTime() {
+        return accessTokenExpireTime;
+    }
 }

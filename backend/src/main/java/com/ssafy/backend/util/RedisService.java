@@ -91,5 +91,25 @@ public class RedisService {
         operations.set(key, token, expireDate, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Delete Value With Key from Redis
+     * @param key
+     */
+    public void deleteValue(String key) {
+        if(redisTemplate.opsForValue().get(key) != null){
+            redisTemplate.delete(key);
+        }
+    }
+
+    /**
+     * Set Token BlackList to Redis
+     * @param token
+     * @param value
+     * @param expireTime
+     */
+    public void setTokenBlackList(String token, String value, long expireTime) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        operations.set(token, value, expireTime, TimeUnit.MILLISECONDS);
+    }
 
 }
