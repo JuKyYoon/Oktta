@@ -61,7 +61,7 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
