@@ -1,5 +1,8 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.response.LoginResponse;
@@ -10,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +35,12 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private final UserRepository userRepository;
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserRepository userRepository) {
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -47,6 +54,21 @@ public class AuthController {
         Map<String, String> result = authService.signIn(signUser);
         SetCookie.setRefreshTokenCookie(response, result.get(REFRESHTOKEN_KEY));
         return ResponseEntity.status(200).body(LoginResponse.of(200, successMsg, result));
+    }
+    /**
+     * Logout
+     *
+     */
+    @GetMapping("/logout")
+    public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        String userId = user.getId();
+        SetCookie.deleteRefreshTokenCookie(response);
+        authService.signOut(request, userId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
     /**
