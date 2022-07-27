@@ -46,7 +46,9 @@ public class AuthServiceImpl implements AuthService {
 
         // 위에서 만든 토큰을 이용해 인증한다, UserDetailsService 가 요청을 받아 처리한다. 리턴값은 인증 객체로, 토큰 생성에 사용한다.
         Authentication authentication = authenticationManager.authenticate(token);
-        return createToken(authentication.getName());
+        Map<String, String> result = createToken(authentication.getName());
+        result.put("userId", authentication.getName());
+        return result;
     }
 
     /**
@@ -106,7 +108,6 @@ public class AuthServiceImpl implements AuthService {
 
         result.put("accessToken", accessToken);
         result.put("refreshToken", refreshToken);
-
         return result;
     }
 
