@@ -52,7 +52,7 @@ public class BoardController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        boardService.createBoard(user.getIdx(), board);
+        boardService.createBoard(user, board);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }

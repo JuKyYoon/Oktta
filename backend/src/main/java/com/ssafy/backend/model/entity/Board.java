@@ -20,8 +20,9 @@ public class Board {
     @Column(columnDefinition = "LONG UNSIGNED")
     private Long idx;
 
-    @Column(name = "user_idx", nullable = false)
-    private Long userIdx;
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "user_idx", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String title;
@@ -45,7 +46,7 @@ public class Board {
     }
 
     private Board(Builder builder){
-        this.userIdx = builder.userIdx;
+        this.user = builder.user;
         this.title = builder.title;
         this.content = builder.content;
         this.category = builder.category;
@@ -54,15 +55,15 @@ public class Board {
     public static class Builder {
         // Required Parameter
 
-        private final Long userIdx;
+        private final User user;
         private final String title;
         private final String content;
         private final int category;
 
         // Optional Parameter
 
-        public Builder(Long userIdx, String title, String content, int category) {
-            this.userIdx = userIdx;
+        public Builder(User user, String title, String content, int category) {
+            this.user = user;
             this.title = title;
             this.content = content;
             this.category = category;
