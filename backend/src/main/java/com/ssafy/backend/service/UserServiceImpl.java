@@ -71,8 +71,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int modifyUser(User user) {
-        return 0;
+    public void modifyUser(User user, UserDto changeUser) {
+        // 비밀번호 체크
+        boolean isValidate = BCrypt.checkpw(changeUser.getPassword(), user.getPassword());
+        if(isValidate) {
+            user.updateInfo(changeUser.getNickname());
+            userRepository.save(user);
+        } else {
+            throw new PasswordNotMatchException("Password is Not Match");
+        }
     }
 
     @Override
