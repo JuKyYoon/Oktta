@@ -1,11 +1,13 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.exception.SessionNotFoundException;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,13 +49,17 @@ public class SessionServiceImpl implements SessionService {
     public String enterSession(long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException {
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                 .role(role).data("test user").build();
-
-        return searchSession(sessionIdx).createConnection(connectionProperties).getToken();
+        Session session = searchSession(sessionIdx);
+        if(session == null) {
+            throw new SessionNotFoundException("Session Not Found");
+        }
+        return session.createConnection(connectionProperties).getToken();
     }
 
     public Session searchSession(long sessionIdx) {
         return this.mapSessions.get(sessionIdx);
     }
+
 
     public JSONObject testas() throws OpenViduJavaClientException, OpenViduHttpException {
         this.openVidu.fetch();
@@ -62,6 +68,20 @@ public class SessionServiceImpl implements SessionService {
         for (Session activeSession : activeSessions) {
             System.out.println(activeSession.getSessionId());
             b.add(activeSession);
+        }
+        JSONObject ret = new JSONObject();
+        ret.put("sessions", b);
+        return ret;
+    }
+
+    @Override
+    public JSONObject twotwotwo() throws OpenViduJavaClientException, OpenViduHttpException {
+        Iterator<Long> keys = this.mapSessions.keySet().iterator();
+        JSONArray b = new JSONArray();
+        while(keys.hasNext()) {
+            long k = keys.next();
+            b.add(k);
+            b.add(this.mapSessions.get(k));
         }
         JSONObject ret = new JSONObject();
         ret.put("sessions", b);

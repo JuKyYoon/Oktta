@@ -9,5 +9,6 @@ public interface SessionService {
     void createSession(long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException;
     String enterSession(long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException;
 
+    JSONObject twotwotwo() throws OpenViduJavaClientException, OpenViduHttpException;
     JSONObject testas() throws OpenViduJavaClientException, OpenViduHttpException;
 }
