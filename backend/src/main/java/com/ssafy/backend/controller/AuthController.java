@@ -57,7 +57,9 @@ public class AuthController {
     }
     /**
      * Logout
-     *
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return { statusCode, message }
      */
     @GetMapping("/logout")
     public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
@@ -66,8 +68,8 @@ public class AuthController {
                 () -> new UserNotFoundException("User Not Found")
         );
         String userId = user.getId();
-        SetCookie.deleteRefreshTokenCookie(response);
         authService.signOut(request, userId);
+        SetCookie.deleteRefreshTokenCookie(response);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
