@@ -20,7 +20,6 @@ const initialState  = {
 };
 
 
-
 export default function sessionState(state = initialState, action) {
   switch (action.type) {
     case CHANGE_STATE:
