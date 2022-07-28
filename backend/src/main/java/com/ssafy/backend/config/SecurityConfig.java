@@ -44,14 +44,12 @@ public class SecurityConfig {
             "/user/name/*",
             "/auth/refresh/**",
             "/v3/api-docs",
-            "/session/**",
             "/swagger*/**"
     };
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
             "/auth/authorize",
-            "/session/**",
             "/v3/api-docs",
             "/swagger*/**"
     };
@@ -72,7 +70,8 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI)
+        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI)
+                .antMatchers(HttpMethod.POST, POST_PUBLIC_URI).antMatchers(HttpMethod.DELETE, "/session/**")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -119,7 +118,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:5500");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
