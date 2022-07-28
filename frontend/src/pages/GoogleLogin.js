@@ -5,22 +5,32 @@ import { googleLoginRequest } from "../services/userService.js";
 
 const GoogleLogin = () => {
   const [user, setUser] = useState({});
-  const src = "https://accounts.google.com/gsi/client";
 
   const dispatch = useDispatch();
   const handleCallbackResponse = (response) => {
     // console.log("Encoded JWT ID token: " + response.credential);
-    dispatch(googleLoginRequest(response.credential));
-    // var userObject = jwt_decode(response.credential);
-    // console.log(userObject);
-    // setUser(userObject);
-    document.getElementById("googleDiv").hidden = true;
+    dispatch(googleLoginRequest(response.credential))
+      // var userObject = jwt_decode(response.credential);
+      // console.log(userObject);
+      // setUser(userObject);
+      // document.getElementById("googleDiv").hidden = true;
+      .then((res) => {
+        if (res.payload.message === "success") {
+          console.log(res.payload.message);
+          navigate('/');
+        } else {
+          console.log(res.payload.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const handleSignOut = (event) => {
-    setUser({});
-    document.getElementById("googleDiv").hidden = false;
-  };
+  // const handleSignOut = (event) => {
+  //   setUser({});
+  //   document.getElementById("googleDiv").hidden = false;
+  // };
 
   // global google
   const global_google = () => {
@@ -29,6 +39,7 @@ const GoogleLogin = () => {
       callback: handleCallbackResponse,
     });
     google.accounts.id.renderButton(document.getElementById("googleDiv"), {
+      // type: "icon",
       theme: "outline",
       size: "large",
     });
@@ -58,12 +69,12 @@ const GoogleLogin = () => {
   return (
     <>
       <div id="googleDiv"></div>
-      {
+      {/* {
         // 로그인이 되어있을 때 로그아웃 버튼
         Object.keys(user).length != 0 && (
           <button onClick={handleSignOut}>로그아웃</button>
         )
-      }
+      } */}
     </>
   );
 };

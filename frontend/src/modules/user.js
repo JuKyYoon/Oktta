@@ -1,52 +1,40 @@
-import { LOGIN, GOOGLE_LOGIN } from "../modules/types.js";
+import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT } from "../modules/types.js";
 
-/* 요청 URL*/
-const USER_URL = "/api/v1/users";
+const initState = {
+  isLogin: false,
+  userId: "",
+  token: "",
+}
 
-/////////////////////////////////
-/* 아직 구현하지 않은 부분
-export const pwInquiry = (id) => ({
-  type: PW_INQUIRY,
-  userInfo: {
-    id,
-    // 토큰?
-  }
-});
-
-export const update = (id, password, nickname) => ({
-  type: UPDATE,
-  userInfo: {
-    id,
-    password,
-    nickname
-    // 토큰?
-  }
-});
-*/
-//////////////////////////
-
-export default function (state = {}, action) {
+export default function (state = initState, action) {
   switch (action.type) {
+    case GET_TOKEN:
+      return { ...state };
+    case SIGNUP:
+      return { ...state };
     case LOGIN:
-      return { ...state, data: action.payload };
+      if (action.payload.data.message === "success") {
+        return { ...state, isLogin: true, userId: action.payload.data.result.userId, token: action.payload.data.result.accessToken };
+      }
+      return { ...state };
     case GOOGLE_LOGIN:
       return { ...state, data: action.payload };
-
-    //////////////////////////////////////////
-    /* 아직 구현하지 않은 부분
+    case KAKAO_LOGIN:
+      return { ...state, data: action.payload };
+    case NAVER_LOGIN:
+      return { ...state, data: action.payload };
+    case LOGOUT:
+      return initState;
+    case CHECK_EMAIL:
+      return { ...state, data: action.payload };
+    case CHECK_NICKNAME:
+      return { ...state, data: action.payload };
     case PW_INQUIRY:
-      response = request('POST', '', action.userInfo); // API 물어보고 넣기
-      console.log(response);
-      // return 새로운 state
-      return ;
-
-    case UPDATE:
-      response = request('PUT', '', action.userInfo); // API 물어보고 넣기
-      console.log(response);
-      // return 새로운 state
-      return ;
-  */
-    ///////////////////////////////////////////
+      return { ...state, data: action.payload };
+    case EDIT_ACCOUNT:
+      return { ...state, data: action.payload };
+    case DELETE_ACCOUNT:
+      return { ...state, data: action.payload };
     default:
       return state;
   }
