@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BoardServiceImpl implements BoardService {
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -19,6 +21,12 @@ public class BoardServiceImpl implements BoardService {
     public BoardServiceImpl(BoardRepository boardRepository, UserRepository userRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public Board selectBoard(Long idx) {
+        Board board = boardRepository.findByIdx(idx).orElse(null);
+        return board;
     }
 
     @Override

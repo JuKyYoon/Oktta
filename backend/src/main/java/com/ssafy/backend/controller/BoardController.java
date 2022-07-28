@@ -1,11 +1,14 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.BoardDto;
+import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.BoardNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
+import com.ssafy.backend.model.response.BoardResponse;
 import com.ssafy.backend.service.BoardService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -14,10 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/boards")
@@ -46,7 +46,19 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-    @PostMapping("/create")
+    @GetMapping("/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> selectBoard(@PathVariable("idx") String boardIdx){
+        Board board = boardService.selectBoard(Long.parseLong(boardIdx));
+        if(board == null){
+            BoardNotFoundException e = new BoardNotFoundException("Board Not Found");
+            throw e;
+        }
+
+        System.out.println(board);
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board));
+    }
+
+    @PostMapping("")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto board){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
