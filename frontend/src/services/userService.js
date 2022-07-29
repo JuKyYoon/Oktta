@@ -7,9 +7,9 @@ const USER_URL = "/api/v1/user";
 const AUTH_URL = "/api/v1/auth";
 
 // 토큰 재발급
-export const getToken = () => {
+export const getToken = async () => {
   const userId = store.getState().user.userId;
-  const data = request.get(`${AUTH_URL}/refresh/${userId}`);
+  const data = await request.get(`${AUTH_URL}/refresh/${userId}`);
   return {
     type: GET_TOKEN,
     payload: data,
@@ -17,8 +17,8 @@ export const getToken = () => {
 };
 
 // 회원가입
-export const signupRequest = (dataToSubmit) => {
-  const data = request.post(USER_URL, dataToSubmit);
+export const signupRequest = async (dataToSubmit) => {
+  const data = await request.post(USER_URL, dataToSubmit);
   return {
     type: SIGNUP,
     payload: data,
@@ -26,8 +26,8 @@ export const signupRequest = (dataToSubmit) => {
 };
 
 // 로그인
-export const loginRequest = (dataToSubmit) => {
-  const data = request.post(`${AUTH_URL}/authorize`, dataToSubmit)
+export const loginRequest = async (dataToSubmit) => {
+  const data = await request.post(`${AUTH_URL}/authorize`, dataToSubmit)
   return {
     type: LOGIN,
     payload: data,
@@ -35,24 +35,24 @@ export const loginRequest = (dataToSubmit) => {
 };
 
 // 소셜 로그인
-export const googleLoginRequest = (dataToSubmit) => {
-  const data = axiosAuth.post(`${AUTH_URL}/authorize/google`, dataToSubmit);
+export const googleLoginRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.post(`${AUTH_URL}/authorize/google`, dataToSubmit);
   return {
     type: GOOGLE_LOGIN,
     payload: data,
   };
 };
 
-export const kakaoLoginRequest = (dataToSubmit) => {
-  const data = axiosAuth.post(`${AUTH_URL}/authorize/kakao`, dataToSubmit);
+export const kakaoLoginRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.post(`${AUTH_URL}/authorize/kakao`, dataToSubmit);
   return {
     type: KAKAO_LOGIN,
     payload: data,
   };
 };
 
-export const naverLoginRequest = (dataToSubmit) => {
-  const data = axiosAuth.post(`${AUTH_URL}/authorize/naver`, dataToSubmit);
+export const naverLoginRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.post(`${AUTH_URL}/authorize/naver`, dataToSubmit);
   return {
     type: NAVER_LOGIN,
     payload: data,
@@ -60,8 +60,8 @@ export const naverLoginRequest = (dataToSubmit) => {
 };
 
 // 로그아웃
-export const logoutRequest = () => {
-  const data = axiosAuth.delete(`${AUTH_URL}/logout`);
+export const logoutRequest = async () => {
+  const data = await axiosAuth.delete(`${AUTH_URL}/logout`);
   return {
     type: LOGOUT,
     payload: data,
@@ -69,8 +69,8 @@ export const logoutRequest = () => {
 };
 
 // 이메일이 중복이면 fail, 이메일이 중복이 아니면 success
-export const checkEmailRequest = (dataToSubmit) => {
-  const data = axiosAuth.get(`${USER_URL}/id/${dataToSubmit}`);
+export const checkEmailRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.get(`${USER_URL}/id/${dataToSubmit}`);
   return {
     type: CHECK_EMAIL,
     payload: data,
@@ -78,8 +78,8 @@ export const checkEmailRequest = (dataToSubmit) => {
 };
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
-export const checkNicknameRequest = (dataToSubmit) => {
-  const data = axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
+export const checkNicknameRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
   return {
     type: CHECK_NICKNAME,
     payload: data,
@@ -87,8 +87,8 @@ export const checkNicknameRequest = (dataToSubmit) => {
 };
 
 // 비밀번호 수정
-export const pwInquiry = (dataToSubmit) => {
-  const data = axiosAuth.patch(`${USER_URL}/password/${dataToSubmit}`);
+export const pwInquiry = async (dataToSubmit) => {
+  const data = await axiosAuth.patch(`${USER_URL}/password/${dataToSubmit}`);
   return {
     type: PW_INQUIRY,
     payload: data,
@@ -96,8 +96,8 @@ export const pwInquiry = (dataToSubmit) => {
 };
 
 // 회원 정보 수정
-export const editAccount = (dataToSubmit) => {
-  const data = axiosAuth.put(USER_URL, dataToSubmit);
+export const editAccount = async (dataToSubmit) => {
+  const data = await axiosAuth.put(USER_URL, dataToSubmit);
   return {
     type: EDIT_ACCOUNT,
     payload: data,
@@ -105,8 +105,8 @@ export const editAccount = (dataToSubmit) => {
 };
 
 // 회원 탈퇴
-export const delAccount = (dataToSubmit) => {
-  const data = axiosAuth.delete(USER_URL, dataToSubmit);
+export const delAccount = async (dataToSubmit) => {
+  const data = await axiosAuth.delete(USER_URL, dataToSubmit);
   return {
     type: DELETE_ACCOUNT,
     payload: data,

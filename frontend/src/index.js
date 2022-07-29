@@ -11,6 +11,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './styles/style';
 
 const persistConfig = {
   key: 'root',
@@ -33,7 +35,9 @@ ReactDom.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
       <BrowserRouter>
-        <App />
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </BrowserRouter>
     </PersistGate>
   </Provider>,
