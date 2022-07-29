@@ -1,54 +1,77 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import { ThemeProvider } from '@mui/material';
+import { theme } from '../styles/style';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutRequest } from '../services/userService';
+
+// 나중에 바꾸기
+const pages = [['최근 핫한 방', '/article/popular'], ['몇 대 몇', '/article/list'], ['자유게시판', '/board/general'], ['고객센터', '/board/general']];
 
 const MainMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  
-  const handleClose = () => {
-    setAnchorEl(null);
+
+  const state = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  const onLogoutHandler = () => {
+    dispatch(logoutRequest())
+      .then((res) => {
+      })
+      .catch((err) => console.log(err))
   };
 
   return (
-    <div>
-      <Link to="/article/popular">최근 핫한 방</Link>
-      <Link to="/article/list">몇 대 몇</Link>
-      <Link to="/board/general">자유게시판</Link>
-      <span>
-        <Button
-          id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}
-        >
-          고객센터
-        </Button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem onClick={handleClose}>
-            <Link to="/board/notice">공지사항</Link>
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <Link to="/">1:1문의</Link>
-          </MenuItem>
-        </Menu>
-      </span>
-    </div>
+    <ThemeProvider theme={theme}>
+      <AppBar position="static" color='veryperi'>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Link to="/">
+              <img src='../assets/oktta.png' width={150} />
+            </Link>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page, idx) => (
+                <Link to={page[1]} key={idx} >
+                  <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                    {page[0]}
+                  </Button>
+                </Link>
+              ))}
+            </Box>
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }} className='LoginButtonChange'>
+              {state.user.isLogin ?
+                <>
+                  <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={onLogoutHandler}>
+                    로그아웃
+                  </Button>
+                  <Link to="/user/myPage">
+                    <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                      마이페이지
+                    </Button>
+                  </Link>
+                </> :
+                <>
+                  <Link to="/user/login">
+                    <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                      로그인
+                    </Button>
+                  </Link>
+                  <Link to="/user/signup">
+                    <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                      회원가입
+                    </Button>
+                  </Link>
+                </>
+              }
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </ThemeProvider >
   );
 };
-
 export default MainMenu;
