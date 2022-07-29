@@ -33,13 +33,13 @@ axiosAuth.interceptors.response.use(
     // console.log(result)
     if (error.response.status === 401 && result.retry != true) {
       result.retry = true;
-      const accessToken = await getToken().payload.then((res) => console.log("sdfasdfasdf", res));
+      const accessToken = await getToken().payload.then((res) => console.log(res));
       result.headers.Authorization = `Bearer ${accessToken}`;
       // console.log(result)
       return await axiosAuth(result);
     }
     else {
-      // 
+      // 추가 작업 필요
     }
     return Promise.reject(error);
   }
