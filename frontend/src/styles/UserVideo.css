@@ -13,7 +13,18 @@ video {
     font-weight: bold;
     border-bottom-right-radius: 4px;
 }
-p{
+
+p {
     margin: 0;
 }
 
+#session {
+    width: 60%;
+}
+
+.chat {
+    border: solid 2px;
+    width: 30%;
+    right: 5%;
+    position: absolute;
+}

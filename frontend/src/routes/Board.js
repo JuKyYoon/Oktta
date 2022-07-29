@@ -9,7 +9,6 @@ const Board = () => {
     <Routes>
       <Route path="notice" element={<Home />} />
       <Route path="general" element={<Home />} />
-      <Route path="screen" element={<ScreenShare />} />
     </Routes>
   )
 }
