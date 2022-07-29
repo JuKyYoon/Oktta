@@ -9,7 +9,7 @@ import javax.mail.MessagingException;
 public interface UserService {
     User loginUser(User user);
     void registUser(UserDto user) throws MessagingException;
-    int modifyUser(User user);
+    void modifyUser(User user, UserDto changeUser);
     User findUser(String id);
     boolean checkDuplicatedID(String userId);
     boolean checkDuplicatedNickName(String nickName);

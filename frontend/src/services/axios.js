@@ -1,4 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
+import { store } from "..";
+import { getToken } from "./userService";
 
 const DOMAIN = "http://localhost:8080";
 const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjU5MDc5Mzc5LCJleHAiOjE2NjAyODg5Nzl9.tpA2YLDZQoQm6nykABpKHdBtRigu0kPZP3b9a42IbaE'

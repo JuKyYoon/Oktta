@@ -153,4 +153,17 @@ public class UserController {
         userService.deleteUser(user, password.get("password").trim());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
+
+    /**
+     * 회원 수정 API
+     */
+    @PutMapping("")
+    public ResponseEntity<BaseResponseBody> modifyUser(@RequestBody UserDto userDto){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        userService.modifyUser(user, userDto);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
 }

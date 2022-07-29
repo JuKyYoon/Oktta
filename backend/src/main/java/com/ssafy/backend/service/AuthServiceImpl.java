@@ -4,6 +4,8 @@ import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
+import com.ssafy.backend.util.RedisService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,10 +26,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository) {
+    private final RedisService redisService;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository, RedisService redisService) {
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
+        this.redisService = redisService;
     }
 
     /**
@@ -70,6 +75,22 @@ public class AuthServiceImpl implements AuthService {
             }
             return result;
         }
+    }
+
+    /**
+     * 로그아웃
+     * @param req
+     * @param userId
+     * @return
+     */
+    @Override
+    public void signOut(HttpServletRequest req, String userId) {
+        // Redis에서 해당 userId로 저장된 refreshToken 삭제
+        redisService.deleteValue(userId);
+        String accessToken = jwtProvider.resolveToken(req);
+        // accesstoken 블랙리스트로 redis 등록
+        long expireTime = jwtProvider.getAccessTokenExpireTime();
+        redisService.setTokenBlackList(accessToken, "logout", expireTime);
     }
 
     /**
