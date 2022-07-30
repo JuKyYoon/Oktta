@@ -50,7 +50,7 @@ public class SecurityConfig {
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/authorize",
+            "/auth/**",
             "/session/**",
             "/v3/api-docs",
             "/swagger*/**"
@@ -87,6 +87,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
