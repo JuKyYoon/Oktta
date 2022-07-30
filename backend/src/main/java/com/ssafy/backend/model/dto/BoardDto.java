@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema
 public class BoardDto {
     private Long idx;
-    private Long userIdx;
+    private String nickname;
     private String title;
     private String content;
     private String createDate;
@@ -18,25 +18,24 @@ public class BoardDto {
 
     }
 
-    public BoardDto(Board board) {
-        this.userIdx = board.getIdx();
+    public BoardDto(String nickname, Board board) {
+        this.nickname = nickname;
+        this.idx = board.getIdx();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.createDate = board.getCreateDate().toString();
         this.modifyDate = board.getModifyDate().toString();
         this.category = board.getCategory();
-        this.hit = board.getHit();
+        this.hit = board.getHit() + 1;
     }
 
     public Long getIdx() { return idx; }
 
     public void setIdx(Long idx) { this.idx = idx; }
 
-    public Long getUserIdx() {
-        return userIdx;
-    }
+    public String getNickname() { return nickname; }
 
-    public void setUserIdx(Long userIdx) { this.userIdx = userIdx; }
+    public void setString(String nickname) { this.nickname = nickname; }
 
     public String getTitle() {
         return title;

@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
@@ -48,13 +50,14 @@ public class BoardController {
 
     @GetMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> selectBoard(@PathVariable("idx") String boardIdx){
-        Board board = boardService.selectBoard(Long.parseLong(boardIdx));
-        if(board == null){
+        BoardDto board = boardService.detailBoard(Long.parseLong(boardIdx));
+        if(board.getIdx() == null){
             BoardNotFoundException e = new BoardNotFoundException("Board Not Found");
             throw e;
+        } else {
+            boardService.updateHit(board.getIdx());
         }
 
-        System.out.println(board);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board));
     }
 

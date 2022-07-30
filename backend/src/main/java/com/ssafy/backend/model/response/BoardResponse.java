@@ -1,25 +1,23 @@
 package com.ssafy.backend.model.response;
 
-import com.ssafy.backend.model.entity.Board;
+import com.ssafy.backend.model.dto.BoardDto;
 
 import java.util.Map;
 
 public class BoardResponse extends BaseResponseBody {
-    Board board;
+    BoardDto boardDto;
 
-    public Board getBoard() {
-        return board;
+    public BoardDto getBoard() { return boardDto; }
+
+    public void setBoard(BoardDto boardDto) {
+        this.boardDto = boardDto;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public static BoardResponse of(Integer statusCode, String message, Board board){
+    public static BoardResponse of(Integer statusCode, String message, BoardDto boardDto){
         BoardResponse res = new BoardResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);
-        res.setBoard(board);
+        res.setBoard(boardDto);
         return res;
     }
 }
