@@ -1,0 +1,62 @@
+/* App css */
+body {
+  margin: 0;
+}
+
+main {
+  padding: 10px;
+}
+
+a {
+  margin: 5px;
+  text-decoration: none;
+  color: black;
+}
+
+* {
+  font-family: sans-serif;
+}
+
+/* 입력 폼 정렬 */
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin-top: 5%;
+}
+
+/* 로그인 폼 정렬 */
+.loginform {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+  width: 250px;
+}
+
+/* 에러 메시지 색상 */
+.error_message {
+  display: none;
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: -.5px;
+  color: #ff003e;
+  vertical-align: middle;
+}
+.css-1nrlq1o-MuiFormControl-root {
+  width: 300px;
+}
+
+.css-1wc848c-MuiFormHelperText-root.Mui-error {
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: -.5px;
+  color: #ff003e;
+  vertical-align: middle;
+}
+
+/* 버튼 색상 */
+.css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
+  background-color: #6667ab !important;
+}
