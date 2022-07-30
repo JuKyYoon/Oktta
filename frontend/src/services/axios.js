@@ -2,21 +2,18 @@ import axios from "axios";
 import { store } from "..";
 import { getToken } from "./userService";
 
-const DOMAIN = "http://localhost:8080";
-const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjU5MDc5Mzc5LCJleHAiOjE2NjAyODg5Nzl9.tpA2YLDZQoQm6nykABpKHdBtRigu0kPZP3b9a42IbaE'
-
 export const request = axios.create({
-  baseURL: DOMAIN,
+  baseURL: process.env.REACT_APP_SERVER_URL,
 });
 
 export const axiosAuth = axios.create({
-  baseURL: DOMAIN,
+  baseURL: process.env.REACT_APP_SERVER_URL,
   withCredentials: true,
 });
 
 axiosAuth.interceptors.request.use(
   function (config) {
-    // const accessToken = store.getState().user.token;
+    const accessToken = store.getState().user.token;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
