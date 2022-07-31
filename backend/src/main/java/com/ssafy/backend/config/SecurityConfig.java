@@ -1,6 +1,7 @@
 package com.ssafy.backend.config;
 
 import com.ssafy.backend.security.JwtProvider;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -40,12 +44,14 @@ public class SecurityConfig {
             "/user/name/*",
             "/auth/refresh/**",
             "/v3/api-docs",
+            "/session/**",
             "/swagger*/**"
     };
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/authorize",
+            "/auth/**",
+            "/session/**",
             "/v3/api-docs",
             "/swagger*/**"
     };
@@ -66,16 +72,22 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI);
+        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI)
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .csrf().disable();
+
 
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
@@ -103,5 +115,20 @@ public class SecurityConfig {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 
 }

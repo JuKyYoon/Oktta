@@ -44,6 +44,9 @@ dependencies {
 // apache commons lang 랜덤 문자열 생성용
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
+//openvidu 설정
+    implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.22.0'
+
 
 }
 
