@@ -1,7 +1,8 @@
-import { GET_SESSION } from '../modules/type.js';
+import { GET_ARTICLE, CREATE_ARTICLE } from '../modules/types.js';
 import { store } from '..';
+import { request } from './axios.js';
 
-export const getSession = () => {
+export const getArticle = () => {
   const data = [
     { id: '0', title: '1번방입니다.', publisher: '방장1' },
     { id: '1', title: '2번방입니다.', publisher: '방장2' },
@@ -20,7 +21,15 @@ export const getSession = () => {
 
   //   const payload = '서버로 API 요청해서 받아오기';
   return {
-    type: GET_SESSION,
+    type: GET_ARTICLE,
+    payload,
+  };
+};
+
+export const CreateArticle = async (dataToSubmit) => {
+  const payload = await request.post(ARTICLE_URL, dataToSubmit);
+  return {
+    type: CREATE_ARTICLE,
     payload,
   };
 };

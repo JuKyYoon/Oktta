@@ -1,17 +1,17 @@
 import React from 'react';
-import SessionInfo from '../components/SessionInfo';
+import ArticleInfo from '../components/ArticleInfo';
 import { Link } from 'react-router-dom';
 import { Box, List, ListItem, Button, Stack } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSession } from '../services/sesseionService';
+import { getArticle } from '../services/articleService';
 
-const SessionList = () => {
+const ArticleList = () => {
   // dummy data
 
   const dispatch = useDispatch();
-  dispatch(getSession());
-  const sessionList = useSelector((state) => state.session.sessions);
+  dispatch(getArticle());
+  const articleList = useSelector((state) => state.article.articles);
   const theme = createTheme({
     palette: {
       veriperi: {
@@ -35,17 +35,17 @@ const SessionList = () => {
 
           <nav aria-label='secondary mailbox folders'>
             <List>
-              {sessionList.map((session) => {
+              {articleList.map((article) => {
                 return (
                   <ListItem
                     disablePadding
-                    key={session.id}
+                    key={article.id}
                     sx={{ mt: 3 }}
                     divider={true}>
-                    <SessionInfo
-                      title={session.title}
-                      publisher={session.publisher}
-                      id={session.id}
+                    <ArticleInfo
+                      title={article.title}
+                      publisher={article.publisher}
+                      id={article.id}
                     />
                   </ListItem>
                 );
@@ -58,4 +58,4 @@ const SessionList = () => {
   );
 };
 
-export default SessionList;
+export default ArticleList;

@@ -1,13 +1,13 @@
-import { GET_SESSION } from '../modules/type.js';
+import { GET_ARTICLE } from './types.js';
 
 const initState = {
-  sessions: null,
+  articles: null,
 };
 
 export default function (state = initState, action) {
   switch (action.type) {
-    case GET_SESSION:
-      state.sessions = action.payload;
+    case GET_ARTICLE:
+      state.articles = action.payload;
       return { ...state };
     default:
       return { ...state };

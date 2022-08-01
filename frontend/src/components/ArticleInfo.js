@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { Link } from 'react-router-dom';
 
-const SessionInfo = (props) => {
+const ArticleInfo = (props) => {
   const theme = createTheme({
     palette: {
       veriperi: {
@@ -38,4 +38,4 @@ const SessionInfo = (props) => {
   );
 };
 
-export default SessionInfo;
+export default ArticleInfo;

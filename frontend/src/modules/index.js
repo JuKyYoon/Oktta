@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import user from './user';
-import session from './session';
+import article from './article';
 
 const rootReducer = combineReducers({
   user,
-  session,
+  article,
 });
 
 export default rootReducer;
