@@ -65,12 +65,13 @@ ul {
   background-color: #6667ab !important;
 }
 
-/* 화면 공유 페이지 */
+/* 화면 공유 페이지 정렬 */
 .session-content {
   display: flex;
   justify-content: space-between;
 }
 
+/* 채팅 상자 */
 .chat-box {
   display: flex;
   flex-direction: column;
@@ -82,6 +83,7 @@ ul {
   overflow: scroll;
 }
 
+/* 공유 화면 관련 */
 #video-container {
   margin: 20px;
 }
