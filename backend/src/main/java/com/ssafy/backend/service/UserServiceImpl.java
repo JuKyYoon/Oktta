@@ -9,6 +9,7 @@ import com.ssafy.backend.model.exception.DuplicatedTokenException;
 import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
 import com.ssafy.backend.model.exception.PasswordNotMatchException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -41,11 +42,6 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
         this.mailService = mailService;
-    }
-
-    @Override
-    public User loginUser(User user){
-        return null;
     }
 
     /**
@@ -188,5 +184,15 @@ public class UserServiceImpl implements UserService {
             String encrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             return userRepository.updatePassword(encrypt, user.getId());
         }
+    }
+
+    /**
+     * User entity의 내용을 UserDto로 매핑 후, 비밀번호 제외
+     * @param user
+     * @param user
+     */
+    @Override
+    public UserDto setUserInfo(User user) {
+        return UserMapper.mapper.toDto(user);
     }
 }

@@ -31,9 +31,10 @@ dependencies {
 
 //  swagger 설정
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
-
-// modelMapper 설정
-    implementation 'org.modelmapper:modelmapper:3.1.0'
+    
+// mapstruct 설정    
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 
 // smtp 설정
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.0'

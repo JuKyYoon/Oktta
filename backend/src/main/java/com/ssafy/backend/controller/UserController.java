@@ -1,12 +1,12 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
-import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.model.response.UserInfoResponse;
 import com.ssafy.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,5 +165,20 @@ public class UserController {
         );
         userService.modifyUser(user, userDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 로그인 한 유저 정보 불러오기
+     */
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoResponse> getMyInfo(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        UserDto userDto = userService.setUserInfo(user);
+
+        return ResponseEntity.status(200).body(UserInfoResponse.of(200, successMsg, userDto));
     }
 }
