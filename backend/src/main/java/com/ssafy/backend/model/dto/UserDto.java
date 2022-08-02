@@ -15,7 +15,6 @@ public class UserDto {
     private String modifyDate;
     private int snsType;
     private int profileImg;
-    private boolean emailAuth;
     private String role;
 
     public UserDto() {
@@ -81,14 +80,6 @@ public class UserDto {
 
     public void setProfileImg(int profileImg) {
         this.profileImg = profileImg;
-    }
-
-    public boolean isEmailAuth() {
-        return emailAuth;
-    }
-
-    public void setEmailAuth(boolean emailAuth) {
-        this.emailAuth = emailAuth;
     }
 
     public String getRole() {

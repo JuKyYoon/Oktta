@@ -83,7 +83,7 @@ public class JwtProvider {
                 .setExpiration(expireTime)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-        redisService.setRefreshToken(id, refreshToken, refreshTokenExpireTime);
+        redisService.setStringValueAndExpire(refreshToken, id, refreshTokenExpireTime);
         return refreshToken;
     }
 
@@ -130,6 +130,9 @@ public class JwtProvider {
         try {
             LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            if (redisService.getStringValue(token) != null) {
+                throw new MalformedJwtException("BlackList");
+            }
             return true;
         } catch (SignatureException e) {
             LOGGER.error("Invalid JWT Signature", e);
@@ -156,16 +159,6 @@ public class JwtProvider {
             request.setAttribute(attrName, "Exception");
             return false;
         }
-    }
-
-    /**
-     * Redis에 refreshToken 이 있는지 유저 아이디로 탐색한다.
-     * @param userId 유저아이디
-     * @param token refreshToken
-     * @return True of False
-     */
-    public boolean checkRefreshToken(String userId, String token) {
-        return token.equals(redisService.getStringValue(userId));
     }
 
     public long getAccessTokenExpireTime() {
