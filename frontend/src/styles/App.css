@@ -17,6 +17,10 @@ a {
   font-family: sans-serif;
 }
 
+ul {
+  list-style:none;
+}
+
 /* 입력 폼 정렬 */
 .form {
   display: flex;
@@ -59,4 +63,31 @@ a {
 /* 버튼 색상 */
 .css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
   background-color: #6667ab !important;
+}
+
+/* 화면 공유 페이지 정렬 */
+.session-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 채팅 상자 */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: solid 2px;
+  width: 40%;
+  height: 470px;
+  margin: 20px;
+  overflow: scroll;
+}
+
+/* 공유 화면 관련 */
+#video-container {
+  margin: 20px;
+}
+
+video {
+  width: 100%;
 }
