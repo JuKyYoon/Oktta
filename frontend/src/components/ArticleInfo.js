@@ -32,6 +32,16 @@ const ArticleInfo = (props) => {
               입장하기
             </Button>
           </Link>
+          <Link
+            to={`/article/edit/${props.id}`}
+            style={{ textDecoration: 'none' }}>
+            <Button
+              variant='text'
+              color='veriperi'
+              endIcon={<LoginOutlinedIcon />}>
+              [임시] 수정하기 버튼
+            </Button>
+          </Link>
         </Grid>
       </Grid>
     </ThemeProvider>
