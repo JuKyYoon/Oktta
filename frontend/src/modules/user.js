@@ -14,7 +14,6 @@ export default function (state = initState, action) {
       return { ...state };
     case LOGIN:
       if (action.payload.data.message === "success") {
-        action.payload.data.result.userId = 'A104'
         return { ...state, isLogin: true, userId: action.payload.data.result.userId, token: action.payload.data.result.accessToken };
       }
       return { ...state };
