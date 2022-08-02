@@ -53,7 +53,8 @@ public class SecurityConfig {
             "/auth/**",
             "/session/**",
             "/v3/api-docs",
-            "/swagger*/**"
+            "/swagger*/**",
+            "/aws*/**"
     };
 
     /**
