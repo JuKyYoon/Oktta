@@ -108,7 +108,7 @@ public class BaseControllerAdvice {
         LOGGER.error(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(BaseResponseBody.of(200, failMsg));
+                .body(BaseResponseBody.of(404, failMsg));
     }
 
     @ExceptionHandler(Exception.class)

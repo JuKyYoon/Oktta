@@ -49,14 +49,9 @@ public class BoardController {
     }
 
     @GetMapping("/{idx}")
-    public ResponseEntity<? extends BaseResponseBody> selectBoard(@PathVariable("idx") String boardIdx){
+    public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") String boardIdx){
         BoardDto board = boardService.detailBoard(Long.parseLong(boardIdx));
-        if(board.getIdx() == null){
-            BoardNotFoundException e = new BoardNotFoundException("Board Not Found");
-            throw e;
-        } else {
-            boardService.updateHit(board.getIdx());
-        }
+        boardService.updateHit(board.getIdx());
 
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board));
     }
