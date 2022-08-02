@@ -94,6 +94,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http

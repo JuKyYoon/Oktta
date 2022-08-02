@@ -48,6 +48,7 @@ public class User {
     private int profileImg;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(255) default 'ROLE_GUEST'")
     private UserRole role;
 
     // 외부로부터 접근권한 최소화.
