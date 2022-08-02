@@ -83,7 +83,7 @@ public class JwtProvider {
                 .setExpiration(expireTime)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-        redisService.setRefreshToken(id, refreshToken, refreshTokenExpireTime);
+        redisService.setStringValueAndExpire(id, refreshToken, refreshTokenExpireTime);
         return refreshToken;
     }
 
