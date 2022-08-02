@@ -107,7 +107,7 @@ public class BaseControllerAdvice {
         LOGGER.error(req.getRequestURI());
         LOGGER.error(e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(BaseResponseBody.of(404, failMsg));
     }
 
