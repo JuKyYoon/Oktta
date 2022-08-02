@@ -78,9 +78,8 @@ public class AuthController {
      * @param userId 유저 아이디
      * @return { accessToken, refreshToken }
      */
-    @GetMapping("/refresh/{id}")
-    public ResponseEntity<BaseResponseBody> refreshToken(
-            @PathVariable("id") String userId, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/refresh")
+    public ResponseEntity<BaseResponseBody> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String refreshToken = "";
 
@@ -96,7 +95,7 @@ public class AuthController {
             } else {
                 // RefreshToken 이 쿠키에 있는 경우
                 SetCookie.deleteRefreshTokenCookie(response);
-                Map<String, String> result = authService.refresh(request, userId, refreshToken);
+                Map<String, String> result = authService.refresh(request, refreshToken);
                 if("timeover".equals(result.get(failMsg))) {
                     LOGGER.debug("Token Expired");
                     return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "time expired"));

@@ -59,12 +59,13 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public Map<String, String> refresh(HttpServletRequest req, String userId, String refreshToken) {
-        userRepository.findById(userId).orElseThrow(
-                () ->  new UserNotFoundException("Not Found User")
-        );
+    public Map<String, String> refresh(HttpServletRequest req, String refreshToken) {
+        String userId = redisService.getStringValue(refreshToken);
 
-        if (jwtProvider.validateToken(req, refreshToken) && jwtProvider.checkRefreshToken(userId, refreshToken)) {
+        if (userId != null && jwtProvider.validateToken(req, refreshToken)) {
+            userRepository.findById(userId).orElseThrow(
+                    () ->  new UserNotFoundException("Not Found User")
+            );
             return createToken(userId);
         } else {
             String exception = (String) req.getAttribute("exception");
