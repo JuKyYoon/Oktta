@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { FormControl, InputLabel, Input, FormHelperText, Container, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { updateNicknameRequest, updatePasswordRequest, checkNicknameRequest } from '../services/userService';
@@ -22,9 +23,10 @@ const UpdateProfile = () => {
 
   const [mode, setMode] = useState('nickname');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // 닉네임 관련
-  const currentNickname = 'test'
+  const currentNickname = useSelector((state) => state.user.userId ? state.user.userId : 'nickname')
   const [nickname, setNickname] = useState(currentNickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [nicknameChecked, setNicknameChecked] = useState(false);
@@ -57,7 +59,7 @@ const UpdateProfile = () => {
   };
 
   const newPasswordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
     const isNewPasswordValid = regPassword.test(event.target.value);
 
     setNewPassword(event.target.value);
@@ -81,14 +83,19 @@ const UpdateProfile = () => {
         } else {
           updateNicknameRequest({
             nickname, password
-          }).then((message) => {
-            if (message === 'success') {
+          })
+          .then((res) => {
+            if (res.payload.data.message === 'success') {
+              dispatch(res)
               alert('닉네임이 변경되었습니다.')
               navigate('/user/mypage')
             } else {
               alert('비밀번호를 확인해주세요.')
-            };
-          });
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
         };
         break
       case 'password':
@@ -98,10 +105,10 @@ const UpdateProfile = () => {
           alert('비밀번호 확인이 일치하지 않습니다.')
         } else {
           updatePasswordRequest({
+            newPassword,
             oldPassword : password,
-            newPassword
-          }).then((message) => {
-            if (message === 'success') {
+          }).then((res) => {
+            if (res.payload.data.message === 'success') {
               alert('비밀번호가 변경되었습니다.')
               navigate('/user/mypage')
             } else {
@@ -123,9 +130,28 @@ const UpdateProfile = () => {
       <ThemeProvider theme={theme}>
         <Container maxWidth="sm">
           <h2>회원정보 수정</h2>
-          <Button onClick={() => setMode('nickname')}>닉네임 변경</Button>
-          <Button onClick={() => setMode('password')}>비밀번호 변경</Button>
-          <Button onClick={() => setMode('profileImage')}>프로필 사진 변경</Button>
+          <Button
+            variant={mode === "nickname" ? "contained" : "text"}
+            onClick={() => setMode('nickname')}
+            color="veryperi"
+          >
+            닉네임 변경
+          </Button>
+          <Button
+            variant={mode === "password" ? "contained" : "text"}
+            onClick={() => setMode('password')}
+            color="veryperi"
+          >
+            비밀번호 변경
+          </Button>
+          <Button
+            variant={mode === "profileImage" ? "contained" : "text"}
+            onClick={() => setMode('profileImage')}
+            color="veryperi"
+          >
+            프로필 사진 변경
+          </Button>
+          <br />
           <br />
           <FormControl>
             <InputLabel htmlFor="password" color="veryperi">비밀번호</InputLabel>
@@ -200,10 +226,10 @@ const UpdateProfile = () => {
               variant="contained"
               color="veryperi"
               onClick={handleSubmit}
-              disabled={(mode === 'nickname') ? !nickname || !isNicknameValid || !nicknameChecked
-                : (mode === 'password') ? !password || !isNewPasswordSame || !isNewPasswordValid
-                  : (mode === 'profileImage') ? false
-                    : true}
+              disabled={((mode === 'nickname') && (!nickname || !isNicknameValid || !nicknameChecked))
+                || ((mode === 'password') && (!password || !isNewPasswordSame || !isNewPasswordValid))
+                || ((mode === 'profileImage') && true)
+              }
             >
               저장
             </Button>

@@ -10,3 +10,4 @@ export const CHECK_NICKNAME = "user/CHECK_NICKNAME";
 export const PW_INQUIRY = "user/PW_INQUIRY";
 export const EDIT_ACCOUNT = "user/EDIT_ACCOUNT";
 export const DELETE_ACCOUNT = "user/DELETE_ACCOUNT";
+export const UPDATE_PROFILE = "user/UPDATE_PROFILE"

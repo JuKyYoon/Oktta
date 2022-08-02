@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { FormControl, InputLabel, Input, FormHelperText, Container, Button } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-=======
 import { FormControl, InputLabel, Input, FormHelperText, Button } from '@mui/material';
->>>>>>> dev
 import { checkEmailRequest, checkNicknameRequest, signupRequest } from '../services/userService';
 import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
@@ -54,7 +49,7 @@ const Signup = () => {
   };
 
   const passwordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
     const isPasswordValid = regPassword.test(event.target.value)
 
     setPassword(event.target.value);
