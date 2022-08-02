@@ -17,7 +17,7 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "LONG UNSIGNED")
+    @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
     @ManyToOne(targetEntity = User.class)

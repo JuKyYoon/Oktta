@@ -32,7 +32,6 @@ DROP TABLE IF EXISTS `lol_auth`;
 CREATE TABLE IF NOT EXISTS `lol_auth` (
     `user_id` VARCHAR(50) NOT NULL UNIQUE,
     `puuid` VARCHAR(100) NOT NULL UNIQUE,
-    `region` VARCHAR(10) NOT NULL,
     `tier` tinyint NOT NULL,
     `account_id` VARCHAR(100) NOT NULL,
     `summoner_name` VARCHAR(50) NOT NULL,

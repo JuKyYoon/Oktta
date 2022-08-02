@@ -1,8 +1,10 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
+import com.ssafy.backend.service.LOLService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/lol")
-public class LOLController {
+public class LolController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Value("${response.success}")
@@ -26,25 +30,30 @@ public class LOLController {
     private String failMsg;
 
     private final UserRepository userRepository;
+    private final LOLService lolService;
 
 
-    public LOLController(UserRepository userRepository) {
+    public LolController(UserRepository userRepository, LOLService lolService) {
         this.userRepository = userRepository;
+        this.lolService = lolService;
     }
 
     /**
-     *
+     * 소환사 명으로 티어정보 저장
+     * @param summonerMap { summonerName }
+     * @return { statusCode, message }
      */
-    @PostMapping()
-    public ResponseEntity<BaseResponseBody> tier(@RequestBody String summonerName){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElse(null);
-        if(user!=null){
-            return  ResponseEntity.status(200).body(BaseResponseBody.of(200,"null"));
+    @PostMapping("")
+    public ResponseEntity<BaseResponseBody> tier(@RequestBody Map<String, String> summonerMap) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        boolean result = lolService.createLolAuth(user.getId(), summonerMap.get("summonerName"));
+        if(result){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
         }else{
-            LOGGER.info("tier auth start");
-
-            return  ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200,failMsg));
         }
     }
 }

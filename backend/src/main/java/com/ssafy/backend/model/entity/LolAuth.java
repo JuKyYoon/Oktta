@@ -22,8 +22,6 @@ public class LolAuth {
     @Column(unique = true, nullable = false)
     private String puuid;
 
-    //region 어떻게 얻어올 것 인가?..
-
     @Column(nullable = false)
     private int tier;
 
@@ -34,7 +32,7 @@ public class LolAuth {
     private String summonerName;
 
     @CreatedDate
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
 
     protected LolAuth(){}
@@ -45,7 +43,6 @@ public class LolAuth {
         this.tier = builder.tier;
         this.accountId = builder.accountId;
         this.summonerName = builder.summonerName;
-        this.createDate = builder.createDate;
     }
 
     public static class Builder {
@@ -55,15 +52,13 @@ public class LolAuth {
         private final int tier;
         private final String accountId;
         private final String summonerName;
-        private final LocalDateTime createDate;
 
-        public Builder(String userId, String puuid, int tier, String accountId, String summonerName, LocalDateTime createDate) {
+        public Builder(String userId, String puuid, int tier, String accountId, String summonerName) {
             this.userId = userId;
             this.puuid = puuid;
             this.tier = tier;
             this.accountId = accountId;
             this.summonerName = summonerName;
-            this.createDate = createDate;
         }
 
         public LolAuth build() { return new LolAuth(this); }

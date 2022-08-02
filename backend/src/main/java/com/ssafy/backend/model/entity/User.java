@@ -21,7 +21,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idx", columnDefinition = "LONG UNSIGNED")
+    @Column(name="idx", columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
     @Column(unique = true, nullable = false)
