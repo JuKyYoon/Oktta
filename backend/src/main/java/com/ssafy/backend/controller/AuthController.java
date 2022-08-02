@@ -49,7 +49,7 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @PostMapping("/authorize")
+    @PostMapping("")
     public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserDto signUser, HttpServletResponse response) {
         Map<String, String> result = authService.signIn(signUser);
         SetCookie.setRefreshTokenCookie(response, result.get(REFRESHTOKEN_KEY));
@@ -61,7 +61,7 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @DeleteMapping("/logout")
+    @DeleteMapping("")
     public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
