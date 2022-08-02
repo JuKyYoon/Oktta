@@ -52,7 +52,7 @@ public class SecurityConfig {
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/authorize",
+            "/auth",
             "/session/**",
             "/v3/api-docs",
             "/swagger*/**"

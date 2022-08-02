@@ -36,6 +36,7 @@ public class AuthController {
     private final AuthService authService;
 
     private final UserRepository userRepository;
+
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
     public AuthController(AuthService authService, UserRepository userRepository) {
@@ -49,7 +50,7 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @PostMapping("/authorize")
+    @PostMapping("")
     public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserDto signUser, HttpServletResponse response) {
         Map<String, String> result = authService.signIn(signUser);
         SetCookie.setRefreshTokenCookie(response, result.get(REFRESHTOKEN_KEY));
@@ -61,14 +62,23 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @DeleteMapping("/logout")
+    @DeleteMapping("")
     public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        String userId = user.getId();
-        authService.signOut(request, userId);
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = "";
+        if(cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(REFRESHTOKEN_KEY)) {
+                    refreshToken = c.getValue().trim();
+                    break;
+                }
+            }
+        }
+        authService.signOut(request, user.getId(), refreshToken);
         SetCookie.deleteRefreshTokenCookie(response);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }

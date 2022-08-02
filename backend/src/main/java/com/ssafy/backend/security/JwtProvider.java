@@ -130,6 +130,9 @@ public class JwtProvider {
         try {
             LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            if (redisService.getStringValue(token) != null) {
+                throw new MalformedJwtException("BlackList");
+            }
             return true;
         } catch (SignatureException e) {
             LOGGER.error("Invalid JWT Signature", e);
