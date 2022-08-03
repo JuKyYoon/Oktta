@@ -17,6 +17,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -73,8 +74,8 @@ public class UserServiceImpl implements UserService {
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(user.getId(), authKey, LocalDateTime.now(),
                     LocalDateTime.now().plusDays(expireDay)).build());
-        } catch (IllegalArgumentException e){
-            throw new DuplicatedTokenException("중복 토큰 발생!");
+        } catch (DataIntegrityViolationException e){
+            throw new DataIntegrityViolationException("회원가입 시 중복된 키값");
         }
 
         // 인증 메일 전송

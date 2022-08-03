@@ -9,6 +9,7 @@ import com.ssafy.backend.model.response.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -26,6 +27,18 @@ public class BaseControllerAdvice {
 
     @Value("${response.fail}")
     private String failMsg;
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<BaseResponseBody> dataIntegrityViolationException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("SQL Integrity Error");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(MessageResponse.of(200, failMsg, "SQL Integrity Error"));
+    }
 
     @ExceptionHandler(PasswordNotMatchException.class)
     public ResponseEntity<BaseResponseBody> passwordNotMatchException(Exception e, HttpServletRequest req) {
