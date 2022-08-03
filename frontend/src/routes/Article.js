@@ -1,19 +1,12 @@
-import ArticleList from '../pages/ArticleList';
-import CreateArticle from '../pages/CreateArticle';
-import EditArticle from '../pages/EditArticle';
-import ScreenShare from '../pages/ScreenShare';
-import ArticleDetail from '../pages/ArticleDetail';
-
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Home from '../components/Home';
 
 const Article = () => {
   return (
     <Routes>
-      <Route path='list' element={<ArticleList />} />
-      <Route path='create' element={<CreateArticle />} />
-      <Route path='edit/:articleId' element={<EditArticle />} />
-      <Route path='popular' element={<Home />} />
-      <Route path=":id" element={<ArticleDetail />} />
-      <Route path=":id/share" element={<ScreenShare />} />
+      <Route path='notice' element={<Home />} />
+      <Route path='general' element={<Home />} />
     </Routes>
   );
 };

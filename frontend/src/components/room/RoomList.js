@@ -1,12 +1,12 @@
 import React from 'react';
-import ArticleInfo from '../components/ArticleInfo';
+import RoomInfo from './RoomInfo';
 import { Link } from 'react-router-dom';
 import { Box, List, ListItem, Button, Stack } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { getArticle } from '../services/articleService';
+import { getArticle } from '../../services/roomService';
 
-const ArticleList = () => {
+const RoomList = () => {
   // dummy data
 
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const ArticleList = () => {
         <h1>현재 방 목록</h1>
         <Box sx={{ width: '100%', maxWidth: 600, bgcolor: 'background.paper' }}>
           <Stack direction='row' justifyContent='end'>
-            <Link to={`/article/create`} style={{ textDecoration: 'none' }}>
+            <Link to={`../create`} style={{ textDecoration: 'none' }}>
               <Button variant='contained' color='veriperi'>
                 방 만들기
               </Button>
@@ -42,7 +42,7 @@ const ArticleList = () => {
                     key={article.id}
                     sx={{ mt: 3 }}
                     divider={true}>
-                    <ArticleInfo
+                    <RoomInfo
                       title={article.title}
                       publisher={article.publisher}
                       id={article.id}
@@ -58,4 +58,4 @@ const ArticleList = () => {
   );
 };
 
-export default ArticleList;
+export default RoomList;

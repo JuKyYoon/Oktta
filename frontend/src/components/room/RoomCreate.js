@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { createArticle } from '../services/articleService';
+import { createArticle } from '../../services/roomService';
 const CreateArticle = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');

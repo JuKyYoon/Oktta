@@ -4,9 +4,9 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import rootReducer from './modules';
-import './styles/App.css';
-import promiseMiddlerware from "redux-promise";
-import reduxThunk from "redux-thunk";
+import './styles/App.scss';
+import promiseMiddlerware from 'redux-promise';
+import reduxThunk from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
@@ -42,4 +42,4 @@ ReactDom.render(
     </PersistGate>
   </Provider>,
   document.getElementById('root')
-)
+);
