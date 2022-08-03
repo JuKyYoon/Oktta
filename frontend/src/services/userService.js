@@ -41,21 +41,24 @@ export const signupRequest = async (dataToSubmit) => {
   return {
     type: SIGNUP,
     payload: data,
-  }
+  };
 };
 
 // 로그인
 export const loginRequest = async (dataToSubmit) => {
-  const data = await request.post(`${AUTH_URL}/authorize`, dataToSubmit)
+  const data = await request.post(`${AUTH_URL}`, dataToSubmit);
   return {
     type: LOGIN,
     payload: data,
-  }
+  };
 };
 
 // 소셜 로그인
 export const googleLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/google`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/google`,
+    dataToSubmit
+  );
   return {
     type: GOOGLE_LOGIN,
     payload: data,
@@ -63,7 +66,10 @@ export const googleLoginRequest = async (dataToSubmit) => {
 };
 
 export const kakaoLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/kakao`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/kakao`,
+    dataToSubmit
+  );
   return {
     type: KAKAO_LOGIN,
     payload: data,
@@ -71,7 +77,10 @@ export const kakaoLoginRequest = async (dataToSubmit) => {
 };
 
 export const naverLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/naver`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/naver`,
+    dataToSubmit
+  );
   return {
     type: NAVER_LOGIN,
     payload: data,
@@ -80,7 +89,7 @@ export const naverLoginRequest = async (dataToSubmit) => {
 
 // 로그아웃
 export const logoutRequest = async () => {
-  const data = await axiosAuth.delete(`${AUTH_URL}/logout`);
+  const data = await axiosAuth.delete(`${AUTH_URL}`);
   return {
     type: LOGOUT,
     payload: data,

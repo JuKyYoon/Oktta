@@ -1,32 +1,20 @@
-export const SET_OV_TOKEN = "article/SET_TOKEN";
-export const SET_ROLE = "article/SET_ROLE";
+import { GET_ARTICLE, CREATE_ARTICLE, UPDATE_ARTICLE } from './types.js';
 
 const initState = {
-  ovToken: '',
-  role: ''
-}
+  articles: null,
+};
 
-export const setOvToken = (ovToken) => {
-  return {
-    type: SET_OV_TOKEN,
-    payload: ovToken
-  }
-}
-
-export const setRole = (role) => {
-  return {
-    type: SET_ROLE,
-    payload: role
-  }
-}
-
+// 리듀서
 export default function (state = initState, action) {
   switch (action.type) {
-    case SET_OV_TOKEN:
-      return { ...state, ovToken: action.payload };
-    case SET_ROLE:
-      return { ...state, role: action.payload };
+    case GET_ARTICLE:
+      state.articles = action.payload;
+      return { ...state };
+    case CREATE_ARTICLE:
+      return { ...state };
+    case UPDATE_ARTICLE:
+      return { ...state };
     default:
-      return state;
+      return { ...state };
   }
 }
