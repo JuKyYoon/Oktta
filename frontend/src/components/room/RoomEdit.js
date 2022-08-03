@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
-import { updateArticle, getArticle } from '../services/articleService';
+import { updateArticle, getArticle } from '../../services/roomService';
 
 const EditArticle = () => {
   const { articleId } = useParams();
