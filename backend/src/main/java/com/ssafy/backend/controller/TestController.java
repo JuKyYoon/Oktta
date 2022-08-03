@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+/**
+ * 추후 삭제 예정
+ */
 
 @RestController
 @RequestMapping("/aws")
@@ -20,8 +22,8 @@ public class TestController {
     }
 
     @PostMapping("")
-    public String form(@RequestParam("fileTest") MultipartFile file) {
-        awsService.uploadFile(file);
-        return "success";
+    public String form(@RequestParam("testFile") MultipartFile file) {
+        String id = "test@test.com";
+        return awsService.fileUpload(id, file);
     }
 }
