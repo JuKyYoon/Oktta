@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import { Link } from 'react-router-dom';
 
-const ArticleInfo = (props) => {
+const RoomInfo = (props) => {
   const theme = createTheme({
     palette: {
       veriperi: {
@@ -24,7 +24,7 @@ const ArticleInfo = (props) => {
           {props.publisher}
         </Grid>
         <Grid item xs={3}>
-          <Link to={`/article/${props.id}`} style={{ textDecoration: 'none' }}>
+          <Link to={`../${props.id}`} style={{ textDecoration: 'none' }}>
             <Button
               variant='text'
               color='veriperi'
@@ -32,9 +32,7 @@ const ArticleInfo = (props) => {
               입장하기
             </Button>
           </Link>
-          <Link
-            to={`/article/edit/${props.id}`}
-            style={{ textDecoration: 'none' }}>
+          <Link to={`../edit/${props.id}`} style={{ textDecoration: 'none' }}>
             <Button
               variant='text'
               color='veriperi'
@@ -48,4 +46,4 @@ const ArticleInfo = (props) => {
   );
 };
 
-export default ArticleInfo;
+export default RoomInfo;

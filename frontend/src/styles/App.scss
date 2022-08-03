@@ -1,0 +1,40 @@
+$veripery: #6667ab;
+
+/* App css */
+body {
+  margin: 0;
+}
+
+main {
+  padding: 10px;
+}
+
+a {
+  margin: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+}
+
+* {
+  font-family: sans-serif;
+}
+
+ul {
+  list-style:none;
+}
+
+/* 에러 메시지 색상 */
+.error_message {
+  display: none;
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: -.5px;
+  color: #ff003e;
+  vertical-align: middle;
+}
+
+
+
+
+
