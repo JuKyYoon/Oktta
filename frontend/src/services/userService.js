@@ -1,23 +1,10 @@
-import { request, axiosAuth } from './axios';
-import {
-  GET_TOKEN,
-  SIGNUP,
-  LOGIN,
-  GOOGLE_LOGIN,
-  KAKAO_LOGIN,
-  NAVER_LOGIN,
-  LOGOUT,
-  CHECK_EMAIL,
-  CHECK_NICKNAME,
-  PW_INQUIRY,
-  EDIT_ACCOUNT,
-  DELETE_ACCOUNT,
-} from '../modules/types.js';
-import { store } from '..';
+import { request, axiosAuth } from "./axios";
+import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT, UPDATE_PROFILE } from "../modules/types.js";
+import { store } from "..";
 
-/* 요청 URL */
-const USER_URL = '/api/v1/user';
-const AUTH_URL = '/api/v1/auth';
+/* 요청 URL*/
+const USER_URL = '/api/v1/user'
+const AUTH_URL = '/api/v1/auth'
 
 // 토큰 재발급
 export const getToken = async () => {
@@ -25,6 +12,25 @@ export const getToken = async () => {
   const data = await request.get(`${AUTH_URL}/refresh/${userId}`);
   return {
     type: GET_TOKEN,
+    payload: data,
+  };
+};
+
+// 닉네임 변경
+export const updateNicknameRequest = async (dataToSubmit) => {
+  const res = await axiosAuth.put(USER_URL, dataToSubmit)
+  const data = { ...res, userId: dataToSubmit.nickname}
+  return {
+    type: UPDATE_PROFILE,
+    payload: data,
+  };
+};
+
+// 비밀번호 변경 -- 500
+export const updatePasswordRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit)
+  return {
+    type: UPDATE_PASSWORD,
     payload: data,
   };
 };

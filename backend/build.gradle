@@ -48,6 +48,9 @@ dependencies {
 //openvidu 설정
     implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.22.0'
 
+// WebClient 설정
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.2'
+
 // aws s3 설정
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 
