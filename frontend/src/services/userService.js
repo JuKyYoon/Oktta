@@ -1,5 +1,18 @@
 import { request, axiosAuth } from "./axios";
-import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT, UPDATE_PROFILE } from "../modules/types.js";
+import {
+  GET_TOKEN,
+  SIGNUP,
+  LOGIN,
+  GOOGLE_LOGIN,
+  KAKAO_LOGIN,
+  NAVER_LOGIN,
+  LOGOUT,
+  CHECK_EMAIL,
+  CHECK_NICKNAME,
+  PW_INQUIRY,
+  EDIT_ACCOUNT,
+  DELETE_ACCOUNT,
+} from "../modules/types.js";
 import { store } from "..";
 
 /* 요청 URL*/

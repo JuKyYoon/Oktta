@@ -1,40 +1,23 @@
-import React from 'react';
-import Button from '@mui/material/Button';
-import { useNavigate, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setOvToken, setRole } from '../modules/article';
-import { joinSessionRequest, createSessionRequest } from '../services/sessionService';
+import React from "react";
 
 const ArticleDetail = () => {
-  const params = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const createSession = () => {
-    createSessionRequest(params.id)
-    .then((token) => {
-      dispatch(setOvToken(token))
-      dispatch(setRole('publisher'))
-    })
-    .then(() => navigate('share'))
-  }
-
-  const joinSession = () => {
-    joinSessionRequest(params.id)
-    .then((token) => {
-      dispatch(setOvToken(token))
-      dispatch(setRole('subscriber'))
-    })
-    .then(() => navigate('share'))
-  }
+  // 원래는 불러올 것인데 일단은 더미 데이터로 테스트
+  const [title, content, userId, createDate] = [
+    "이거 누가 잘못한겨>?",
+    "아니 룰루 개못해",
+    "양택훈",
+    "2022-08-01 오후 3:51",
+  ];
 
   return (
     <div>
-      <h2>{params.id}</h2>
-      <Button onClick={createSession}>생성</Button>
-      <Button onClick={joinSession}>참여</Button>
-      <Link to={`/article/${parseInt(params.id) + 1}`}>번호올리기</Link>
+      <h2>게시물 상세 페이지</h2>
+      <div className="article_header">
+        <div>{title}</div>
+        <div>{userId}</div>
+        <div>{createDate}</div>
+      </div>
+      <div className="article_body">{content}</div>
     </div>
   );
 };
