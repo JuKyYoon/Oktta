@@ -45,15 +45,22 @@ public class SecurityConfig {
             "/auth/refresh/**",
             "/v3/api-docs",
             "/session/**",
-            "/swagger*/**"
+            "/swagger*/**",
+            "/user/password/**",
+            "/user/reset-token/**"
     };
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/**",
+            "/auth",
             "/session/**",
             "/v3/api-docs",
-            "/swagger*/**"
+            "/swagger*/**",
+            "/aws*/**"
+    };
+
+    private static final String[] DELETE_PUBLIC_URI = {
+            "/user/reset-token/**"
     };
 
     /**
@@ -73,6 +80,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI)
+                .antMatchers(HttpMethod.DELETE, DELETE_PUBLIC_URI)
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -120,7 +128,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:5500");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

@@ -21,7 +21,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idx", columnDefinition = "LONG UNSIGNED")
+    @Column(name="idx", columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
     @Column(unique = true, nullable = false)
@@ -106,12 +106,16 @@ public class User {
         this.role = role;
     }
 
+    public static User.Builder builder() {
+        return new User.Builder();
+    }
+
     // Builder 패턴 ( Not Lombok )
     public static class Builder {
 
-        private final String id;
-        private final String nickname;
-        private final String password;
+        private String id;
+        private String nickname;
+        private String password;
         private UserRole role;
 
         // Optional Parameter
@@ -119,6 +123,9 @@ public class User {
             this.role = UserRole.valueOf(role);
             return this;
         }
+
+        // Because of MapStruct
+        public Builder() {}
 
         // Required Parameter
         public Builder(String id, String nickname, String password) {

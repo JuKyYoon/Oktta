@@ -17,10 +17,18 @@ public class WebConfig implements WebMvcConfigurer {
 //		Set max age to 1800 seconds (30 minutes).
         registry.addMapping("/**")
 //			.allowedOrigins("*")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:5500")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 //			.allowedHeaders("*")
                 .allowCredentials(true) // 쿠키 허용
                 .maxAge(6000);
     }
+
+
+    //	Swagger UI 실행시 404처리
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/swagger-ui/index.html**").addResourceLocations("classpath:/META-INF/resources/swagger-ui/index.html");
+//        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+//    }
 }

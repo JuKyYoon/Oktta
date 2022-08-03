@@ -46,7 +46,9 @@ public class AuthServiceImpl implements AuthService {
 
         // 위에서 만든 토큰을 이용해 인증한다, UserDetailsService 가 요청을 받아 처리한다. 리턴값은 인증 객체로, 토큰 생성에 사용한다.
         Authentication authentication = authenticationManager.authenticate(token);
-        return createToken(authentication.getName());
+        Map<String, String> result = createToken(authentication.getName());
+        result.put("userId", authentication.getName());
+        return result;
     }
 
     /**
@@ -57,12 +59,13 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public Map<String, String> refresh(HttpServletRequest req, String userId, String refreshToken) {
-        userRepository.findById(userId).orElseThrow(
-                () ->  new UserNotFoundException("Not Found User")
-        );
+    public Map<String, String> refresh(HttpServletRequest req, String refreshToken) {
+        String userId = redisService.getStringValue(refreshToken);
 
-        if (jwtProvider.validateToken(req, refreshToken) && jwtProvider.checkRefreshToken(userId, refreshToken)) {
+        if (userId != null && jwtProvider.validateToken(req, refreshToken)) {
+            userRepository.findById(userId).orElseThrow(
+                    () ->  new UserNotFoundException("Not Found User")
+            );
             return createToken(userId);
         } else {
             String exception = (String) req.getAttribute("exception");
@@ -84,9 +87,10 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public void signOut(HttpServletRequest req, String userId) {
-        // Redis에서 해당 userId로 저장된 refreshToken 삭제
-        redisService.deleteValue(userId);
+    public void signOut(HttpServletRequest req, String userId, String refreshToken) {
+        // Redis에서 refreshToken 삭제
+        redisService.deleteValue(refreshToken);
+
         String accessToken = jwtProvider.resolveToken(req);
         // accesstoken 블랙리스트로 redis 등록
         long expireTime = jwtProvider.getAccessTokenExpireTime();
@@ -106,7 +110,6 @@ public class AuthServiceImpl implements AuthService {
 
         result.put("accessToken", accessToken);
         result.put("refreshToken", refreshToken);
-
         return result;
     }
 

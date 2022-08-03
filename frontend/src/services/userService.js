@@ -15,9 +15,9 @@ import {
 } from "../modules/types.js";
 import { store } from "..";
 
-/* 요청 URL */
-const USER_URL = "/api/v1/user";
-const AUTH_URL = "/api/v1/auth";
+/* 요청 URL*/
+const USER_URL = '/api/v1/user'
+const AUTH_URL = '/api/v1/auth'
 
 // 토큰 재발급
 export const getToken = async () => {
@@ -25,6 +25,25 @@ export const getToken = async () => {
   const data = await request.get(`${AUTH_URL}/refresh/${userId}`);
   return {
     type: GET_TOKEN,
+    payload: data,
+  };
+};
+
+// 닉네임 변경
+export const updateNicknameRequest = async (dataToSubmit) => {
+  const res = await axiosAuth.put(USER_URL, dataToSubmit)
+  const data = { ...res, userId: dataToSubmit.nickname}
+  return {
+    type: UPDATE_PROFILE,
+    payload: data,
+  };
+};
+
+// 비밀번호 변경 -- 500
+export const updatePasswordRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit)
+  return {
+    type: UPDATE_PASSWORD,
     payload: data,
   };
 };
@@ -40,7 +59,7 @@ export const signupRequest = async (dataToSubmit) => {
 
 // 로그인
 export const loginRequest = async (dataToSubmit) => {
-  const data = await request.post(`${AUTH_URL}/authorize`, dataToSubmit);
+  const data = await request.post(`${AUTH_URL}`, dataToSubmit);
   return {
     type: LOGIN,
     payload: data,
@@ -83,7 +102,7 @@ export const naverLoginRequest = async (dataToSubmit) => {
 
 // 로그아웃
 export const logoutRequest = async () => {
-  const data = await axiosAuth.delete(`${AUTH_URL}/logout`);
+  const data = await axiosAuth.delete(`${AUTH_URL}`);
   return {
     type: LOGOUT,
     payload: data,
