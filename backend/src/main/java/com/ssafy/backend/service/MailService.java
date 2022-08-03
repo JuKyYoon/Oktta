@@ -5,5 +5,5 @@ import javax.mail.internet.MimeMessage;
 
 public interface MailService {
     void sendAuthMail(String email, String authKey) throws MessagingException;
-    void sendMail(String email, MimeMessage message, String mailContent) throws MessagingException;
+    void sendPasswordResetMail(String email, String resetToken)throws MessagingException;
 }

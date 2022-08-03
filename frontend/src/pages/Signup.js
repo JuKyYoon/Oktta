@@ -49,7 +49,7 @@ const Signup = () => {
   };
 
   const passwordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
     const isPasswordValid = regPassword.test(event.target.value)
 
     setPassword(event.target.value);

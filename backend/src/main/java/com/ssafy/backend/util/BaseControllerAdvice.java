@@ -1,5 +1,6 @@
 package com.ssafy.backend.util;
 
+import com.ssafy.backend.model.exception.BoardNotFoundException;
 import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
 import com.ssafy.backend.model.exception.PasswordNotMatchException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
@@ -96,6 +97,18 @@ public class BaseControllerAdvice {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseResponseBody.of(500, failMsg));
+    }
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> BoardNotFoundException(Exception e, HttpServletRequest req){
+        LOGGER.debug("Board NOT FOUND");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseResponseBody.of(404, failMsg));
     }
 
     @ExceptionHandler(Exception.class)

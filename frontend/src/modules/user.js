@@ -1,4 +1,4 @@
-import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT } from "../modules/types.js";
+import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT, UPDATE_PROFILE } from "../modules/types.js";
 
 const initState = {
   isLogin: false,
@@ -35,6 +35,8 @@ export default function (state = initState, action) {
       return { ...state, data: action.payload };
     case DELETE_ACCOUNT:
       return { ...state, data: action.payload };
+    case UPDATE_PROFILE:
+      return { ...state, userId: action.payload.userId };
     default:
       return state;
   }
