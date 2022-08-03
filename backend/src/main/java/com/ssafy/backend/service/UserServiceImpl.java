@@ -62,7 +62,11 @@ public class UserServiceImpl implements UserService {
     public void registUser(UserDto user) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
-        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        String authKey = "";
+        // 중복 인증 키 아닐 때 까지 반복
+        do {
+            authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        } while (userAuthTokenRepository.findByToken(authKey).orElse(null) == null);
 
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(user.getId(), authKey, LocalDateTime.now(),
@@ -183,7 +187,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resendAuthMail(String userId) throws MessagingException {
-        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        String authKey = "";
+        // 중복 인증 키 아닐 때 까지 반복
+        do {
+            authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        } while (userAuthTokenRepository.findByToken(authKey).orElse(null) == null);
+
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(),
                     LocalDateTime.now().plusDays(expireDay)).build());
