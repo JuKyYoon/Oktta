@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.UserDto;
+import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
@@ -47,7 +48,12 @@ public class AuthServiceImpl implements AuthService {
         // 위에서 만든 토큰을 이용해 인증한다, UserDetailsService 가 요청을 받아 처리한다. 리턴값은 인증 객체로, 토큰 생성에 사용한다.
         Authentication authentication = authenticationManager.authenticate(token);
         Map<String, String> result = createToken(authentication.getName());
-        result.put("userId", authentication.getName());
+
+        User user = userRepository.findById(authentication.getName()).orElseThrow(
+                () -> new UserNotFoundException("User not Found in SignIn")
+        );
+        result.put("nickname", user.getNickname());
+        result.put("auth", user.getRole().getValue().equals("ROLE_USER") ? "1": "0");
         return result;
     }
 
