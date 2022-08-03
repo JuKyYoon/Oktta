@@ -7,15 +7,16 @@ import com.ssafy.backend.model.entity.User;
 import javax.mail.MessagingException;
 
 public interface UserService {
-    User loginUser(User user);
     void registUser(UserDto user) throws MessagingException;
-    int modifyUser(User user);
-    User findUser(String id);
+    void modifyUser(User user, UserDto changeUser);
     boolean checkDuplicatedID(String userId);
     boolean checkDuplicatedNickName(String nickName);
     void deleteUser(User user, String password);
-    User findPassword(User user);
-    public void authUser(String authKey);
-    public void resendAuthMail(String userId) throws MessagingException;
-    public int modifyPassword(String id, PasswordDto passwords);
+    void findPassword(String email) throws MessagingException;
+    void authUser(String authKey);
+    void resendAuthMail(String userId) throws MessagingException;
+    int modifyPassword(String id, PasswordDto passwords);
+    UserDto setUserInfo(User user);
+    String validateResetToken(String resetToken);
+    boolean resetPassword(String password, String token);
 }

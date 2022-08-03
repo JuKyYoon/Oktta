@@ -44,14 +44,22 @@ public class SecurityConfig {
             "/user/name/*",
             "/auth/refresh/**",
             "/v3/api-docs",
-            "/swagger*/**"
+            "/session/**",
+            "/swagger*/**",
+            "/user/password/**",
+            "/user/reset-token/**"
     };
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/authorize",
+            "/auth",
+            "/session/**",
             "/v3/api-docs",
             "/swagger*/**"
+    };
+
+    private static final String[] DELETE_PUBLIC_URI = {
+            "/user/reset-token/**"
     };
 
     /**
@@ -70,8 +78,8 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI)
-                .antMatchers(HttpMethod.POST, POST_PUBLIC_URI).antMatchers(HttpMethod.DELETE, "/session/**")
+        return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI)
+                .antMatchers(HttpMethod.DELETE, DELETE_PUBLIC_URI)
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -86,6 +94,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http

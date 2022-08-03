@@ -4,6 +4,8 @@ import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
+import com.ssafy.backend.util.RedisService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,10 +26,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository) {
+    private final RedisService redisService;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository, RedisService redisService) {
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
+        this.redisService = redisService;
     }
 
     /**
@@ -41,7 +46,9 @@ public class AuthServiceImpl implements AuthService {
 
         // 위에서 만든 토큰을 이용해 인증한다, UserDetailsService 가 요청을 받아 처리한다. 리턴값은 인증 객체로, 토큰 생성에 사용한다.
         Authentication authentication = authenticationManager.authenticate(token);
-        return createToken(authentication.getName());
+        Map<String, String> result = createToken(authentication.getName());
+        result.put("userId", authentication.getName());
+        return result;
     }
 
     /**
@@ -52,12 +59,13 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public Map<String, String> refresh(HttpServletRequest req, String userId, String refreshToken) {
-        userRepository.findById(userId).orElseThrow(
-                () ->  new UserNotFoundException("Not Found User")
-        );
+    public Map<String, String> refresh(HttpServletRequest req, String refreshToken) {
+        String userId = redisService.getStringValue(refreshToken);
 
-        if (jwtProvider.validateToken(req, refreshToken) && jwtProvider.checkRefreshToken(userId, refreshToken)) {
+        if (userId != null && jwtProvider.validateToken(req, refreshToken)) {
+            userRepository.findById(userId).orElseThrow(
+                    () ->  new UserNotFoundException("Not Found User")
+            );
             return createToken(userId);
         } else {
             String exception = (String) req.getAttribute("exception");
@@ -73,6 +81,23 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
+     * 로그아웃
+     * @param req
+     * @param userId
+     * @return
+     */
+    @Override
+    public void signOut(HttpServletRequest req, String userId, String refreshToken) {
+        // Redis에서 refreshToken 삭제
+        redisService.deleteValue(refreshToken);
+
+        String accessToken = jwtProvider.resolveToken(req);
+        // accesstoken 블랙리스트로 redis 등록
+        long expireTime = jwtProvider.getAccessTokenExpireTime();
+        redisService.setTokenBlackList(accessToken, "logout", expireTime);
+    }
+
+    /**
      * 유저 아이디로 JWT 토큰을 만든다.
      * @param userId 유저아이디 ( = 이메일 )
      * @return { accessToken, refreshToken }
@@ -85,7 +110,6 @@ public class AuthServiceImpl implements AuthService {
 
         result.put("accessToken", accessToken);
         result.put("refreshToken", refreshToken);
-
         return result;
     }
 

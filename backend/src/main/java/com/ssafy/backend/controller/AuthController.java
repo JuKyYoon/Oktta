@@ -1,5 +1,8 @@
 package com.ssafy.backend.controller;
 
+import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.response.LoginResponse;
@@ -10,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +35,13 @@ public class AuthController {
 
     private final AuthService authService;
 
+    private final UserRepository userRepository;
+
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserRepository userRepository) {
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -42,11 +50,37 @@ public class AuthController {
      * @param response HttpServletResponse
      * @return { statusCode, message }
      */
-    @PostMapping("/authorize")
+    @PostMapping("")
     public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserDto signUser, HttpServletResponse response) {
         Map<String, String> result = authService.signIn(signUser);
         SetCookie.setRefreshTokenCookie(response, result.get(REFRESHTOKEN_KEY));
         return ResponseEntity.status(200).body(LoginResponse.of(200, successMsg, result));
+    }
+    /**
+     * Logout
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return { statusCode, message }
+     */
+    @DeleteMapping("")
+    public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = "";
+        if(cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(REFRESHTOKEN_KEY)) {
+                    refreshToken = c.getValue().trim();
+                    break;
+                }
+            }
+        }
+        authService.signOut(request, user.getId(), refreshToken);
+        SetCookie.deleteRefreshTokenCookie(response);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
     /**
@@ -54,9 +88,8 @@ public class AuthController {
      * @param userId 유저 아이디
      * @return { accessToken, refreshToken }
      */
-    @GetMapping("/refresh/{id}")
-    public ResponseEntity<BaseResponseBody> refreshToken(
-            @PathVariable("id") String userId, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/refresh")
+    public ResponseEntity<BaseResponseBody> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String refreshToken = "";
 
@@ -72,7 +105,7 @@ public class AuthController {
             } else {
                 // RefreshToken 이 쿠키에 있는 경우
                 SetCookie.deleteRefreshTokenCookie(response);
-                Map<String, String> result = authService.refresh(request, userId, refreshToken);
+                Map<String, String> result = authService.refresh(request, refreshToken);
                 if("timeover".equals(result.get(failMsg))) {
                     LOGGER.debug("Token Expired");
                     return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "time expired"));
