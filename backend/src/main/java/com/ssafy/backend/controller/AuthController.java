@@ -36,6 +36,7 @@ public class AuthController {
     private final AuthService authService;
 
     private final UserRepository userRepository;
+
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
     public AuthController(AuthService authService, UserRepository userRepository) {
@@ -67,8 +68,17 @@ public class AuthController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        String userId = user.getId();
-        authService.signOut(request, userId);
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = "";
+        if(cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(REFRESHTOKEN_KEY)) {
+                    refreshToken = c.getValue().trim();
+                    break;
+                }
+            }
+        }
+        authService.signOut(request, user.getId(), refreshToken);
         SetCookie.deleteRefreshTokenCookie(response);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
@@ -78,9 +88,8 @@ public class AuthController {
      * @param userId 유저 아이디
      * @return { accessToken, refreshToken }
      */
-    @GetMapping("/refresh/{id}")
-    public ResponseEntity<BaseResponseBody> refreshToken(
-            @PathVariable("id") String userId, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/refresh")
+    public ResponseEntity<BaseResponseBody> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String refreshToken = "";
 
@@ -96,7 +105,7 @@ public class AuthController {
             } else {
                 // RefreshToken 이 쿠키에 있는 경우
                 SetCookie.deleteRefreshTokenCookie(response);
-                Map<String, String> result = authService.refresh(request, userId, refreshToken);
+                Map<String, String> result = authService.refresh(request, refreshToken);
                 if("timeover".equals(result.get(failMsg))) {
                     LOGGER.debug("Token Expired");
                     return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "time expired"));
