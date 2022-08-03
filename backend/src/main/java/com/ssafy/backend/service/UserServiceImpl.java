@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     public void registUser(UserDto user) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
-        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        String authKey = "";
         // 중복 인증 키 아닐 때 까지 반복
         do {
             authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
