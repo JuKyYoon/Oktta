@@ -17,7 +17,7 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "LONG UNSIGNED")
+    @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
     @ManyToOne(targetEntity = User.class)
@@ -41,6 +41,38 @@ public class Board {
     private int category;
 
     private Long hit;
+
+    public Long getIdx() {
+        return idx;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public LocalDateTime getModifyDate() {
+        return modifyDate;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public Long getHit() {
+        return hit;
+    }
 
     protected Board() {
     }
