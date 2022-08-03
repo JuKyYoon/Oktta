@@ -27,8 +27,6 @@ public class BoardController {
     @Value("${response.fail}")
     private String failMsg;
 
-
-
     private final BoardRepository boardRepository;
 
     private final UserRepository userRepository;
