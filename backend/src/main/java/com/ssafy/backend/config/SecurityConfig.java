@@ -95,7 +95,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
-                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasAnyRole("GUEST", "USER", "ADMIN")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
@@ -128,7 +128,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:5500");
+        configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
