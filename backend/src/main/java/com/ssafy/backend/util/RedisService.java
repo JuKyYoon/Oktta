@@ -81,12 +81,12 @@ public class RedisService {
     }
 
     /**
-     * Set RefreshTokne to Redis
+     * Set String Value And Expire Time
      * @param key user.id
      * @param token refreshToken
      * @param expireDate expire date
      */
-    public void setRefreshToken(String key, String token, long expireDate) {
+    public void setStringValueAndExpire(String key, String token, long expireDate) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(key, token, expireDate, TimeUnit.MILLISECONDS);
     }
@@ -110,6 +110,14 @@ public class RedisService {
     public void setTokenBlackList(String token, String value, long expireTime) {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(token, value, expireTime, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Delete By Key
+     * @param key
+     */
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
     }
 
 }

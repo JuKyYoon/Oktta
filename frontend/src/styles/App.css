@@ -18,6 +18,10 @@ a {
   font-family: sans-serif;
 }
 
+ul {
+  list-style:none;
+}
+
 /* 입력 폼 정렬 */
 .form {
   display: flex;

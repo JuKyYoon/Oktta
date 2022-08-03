@@ -9,8 +9,10 @@ import com.ssafy.backend.model.exception.DuplicatedTokenException;
 import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
 import com.ssafy.backend.model.exception.PasswordNotMatchException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.RedisService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,21 +36,22 @@ public class UserServiceImpl implements UserService {
 
     private final MailService mailService;
 
+    private final RedisService redisService;
+
     @Value("${email.expire-day}")
     private int expireDay;
 
     @Value("${email.auth-key-size}")
     private int authKeySize;
 
-    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService) {
+    @Value("${password.reset.expire-time}")
+    private int resetTokenExpireTime;
+
+    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService) {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
         this.mailService = mailService;
-    }
-
-    @Override
-    public User loginUser(User user){
-        return null;
+        this.redisService = redisService;
     }
 
     /**
@@ -56,7 +62,11 @@ public class UserServiceImpl implements UserService {
     public void registUser(UserDto user) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
-        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        String authKey = "";
+        // 중복 인증 키 아닐 때 까지 반복
+        do {
+            authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        } while (userAuthTokenRepository.findByToken(authKey).orElse(null) == null);
 
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(user.getId(), authKey, LocalDateTime.now(),
@@ -80,11 +90,6 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new PasswordNotMatchException("Password is Not Match");
         }
-    }
-
-    @Override
-    public User findUser(String id) {
-        return null;
     }
 
     /**
@@ -122,9 +127,36 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * 비밀번호 찾기 위한 토큰을 발행하고, 이메일로 토큰 포함된 링크를 보낸다.
+     * @param id 유저가 입력한 이메일
+     * @return
+     */
     @Override
-    public User findPassword(User user) {
-        return null;
+    public void findPassword(String id) throws MessagingException {
+        LOGGER.info("Find Password By Sending a Email");
+        // 존재하는 유저인지 검사한다,
+        userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found By Id")
+        );
+        String tokenResult = "";
+        String resetToken = "";
+        // 비밀번호 초기화 토큰을 발행한다. (Redis에 저장한다.)
+        do {
+            resetToken = RandomStringUtils.randomAlphanumeric(authKeySize);
+            tokenResult = redisService.getStringValue(resetToken);
+        } while(tokenResult != null);
+
+        // 만료 시간 정하기
+        Date now = new Date();
+        Date expireTime = new Date(now.getTime() + resetTokenExpireTime);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS Z")
+                .withZone(ZoneId.systemDefault());
+
+        String expireDate = format.format(expireTime.toInstant());
+        String value = id + "=" + expireDate;
+        redisService.setStringValueAndExpire(resetToken, value, resetTokenExpireTime);
+        mailService.sendPasswordResetMail(id, resetToken);
     }
 
     /**
@@ -155,7 +187,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resendAuthMail(String userId) throws MessagingException {
-        String authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        String authKey = "";
+        // 중복 인증 키 아닐 때 까지 반복
+        do {
+            authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
+        } while (userAuthTokenRepository.findByToken(authKey).orElse(null) == null);
+
         try {
             userAuthTokenRepository.save(new UserAuthToken.Builder(userId, authKey, LocalDateTime.now(),
                     LocalDateTime.now().plusDays(expireDay)).build());
@@ -188,5 +225,60 @@ public class UserServiceImpl implements UserService {
             String encrypt = BCrypt.hashpw(newPassword, BCrypt.gensalt());
             return userRepository.updatePassword(encrypt, user.getId());
         }
+    }
+
+    /**
+     * User entity의 내용을 UserDto로 매핑 후, 비밀번호 제외
+     * @param user
+     * @param user
+     */
+    @Override
+    public UserDto setUserInfo(User user) {
+        return UserMapper.mapper.toDto(user);
+    }
+
+    /**
+     * 토큰 유효성 판단 후, 만료시간 리턴
+     */
+    @Override
+    public String validateResetToken(String resetToken) {
+        LOGGER.info("Validate a Reset Token");
+        String result = redisService.getStringValue(resetToken);
+        if (result==null) {
+            return null;
+        }
+
+        String[] splitStr = result.split("=");
+        if (splitStr.length != 2) {
+            return null;
+        }
+        return splitStr[1];
+    }
+
+    /**
+     * 비밀번호 재설정
+     * @param password
+     * @param token
+     * @return
+     */
+    @Override
+    public boolean resetPassword(String password, String token) {
+        LOGGER.info("Reset Password");
+        // 시간 지나면 사라지기 때문에 만료시간 검사 필요 없다.
+        String result = redisService.getStringValue(token);
+        if (result == null || password == null) {
+            return false;
+        }
+        // Redis에서 제거
+        redisService.deleteKey(token);
+
+        String[] splitStr = result.split("=");
+        if (splitStr.length != 2) {
+            return false;
+        }
+
+        String userId = splitStr[0];
+        String encrypt = BCrypt.hashpw(password, BCrypt.gensalt());
+        return userRepository.updatePassword(encrypt, userId) == 1;
     }
 }

@@ -1,10 +1,12 @@
 package com.ssafy.backend.model.dto;
 
+import com.ssafy.backend.model.entity.Board;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema
 public class BoardDto {
-    private Long userIdx;
+    private Long idx;
+    private String nickname;
     private String title;
     private String content;
     private String createDate;
@@ -16,19 +18,24 @@ public class BoardDto {
 
     }
 
-    public BoardDto(String title, String content, int category) {
-        this.title = title;
-        this.content = content;
-        this.category = category;
+    public BoardDto(String nickname, Board board) {
+        this.nickname = nickname;
+        this.idx = board.getIdx();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.createDate = board.getCreateDate().toString();
+        this.modifyDate = board.getModifyDate().toString();
+        this.category = board.getCategory();
+        this.hit = board.getHit() + 1;
     }
 
-    public Long getUserIdx() {
-        return userIdx;
-    }
+    public Long getIdx() { return idx; }
 
-    public void setUserIdx(String idx) {
-        this.userIdx = userIdx;
-    }
+    public void setIdx(Long idx) { this.idx = idx; }
+
+    public String getNickname() { return nickname; }
+
+    public void setString(String nickname) { this.nickname = nickname; }
 
     public String getTitle() {
         return title;
