@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
@@ -17,4 +18,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Modifying
     @Query("UPDATE Room room SET room.title = :title, room.content = :content, room.modifyDate = :date  WHERE room.idx = :idx and room.user = :user")
     int updateRoom(String title, String content, long idx, User user, LocalDateTime date);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM room LIMIT :limit OFFSET :page")
+    List<Room> findRooms(int limit, int page);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM room")
+    int findLastPage();
 }
