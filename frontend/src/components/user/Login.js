@@ -1,8 +1,8 @@
-import { Button, ButtonGroup } from "@mui/material";
+import { Button } from "@mui/material";
 import { TextField } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import GoogleLogin from "./GoogleLogin";
+import SocialLogin from "./SocialLogin";
 import { loginRequest } from "../../services/userService.js";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -81,12 +81,6 @@ const Login = () => {
         </Button>
       </form>
       <br />
-      {/* 소셜 로그인 */}
-      <GoogleLogin />
-      <div>
-        <Button href="">카카오</Button>
-        <Button href="">네이버</Button>
-      </div>
       <div>
         <Button>
           <Link to="/user/pwInquiry">비밀번호 찾기</Link>
@@ -95,6 +89,11 @@ const Login = () => {
           <Link to="/user/signUp">회원가입</Link>
         </Button>
       </div>
+      <br />
+      <div className="login_or">
+        <span className="login_text">또는</span>
+      </div>
+      <SocialLogin />
     </div>
   );
 };

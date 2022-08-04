@@ -93,10 +93,12 @@
   width: 250px;
 }
 
+// 회원가입 폼
 .css-1nrlq1o-MuiFormControl-root {
   width: 315px;
 }
 
+// 회원가입 경고문
 .css-1wc848c-MuiFormHelperText-root.Mui-error {
   font-size: 13px;
   line-height: 16px;
@@ -105,8 +107,27 @@
   vertical-align: middle;
 }
 
-/* 버튼 색상 */
+/* 회원가입 버튼 색상 */
 .css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
   background-color: $veripery !important;
 }
 
+.social_login {
+  margin: 4px;
+}
+
+.login_or {
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+  width: 250px;
+  height: 1px;
+  background-color: $veripery;
+}
+
+.login_text {
+  position: relative;
+  bottom: 10px;
+  color: $veripery;
+}

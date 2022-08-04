@@ -1,5 +1,6 @@
 import { request, axiosAuth } from "./axios";
 import {
+  EMAIL_AUTH,
   SIGNUP,
   LOGIN,
   GOOGLE_LOGIN,
@@ -8,14 +9,11 @@ import {
   LOGOUT,
   EDIT_ACCOUNT,
   DELETE_ACCOUNT,
-  EMAIL_AUTH,
 } from "../modules/types.js";
-import React from "react";
-import NotFound from "../components/error/NotFound";
 
 /* 요청 URL*/
-const USER_URL = "/api/v1/user";
-const AUTH_URL = "/api/v1/auth";
+export const USER_URL = "/api/v1/user";
+export const AUTH_URL = "/api/v1/auth";
 
 // 토큰 재발급
 export const getToken = async () => {
@@ -76,33 +74,24 @@ export const loginRequest = async (dataToSubmit) => {
 };
 
 // 소셜 로그인
-export const googleLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(
-    `${AUTH_URL}/authorize/google`,
-    dataToSubmit
-  );
+export const googleLoginRequest = async () => {
+  const data = await axiosAuth.post(`${AUTH_URL}/google`);
   return {
     type: GOOGLE_LOGIN,
     payload: data,
   };
 };
 
-export const kakaoLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(
-    `${AUTH_URL}/authorize/kakao`,
-    dataToSubmit
-  );
+export const kakaoLoginRequest = async () => {
+  const data = await axiosAuth.post(`${AUTH_URL}/kakao`);
   return {
     type: KAKAO_LOGIN,
     payload: data,
   };
 };
 
-export const naverLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(
-    `${AUTH_URL}/authorize/naver`,
-    dataToSubmit
-  );
+export const naverLoginRequest = async () => {
+  const data = await axiosAuth.post(`${AUTH_URL}/naver`);
   return {
     type: NAVER_LOGIN,
     payload: data,
