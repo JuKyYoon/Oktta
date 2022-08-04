@@ -10,9 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -46,5 +45,18 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public int updateHit(Long idx) {
         return boardRepository.updateHit(idx);
+    }
+
+    @Override
+    public List<BoardDto> getBoardList(int category, int startPoint) {
+        List<Board> boardList = boardRepository.findAllByCategory(category, startPoint);
+        List<BoardDto> list = new ArrayList<>();
+
+        for(Board b : boardList) {
+            String nickname = userRepository.findNicknameByIdx(b.getUser().getIdx());
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getContent(), b.getHit()));
+        }
+
+        return list;
     }
 }
