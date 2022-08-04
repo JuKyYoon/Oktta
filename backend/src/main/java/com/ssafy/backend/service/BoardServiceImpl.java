@@ -63,7 +63,6 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int getLastPage(int category, int limit) {
-
         return boardRepository.findLastPage(category) / limit + 1;
     }
 
