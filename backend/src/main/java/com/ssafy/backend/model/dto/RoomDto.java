@@ -1,18 +1,30 @@
 package com.ssafy.backend.model.dto;
 
+import java.time.LocalDateTime;
+
 public class RoomDto {
 
     private Long idx;
     private String title;
     private String nickname;
     private String content;
-    private String createDate;
-    private String modifyDate;
+    private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
     private boolean live;
     private int people;
     private int hit;
 
     public RoomDto() {
+    }
+
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
     }
 
     public Long getIdx() {
@@ -39,19 +51,19 @@ public class RoomDto {
         this.content = content;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public String getModifyDate() {
+    public LocalDateTime getModifyDate() {
         return modifyDate;
     }
 
-    public void setModifyDate(String modifyDate) {
+    public void setModifyDate(LocalDateTime modifyDate) {
         this.modifyDate = modifyDate;
     }
 

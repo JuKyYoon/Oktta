@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -74,5 +76,22 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    @Override
+    public List<RoomDto> getRoomList(int page, int limit) {
+        List<Room> roomList = roomRepository.findRooms(limit, (page - 1) * limit);
+        List<RoomDto> list = new ArrayList<>();
 
+        System.out.println(roomList.size());
+
+        for(Room r : roomList){
+            String nickname = userRepository.findNicknameByIdx(r.getUser().getIdx());
+            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit()));
+        }
+        return list;
+    }
+
+    @Override
+    public int getLastPage(int limit) {
+        return roomRepository.findLastPage() / limit + 1;
+    }
 }

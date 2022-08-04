@@ -33,14 +33,11 @@ public class BoardController {
     @Value("${response.fail}")
     private String failMsg;
 
-    private final BoardRepository boardRepository;
-
     private final UserRepository userRepository;
 
     private final BoardService boardService;
 
-    public BoardController(BoardRepository boardRepository, UserRepository userRepository, BoardService boardService) {
-        this.boardRepository = boardRepository;
+    public BoardController(UserRepository userRepository, BoardService boardService) {
         this.userRepository = userRepository;
         this.boardService = boardService;
     }
@@ -76,11 +73,9 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
-
-
         List<BoardDto> list = boardService.getBoardList(category, page, limit);
-        int lasPage = boardService.getLastPage(category, limit);
-        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lasPage));
+        int lastPage = boardService.getLastPage(category, limit);
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
     }
 
     /**

@@ -41,7 +41,7 @@ public class Room {
     private LocalDateTime modifyDate;
 
     @Column(name = "hit", columnDefinition = "integer default 0")
-    private Long hit;
+    private int hit;
 
     @Column(name = "live")
     private boolean live;
@@ -73,7 +73,7 @@ public class Room {
         return modifyDate;
     }
 
-    public Long getHit() {
+    public int getHit() {
         return hit;
     }
 
