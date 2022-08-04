@@ -1,9 +1,12 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.InvalidSessionCreate;
+import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.SessionNotFoundException;
 import com.ssafy.backend.model.exception.SessionTokenNotValid;
-import com.ssafy.backend.util.RedisService;
+import com.ssafy.backend.model.repository.RoomRepository;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +26,8 @@ public class SessionServiceImpl implements SessionService {
     // Secret shared with our OpenVidu server
     private final String openViduSecret;
 
+    private final RoomRepository roomRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -34,25 +39,40 @@ public class SessionServiceImpl implements SessionService {
     private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
+        this.roomRepository = roomRepository;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
     }
 
 
     @Override
-    public void createSession(long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
         // 만약 세션이 없다면 세션을 만든다.
         if(searchSession(sessionIdx) == null) {
+            // DB에서 room 엔티티 가져온다.
+            Room room = roomRepository.findById(sessionIdx).orElseThrow(
+                    () -> new RoomNotFoundException("Room Not Found in Session Create")
+            );
+
+            // 글 작성자가 아닌 사람이 생성 시도했을 경우
+            if(userId.equals(room.getUser().getId())) {
+                throw new InvalidSessionCreate("Not Room's writer in Session Create Try");
+            }
+
             // 세션 만든다.
             Session session = this.openVidu.createSession();
 
             // Map에 세션 저장
             this.mapSessions.put(sessionIdx, session);
 
-            // 토큰 저장할 Map 생성
+            // 유저 토큰 저장할 Map 생성
             this.mapSessionNamesTokens.put(sessionIdx, new ConcurrentHashMap<>());
+
+            // 라이브 여부 반영
+            room.updateRoomState(true);
+//            room.
         }
     }
 
@@ -74,6 +94,9 @@ public class SessionServiceImpl implements SessionService {
 
             // 토큰 정보를 저장
             this.mapSessionNamesTokens.get(sessionIdx).put(token, role);
+            
+            // DB에도 반영
+            
             return token;
         } catch (OpenViduHttpException e) {
             // 404이면 OpenVidu 서버에서 세션이 없다는 뜻!

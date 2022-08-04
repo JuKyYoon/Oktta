@@ -12,8 +12,15 @@ export const joinSessionRequest = async (id) => {
 
 // 세션 생성
 export const createSessionRequest = async (id) => {
-  const res = await axiosAuth.post(`${SESSION_URL}/${id}`)
-  return res.data.result
+  try {
+    const res = await axiosAuth.post(`${SESSION_URL}/${id}`)
+    console.log(res)
+    return res.data.result
+  } catch (err) {
+    console.log(err.response)
+    return err.response.data;
+  } 
+
 }
 
 // 세션 종료

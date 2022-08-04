@@ -12,10 +12,18 @@ public class BoardDto {
     private String createDate;
     private String modifyDate;
     private int category;
-    private long hit;
+    private Long hit;
 
     public BoardDto(){
 
+    }
+
+    public BoardDto(String nickname, Long idx, String title, String createDate, Long hit){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.hit = hit;
     }
 
     public BoardDto(String nickname, Board board) {
@@ -77,7 +85,7 @@ public class BoardDto {
         this.category = category;
     }
 
-    public long getHit() {
+    public Long getHit() {
         return hit;
     }
 

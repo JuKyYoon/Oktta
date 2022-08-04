@@ -42,9 +42,8 @@ public class SecurityConfig {
             "/user/auth/*",
             "/user/id/*",
             "/user/name/*",
-            "/auth/refresh/**",
+            "/auth/refresh",
             "/v3/api-docs",
-            "/session/**",
             "/swagger*/**",
             "/user/password/**",
             "/user/reset-token/**"
@@ -53,7 +52,6 @@ public class SecurityConfig {
     private static final String[] POST_PUBLIC_URI = {
             "/user",
             "/auth",
-            "/session/**",
             "/v3/api-docs",
             "/swagger*/**",
             "/aws*/**"
