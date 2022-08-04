@@ -11,6 +11,7 @@ import com.ssafy.backend.service.BoardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
+
+    @Value("${pagingLimit}")
+    private int limit;
 
     @Value("${response.success}")
     private String successMsg;
@@ -56,12 +60,12 @@ public class BoardController {
      * POST로 들어오는 게시글 DB에 저장
      */
     @PostMapping("")
-    public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto board){
+    public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto boardDto){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        boardService.createBoard(user, board);
+        boardService.createBoard(user, boardDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -70,9 +74,40 @@ public class BoardController {
      * 한 페이지에 게시글 10개
      * List에 담아서 return
      */
-    @GetMapping("/{category}/{page}")
-    public ResponseEntity<? extends BaseResponseBody> listBoard(@PathVariable("category") int category, @PathVariable("page") int page){
-        List<BoardDto> list = boardService.getBoardList(category, (page - 1) * 10);
-        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list));
+    @GetMapping("")
+    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
+
+
+        List<BoardDto> list = boardService.getBoardList(category, page, limit);
+        int lasPage = boardService.getLastPage(category, limit);
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lasPage));
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    @DeleteMapping("/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> deleteBoard(@PathVariable("idx") Long idx) {
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean result = boardService.deleteBoard(principal.getUsername(), idx);
+        if(result){
+            return ResponseEntity.status(200).body(BoardResponse.of(200,successMsg));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
+        }
+    }
+
+    /**
+     * 게시글 수정
+     */
+    @PutMapping("/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> updateBoard(@PathVariable("idx") Long idx, @RequestBody BoardDto boardDto) {
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean result = boardService.updateBoard(principal.getUsername(), idx, boardDto);
+        if(result){
+            return ResponseEntity.status(200).body(BoardResponse.of(200,successMsg));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
+        }
     }
 }
