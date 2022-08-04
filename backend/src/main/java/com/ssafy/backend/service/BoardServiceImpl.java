@@ -50,15 +50,19 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardDto> getBoardList(int category, int startPoint) {
-        List<Board> boardList = boardRepository.findAllByCategory(category, startPoint);
+        List<Board> boardList = boardRepository.findBoardsByCategory(category, startPoint);
         List<BoardDto> list = new ArrayList<>();
 
         for(Board b : boardList) {
             String nickname = userRepository.findNicknameByIdx(b.getUser().getIdx());
-            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getContent(), b.getHit()));
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getCreateDate(), b.getHit()));
         }
-
         return list;
+    }
+
+    @Override
+    public int getLastPage(int category) {
+        return boardRepository.findLastPage(category) / 10 + 1;
     }
 
     @Override

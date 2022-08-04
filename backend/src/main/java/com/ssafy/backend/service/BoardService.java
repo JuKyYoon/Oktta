@@ -10,6 +10,7 @@ public interface BoardService {
     public void createBoard(User user, BoardDto boardDto);
     public int updateHit(Long idx);
     public List<BoardDto> getBoardList(int category, int startPoint);
+    public int getLastPage(int category);
     public boolean deleteBoard(String id, Long idx);
     public boolean updateBoard(String id, Long idx, BoardDto boardDto);
 }

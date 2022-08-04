@@ -19,7 +19,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     int updateHit(Long idx);
 
     @Query(nativeQuery = true, value = "SELECT * FROM board WHERE category = :category LIMIT 10 OFFSET :page")
-    List<Board> findAllByCategory(int category, int page);
+    List<Board> findBoardsByCategory(int category, int page);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM board WHERE category = :category")
+    int findLastPage(int category);
 
     @Transactional
     @Modifying
