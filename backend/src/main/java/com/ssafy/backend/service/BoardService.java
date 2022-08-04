@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface BoardService {
     public BoardDto detailBoard(Long idx);
-    public void createBoard(User user, BoardDto board);
+    public void createBoard(User user, BoardDto boardDto);
     public int updateHit(Long idx);
     public List<BoardDto> getBoardList(int category, int startPoint);
+    public boolean deleteBoard(String id, Long idx);
+    public boolean updateBoard(String id, Long idx, BoardDto boardDto);
 }
