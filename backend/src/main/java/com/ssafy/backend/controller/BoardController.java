@@ -24,6 +24,9 @@ import java.util.List;
 public class BoardController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
 
+    @Value("${pagingLimit}")
+    private int limit;
+
     @Value("${response.success}")
     private String successMsg;
 
@@ -73,8 +76,10 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
-        List<BoardDto> list = boardService.getBoardList(category, (page - 1) * 10);
-        int lasPage = boardService.getLastPage(category);
+
+
+        List<BoardDto> list = boardService.getBoardList(category, page, limit);
+        int lasPage = boardService.getLastPage(category, limit);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lasPage));
     }
 

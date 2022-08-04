@@ -8,6 +8,7 @@ import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -49,8 +50,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardDto> getBoardList(int category, int startPoint) {
-        List<Board> boardList = boardRepository.findBoardsByCategory(category, startPoint);
+    public List<BoardDto> getBoardList(int category, int page, int limit) {
+        List<Board> boardList = boardRepository.findBoardsByCategory(category, limit, (page-1) * limit);
         List<BoardDto> list = new ArrayList<>();
 
         for(Board b : boardList) {
@@ -61,8 +62,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public int getLastPage(int category) {
-        return boardRepository.findLastPage(category) / 10 + 1;
+    public int getLastPage(int category, int limit) {
+
+        return boardRepository.findLastPage(category) / limit + 1;
     }
 
     @Override
