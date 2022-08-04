@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import { OpenVidu } from 'openvidu-browser';
 import Button from '@mui/material/Button';
 import MessageItem from './MessageItem';
-import { deleteSessionRequest } from '../../services/sessionService';
+import { createSessionRequest, deleteSessionRequest } from '../../services/sessionService';
+
 
 const ScreenShare = () => {
   const params = useParams();
@@ -156,8 +157,9 @@ const ScreenShare = () => {
     setOV(null);
   };
 
-  useEffect(() => {
-    joinSession(role, ovToken);
+  useEffect(async () => {
+    const result = await createSessionRequest(params.id);
+    console.log(result);
   }, []);
 
   return (

@@ -41,6 +41,7 @@ axiosAuth.interceptors.response.use(
     else {
       // 추가 작업 필요
     }
+    console.log("qadfadfsdf")
     return Promise.reject(error);
   }
 );
