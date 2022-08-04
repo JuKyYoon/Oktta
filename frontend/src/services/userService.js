@@ -8,7 +8,10 @@ import {
   LOGOUT,
   EDIT_ACCOUNT,
   DELETE_ACCOUNT,
+  EMAIL_AUTH,
 } from "../modules/types.js";
+import React from "react";
+import NotFound from "../components/error/NotFound";
 
 /* 요청 URL*/
 const USER_URL = "/api/v1/user";
@@ -26,7 +29,13 @@ export const sendEmail = async () => {
 
 // 이메일 인증 성공/실패 여부
 export const emailAuth = async (dataToSubmit) => {
-  return await axiosAuth.get(`${USER_URL}/auth/${dataToSubmit}`);
+  const data = await axiosAuth.get(`${USER_URL}/auth/${dataToSubmit}`);
+  // if (data.statusCode === 200) {
+  return {
+    type: EMAIL_AUTH,
+    payload: data,
+  };
+  // }
 };
 
 // 닉네임 변경

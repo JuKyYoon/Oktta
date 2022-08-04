@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 import { emailAuth, logoutRequest } from "../../services/userService";
 
 const EmailAuth = () => {
+  const [msg, setMsg] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,20 +13,27 @@ const EmailAuth = () => {
 
   useEffect(() => {
     emailAuth(token)
-      .then((res) => console.log(res))
+      .then((res) => {
+        setMsg(res.payload.data.message);
+      })
       .catch((err) => console.log(err));
     dispatch(logoutRequest())
-      .then((res) => {})
-      .catch((err) => console.log(err));
-    navigate("/");
-  });
+      .catch((err) => { console.log(err) })
+    setTimeout(() => {
+      navigate("/");
+    }, 5000);
+  }, []);
 
   return (
     <>
-      <div>토큰이 만료되었습니다.</div>
-      <div>인증이 완료되었습니다.</div>
+      {!!msg ?
+        <>
+          {msg === "success" ? <h1>인증이 완료되었습니다.</h1> : <h1>토큰이 만료되었습니다.</h1>}
+        </> : <></>
+      }
     </>
   );
+
 };
 
 export default EmailAuth;

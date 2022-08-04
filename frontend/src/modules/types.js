@@ -1,3 +1,4 @@
+export const EMAIL_AUTH = "user/EMAIL_AUTH";
 export const GET_TOKEN = "user/GET_TOKEN";
 export const SIGNUP = "user/SIGNUP";
 export const LOGIN = "user/LOGIN";

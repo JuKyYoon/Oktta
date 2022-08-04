@@ -34,16 +34,23 @@ axiosAuth.interceptors.response.use(
     if (error.response.status === 401 && result.retry != true) {
       result.retry = true;
       const accessToken = await getToken()
-        .then((res) => {})
-        .catch((err) => console.log(err));
+        .then((res) => {
+          if (res.data.message === "success") {
+            return res.data.result.accessToken;
+          };
+        })
+        .catch((err) => { return ""; });
+      store.getState().user.accessToken = accessToken;
       result.headers.Authorization = `Bearer ${accessToken}`;
       // console.log(result)
       return await axiosAuth(result);
     } else {
       // 추가 작업 필요
       // 로컬 스토리지에서 로그인 데이터 삭제
-      console.log("deleted user data from local storage");
-      store.getState().user = initState;
+      if (store.getState().user.isLogin === true) {
+        console.log("deleted user data from local storage");
+        store.getState().user = initState;
+      };
     }
     return Promise.reject(error);
   }

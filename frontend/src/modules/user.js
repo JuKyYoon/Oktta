@@ -1,4 +1,5 @@
 import {
+  EMAIL_AUTH,
   GET_TOKEN,
   SIGNUP,
   LOGIN,
@@ -20,6 +21,14 @@ export const initState = {
 
 export default function (state = initState, action) {
   switch (action.type) {
+    case EMAIL_AUTH:
+      if (action.payload.data.message === "success") {
+        return {
+          ...state,
+          auth: "1"
+        }
+      }
+      return { ...state }
     case GET_TOKEN:
       return { ...state };
     case SIGNUP:
