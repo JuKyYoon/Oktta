@@ -1,38 +1,36 @@
-@import '../App.scss';
+@import './App.scss';
 
-/* ../pages/createArticle.js*/
-.create-article{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    margin-top: 5%;
-  }
-  
-  .hrLine{
-    width: 700px;
-  }
-  .create-article-label{
-    font-size: 20px;
-  }
-  
-  .create-article-input{
-    width: 400px;
-    border-color: $veripery;
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .create-article-textarea{
-    width: 400px;
-    height: 200px;
-    border-color: $veripery;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    resize: none;
-  }
-  
-  .myBtn{
-    font-size: 28px;
-  }
+.room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.hrLine {
+  width: 800px;
+}
+.create-room-label {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.create-room-input {
+  width: 400px;
+  border: none;
+  border-bottom: solid;
+  border-color: $veripery;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.myBtn {
+  font-size: 28px;
+}
+
+.ck-editor__editable {
+  min-height: 400px;
+  margin-bottom: 20px;
+}

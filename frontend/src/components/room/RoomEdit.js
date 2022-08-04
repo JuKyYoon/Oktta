@@ -3,19 +3,19 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
-import { updateArticle, getArticle } from '../../services/roomService';
+import { updateRoom, getRoom } from '../../services/roomService';
 
-const EditArticle = () => {
-  const { articleId } = useParams();
+const RoomEdit = () => {
+  const { roomId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  dispatch(getArticle());
-  const article = useSelector((state) =>
-    state.article.articles.find((article) => article.id === articleId)
+  dispatch(getRoom());
+  const room = useSelector((state) =>
+    state.room.rooms.find((room) => room.id === roomId)
   );
 
-  const [title, setTitle] = useState(article.title);
-  const [content, setContent] = useState(article.content);
+  const [title, setTitle] = useState(room.title);
+  const [content, setContent] = useState(room.content);
 
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
@@ -27,16 +27,16 @@ const EditArticle = () => {
   const onSubmitClicked = (e) => {
     e.preventDefault();
     const body = {
-      id: articleId,
+      id: roomId,
       title,
       content,
     };
 
     if (title && content) {
-      dispatch(updateArticle(body))
+      dispatch(updateRoom(body))
         .then((res) => {
           if (res.payload.data.message === 'success') {
-            navigate('/article/list');
+            navigate('/room/list');
           }
         })
         .catch((err) => console.log(err));
@@ -80,11 +80,12 @@ const EditArticle = () => {
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}>
+        disabled={!isValid}
+      >
         수정 완료
       </Button>
     </div>
   );
 };
 
-export default EditArticle;
+export default RoomEdit;
