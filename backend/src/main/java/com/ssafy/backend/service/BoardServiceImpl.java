@@ -54,8 +54,7 @@ public class BoardServiceImpl implements BoardService {
 
         for(Board b : boardList) {
             String nickname = userRepository.findNicknameByIdx(b.getUser().getIdx());
-            System.out.println(nickname);
-            list.add(new BoardDto(nickname, b));
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getContent(), b.getHit()));
         }
 
         return list;
