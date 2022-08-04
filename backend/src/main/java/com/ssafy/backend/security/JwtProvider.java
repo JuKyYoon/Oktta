@@ -130,7 +130,7 @@ public class JwtProvider {
         try {
             LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            if (redisService.getStringValue(token) != null) {
+            if ("logout".equals(redisService.getStringValue(token))){
                 throw new MalformedJwtException("BlackList");
             }
             return true;

@@ -72,7 +72,7 @@ public class SessionServiceImpl implements SessionService {
 
             // 라이브 여부 반영
             room.updateRoomState(true);
-            room.
+//            room.
         }
     }
 

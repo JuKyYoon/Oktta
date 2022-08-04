@@ -1,9 +1,6 @@
 package com.ssafy.backend.util;
 
-import com.ssafy.backend.model.exception.BoardNotFoundException;
-import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
-import com.ssafy.backend.model.exception.PasswordNotMatchException;
-import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import org.slf4j.Logger;
@@ -27,6 +24,31 @@ public class BaseControllerAdvice {
 
     @Value("${response.fail}")
     private String failMsg;
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<BaseResponseBody> numberFormatException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("String to Number Fail");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(MessageResponse.of(400, failMsg, "Not Number"));
+    }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> roomNotFoundExceptionion(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Room Not Found");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(MessageResponse.of(404, failMsg, "Room Not Found"));
+    }
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<BaseResponseBody> dataIntegrityViolationException(Exception e, HttpServletRequest req) {

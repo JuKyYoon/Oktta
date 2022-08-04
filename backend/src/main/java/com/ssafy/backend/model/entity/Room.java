@@ -103,9 +103,15 @@ public class Room {
     }
 
     public static class Builder {
+        private long idx;
         private User user;
         private String title;
         private String content;
+
+        public Room.Builder idx(long idx) {
+            this.idx = idx;
+            return this;
+        }
 
         public Builder() {}
 

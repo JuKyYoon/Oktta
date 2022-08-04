@@ -42,7 +42,7 @@ public class SecurityConfig {
             "/user/auth/*",
             "/user/id/*",
             "/user/name/*",
-            "/auth/refresh/**",
+            "/auth/refresh",
             "/v3/api-docs",
             "/swagger*/**",
             "/user/password/**",
