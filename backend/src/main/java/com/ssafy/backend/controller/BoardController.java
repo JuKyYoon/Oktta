@@ -72,7 +72,7 @@ public class BoardController {
      * List에 담아서 return
      */
     @GetMapping("")
-    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam int category, @RequestParam(defaultValue = "1") int page){
+    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
         List<BoardDto> list = boardService.getBoardList(category, (page - 1) * 10);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list));
     }
