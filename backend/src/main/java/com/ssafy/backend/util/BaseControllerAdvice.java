@@ -25,6 +25,30 @@ public class BaseControllerAdvice {
     @Value("${response.fail}")
     private String failMsg;
 
+    @ExceptionHandler(DuplicatedEnterSession.class)
+    public ResponseEntity<BaseResponseBody> duplicatedEnterSession(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Already in the session");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(MessageResponse.of(403, failMsg, "Already In Session"));
+    }
+
+    @ExceptionHandler(InvalidSessionCreate.class)
+    public ResponseEntity<BaseResponseBody> InvalidSessionCreateException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Room Create Fail Because it's not my room");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(MessageResponse.of(403, failMsg, "Not My Room"));
+    }
+
     @ExceptionHandler(NumberFormatException.class)
     public ResponseEntity<BaseResponseBody> numberFormatException(Exception e, HttpServletRequest req) {
         LOGGER.debug("String to Number Fail");

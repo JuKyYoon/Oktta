@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable */
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import { OpenVidu } from 'openvidu-browser';
@@ -9,18 +10,21 @@ import { createSessionRequest, deleteSessionRequest } from '../../services/sessi
 
 const ScreenShare = () => {
   const params = useParams();
-  const navigate = useNavigate();
-  const { role, ovToken } = useSelector((state) => state.article);
   const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState([
     { from: 'system', data: '환영합니다!' },
   ]);
-  const [session, setSession] = useState('');
+  const [session, setSession] = useState(null);
+  const sessionRef = useRef();
+
+  const [role, setRole] = useState('publisher');
   const [publisher, setPublisher] = useState('');
   const [subscribers, setSubscribers] = useState([]);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(false);
-  const [OV, setOV] = useState();
+  const [openVidu, setOpenVidu] = useState();
+
+  let token = "";
 
   const changeMessage = (event) => {
     setInputMessage(event.target.value);
@@ -50,19 +54,25 @@ const ScreenShare = () => {
     }
   };
 
-  const joinSession = (role, token) => {
-    const OV = new OpenVidu();
-    setOV(OV);
+  const joinSession = (role) => {
+    console.log(token)
+    // OpenVidu 객체 생성.
+    const openVidu = new OpenVidu();
+    setOpenVidu(openVidu);
 
-    const mySession = OV.initSession();
+    // 세션 초기화
+    const mySession = openVidu.initSession();
     setSession(mySession);
-
+    // 이벤트 설정
     mySession.on('streamCreated', (event) => {
+      console.log(event)
       const subscriber = mySession.subscribe(event.stream, 'video-container');
       setSubscribers([...subscribers, subscriber]);
     });
 
+    // 누군가 나감
     mySession.on('streamDestroyed', (event) => {
+      console.log(event)
       deleteSubscriber(event.stream.streamManager);
     });
 
@@ -83,7 +93,7 @@ const ScreenShare = () => {
       .then(() => {
         // --- 5) Get your own camera stream ---
         if (role === 'publisher') {
-          const newPublisher = OV.initPublisher(undefined, {
+          const newPublisher = openVidu.initPublisher(undefined, {
             audioSource: undefined, // The source of audio. If undefined default microphone
             videoSource: undefined, // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
             publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
@@ -114,7 +124,7 @@ const ScreenShare = () => {
     const newVideoEnabled = !videoEnabled;
     let newPublisher;
     if (newVideoEnabled) {
-      newPublisher = OV.initPublisher('video-container', {
+      newPublisher = openVidu.initPublisher('video-container', {
         audioSource: undefined, // The source of audio. If undefined default microphone
         videoSource: 'screen', // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
         publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
@@ -142,26 +152,64 @@ const ScreenShare = () => {
     setVideoEnabled(newVideoEnabled);
   };
 
-  const leaveSession = () => {
-    if (session) {
-      session.disconnect();
-      if (role === 'publisher') {
-        deleteSessionRequest(params.id).then((data) => console.log(data));
-      }
+  const leaveSession = async () => {
+    console.log("leave session")
+    console.log(sessionRef.current)
+    if (sessionRef.current) {
+      sessionRef.current.disconnect();
+      const result = await deleteSessionRequest(params.id, token);
+      console.log("위에 안보내져")
+      console.log(result);
     }
-
-    navigate(`/article/${params.id}/`);
-    setSession(undefined);
-    setSubscribers([]);
-    setPublisher(undefined);
-    setOV(null);
+    console.log("Asdfadf")
+    // navigate(`/article/${params.id}/`);
   };
 
-  useEffect(async () => {
-    const result = await createSessionRequest(params.id);
-    console.log(result);
-  }, []);
+  const creaetSession = async () => {
+    const result= await createSessionRequest(params.id);
+    if (result?.message == "success") {
+      // 세션에 접속한다.
+      token = result.result;
+      joinSession('publisher') 
+    } else {
+      alert("Err");
+    }
+  }
 
+  const printSession = () => {
+    console.log(session);
+  }
+
+  const closeWindow = (e) => {
+    // e.preventDefault();
+    e.returnValue = '';
+    deleteSessionRequest(params.id, token);
+  };
+
+
+  // 세션 상태 업데이트
+  useEffect(() => {
+    return () => {
+      sessionRef.current = session;
+    }
+  }, [session])
+ 
+
+  useEffect(() => {
+    console.log("이게 업데이트야???????????")
+    window.addEventListener("beforeunload", closeWindow);  
+    
+    // 만약, 세션이 없다면, 서버에서 세션을 만들고.
+    if(!session) {
+      creaetSession();
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", closeWindow);
+      leaveSession();
+    };
+  }, []);
+  console.log("렌더")
   return (
     <div id='session'>
       <div id='session-header'>
@@ -169,6 +217,9 @@ const ScreenShare = () => {
       </div>
       <Button variant='contained' onClick={leaveSession}>
         LeaveSession
+      </Button>
+      <Button onClick={printSession}>
+        세션 출력
       </Button>
       {role === 'publisher' ? (
         <div>

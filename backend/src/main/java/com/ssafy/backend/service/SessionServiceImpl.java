@@ -2,11 +2,9 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.exception.InvalidSessionCreate;
-import com.ssafy.backend.model.exception.RoomNotFoundException;
-import com.ssafy.backend.model.exception.SessionNotFoundException;
-import com.ssafy.backend.model.exception.SessionTokenNotValid;
+import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.repository.RoomRepository;
+import com.ssafy.backend.util.RedisService;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,6 +26,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final RoomRepository roomRepository;
 
+    private final RedisService redisService;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -35,31 +35,30 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<Long, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
-
-    private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
-
-
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
+        this.redisService = redisService;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
     }
 
 
     @Override
     public void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+        // 검증 과정을 먼저 해줘야, 강제로 세션을 만들고, 입장하려는 시도를 막을 수 있다.
+        // DB에서 room 엔티티 가져온다.
+        Room room = roomRepository.findById(sessionIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found in Session Create")
+        );
+
+        // 글 작성자가 아닌 사람이 생성 시도했을 경우
+        if(!userId.equals(room.getUser().getId())) {
+            throw new InvalidSessionCreate("Not Room's writer in Session Create Try");
+        }
+
         // 만약 세션이 없다면 세션을 만든다.
         if(searchSession(sessionIdx) == null) {
-            // DB에서 room 엔티티 가져온다.
-            Room room = roomRepository.findById(sessionIdx).orElseThrow(
-                    () -> new RoomNotFoundException("Room Not Found in Session Create")
-            );
-
-            // 글 작성자가 아닌 사람이 생성 시도했을 경우
-            if(userId.equals(room.getUser().getId())) {
-                throw new InvalidSessionCreate("Not Room's writer in Session Create Try");
-            }
 
             // 세션 만든다.
             Session session = this.openVidu.createSession();
@@ -72,7 +71,8 @@ public class SessionServiceImpl implements SessionService {
 
             // 라이브 여부 반영
             room.updateRoomState(true);
-//            room.
+        } else {
+            // 이미 존재하는 세션일 때 어떤 행동 해줘야 할까
         }
     }
 
@@ -89,20 +89,33 @@ public class SessionServiceImpl implements SessionService {
             if(session == null) {
                 throw new SessionNotFoundException("Session Not Found");
             }
+
+            // 세션에 이미 들어가 있는지 검사한다.
+            Object sessionUser = redisService.getHashValue(session.getSessionId(), user.getNickname());
+            if(sessionUser != null) {
+                throw new DuplicatedEnterSession("You are already in the Session");
+            }
+
             // 세션에 접속해서 토큰정보를 받아온다,
             String token = session.createConnection(connectionProperties).getToken();
 
             // 토큰 정보를 저장
             this.mapSessionNamesTokens.get(sessionIdx).put(token, role);
             
-            // DB에도 반영
-            
+            // 레디스에 입장 유저 반영
+            redisService.setValue(session.getSessionId(), user.getNickname(), token);
+
             return token;
         } catch (OpenViduHttpException e) {
             // 404이면 OpenVidu 서버에서 세션이 없다는 뜻!
             if ( 404 == e.getStatus() ) {
+                String sessionId = this.mapSessions.get(sessionIdx).getSessionId();
+                // 메모리 초기화
                 this.mapSessions.remove(sessionIdx);
                 this.mapSessionNamesTokens.remove(sessionIdx);
+
+                //Redis 도 초기화시켜준다.
+                redisService.deleteKey(sessionId);
             }
             throw new SessionNotFoundException("enter session error");
         }
@@ -110,21 +123,20 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void leaveSession(long sessionIdx, String token) {
+        // 나갈 세션을 찾는다.
         Session session = searchSession(sessionIdx);
         if(session == null || this.mapSessionNamesTokens.get(sessionIdx) == null) {
             throw new SessionNotFoundException("Session Not Found");
         }
-        System.out.println(this.mapSessionNamesTokens.get(sessionIdx));
-        System.out.println(this.mapSessionNamesTokens.get(sessionIdx) == null);
-        System.out.println(this.mapSessionNamesTokens.get(sessionIdx).getClass().getName());
 
         // 토큰을 제거한다.
         if (this.mapSessionNamesTokens.get(sessionIdx).remove(token) != null) {
             // 만약 토큰이 있었다면 ( 제거에 성공 ) 세션에 남은 사람들 체크
             if (this.mapSessionNamesTokens.get(sessionIdx).isEmpty()) {
-                // Last user left: session must be removed
+                // 만약 다 나갔으면 세션도 제거해준다.
                 this.mapSessions.remove(sessionIdx);
                 this.mapSessionNamesTokens.remove(sessionIdx);
+                redisService.deleteKey(session.getSessionId());
             }
         } else {
             // 토큰이 유효하지 않음.
@@ -137,7 +149,6 @@ public class SessionServiceImpl implements SessionService {
     public Session searchSession(long sessionIdx) {
         return this.mapSessions.get(sessionIdx);
     }
-
 
     public JSONObject connectionPrint() throws OpenViduJavaClientException, OpenViduHttpException {
         Iterator<Long> keys = this.mapSessionNamesTokens.keySet().iterator();
@@ -152,7 +163,20 @@ public class SessionServiceImpl implements SessionService {
         return ret;
     }
 
-    public JSONObject testas() throws OpenViduJavaClientException, OpenViduHttpException {
+    @Override
+    public void clearSession() {
+        this.mapSessions.clear();
+        this.mapSessionNamesTokens.clear();
+    }
+
+    /**
+     * Openvidu의 세션 리스트 불러오기
+     * @return
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
+    @Override
+    public JSONObject getSessionsFromOpenVidu() throws OpenViduJavaClientException, OpenViduHttpException {
         this.openVidu.fetch();
         List<Session> activeSessions = this.openVidu.getActiveSessions();
         JSONArray b = new JSONArray();
@@ -165,8 +189,14 @@ public class SessionServiceImpl implements SessionService {
         return ret;
     }
 
+    /**
+     * 자바 메모리에 저장된 session 리스트 불러오기
+     * @return
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @Override
-    public JSONObject twotwotwo() throws OpenViduJavaClientException, OpenViduHttpException {
+    public JSONObject getSessionsFromJava() throws OpenViduJavaClientException, OpenViduHttpException {
         Iterator<Long> keys = this.mapSessions.keySet().iterator();
         JSONArray b = new JSONArray();
         while(keys.hasNext()) {
@@ -178,4 +208,6 @@ public class SessionServiceImpl implements SessionService {
         ret.put("sessions", b);
         return ret;
     }
+
+
 }

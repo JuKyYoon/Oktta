@@ -103,17 +103,26 @@ public class SessionController {
         return new ResponseEntity<>(sessionService.connectionPrint(), HttpStatus.OK);
     }
 
-    @GetMapping("/test2")
-    public ResponseEntity<JSONObject> testaasdf() throws OpenViduJavaClientException, OpenViduHttpException {
-        return new ResponseEntity<>(sessionService.twotwotwo(), HttpStatus.OK);
-    }
+
 
     /**
      * 현재 모든 Session에 대한 정보 최신으로 가져옴
      */
-    @GetMapping("/test3")
-    public ResponseEntity<JSONObject> testas() throws OpenViduJavaClientException, OpenViduHttpException {
+    @GetMapping("")
+    public ResponseEntity<JSONObject> getSessions(@RequestParam(name="type") String type) throws OpenViduJavaClientException, OpenViduHttpException {
+        if("openvidu".equals(type)) {
+            return new ResponseEntity<>(sessionService.getSessionsFromOpenVidu(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(sessionService.getSessionsFromJava(), HttpStatus.OK);
+        }
+    }
 
-        return new ResponseEntity<>(sessionService.testas(), HttpStatus.OK);
+    /**
+     * 초기화
+     */
+    @GetMapping("/clear")
+    public ResponseEntity<String> clearSession() throws OpenViduJavaClientException, OpenViduHttpException {
+        sessionService.clearSession();
+        return new ResponseEntity<>("200", HttpStatus.OK);
     }
 }
