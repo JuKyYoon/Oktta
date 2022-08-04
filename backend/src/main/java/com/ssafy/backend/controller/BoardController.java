@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
@@ -39,6 +41,9 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+    /**
+     * 게시글 상세 정보
+     */
     @GetMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") String boardIdx){
         BoardDto board = boardService.detailBoard(Long.parseLong(boardIdx));
@@ -47,6 +52,9 @@ public class BoardController {
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board));
     }
 
+    /**
+     * POST로 들어오는 게시글 DB에 저장
+     */
     @PostMapping("")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto board){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -55,5 +63,16 @@ public class BoardController {
         );
         boardService.createBoard(user, board);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * @param category 0:자유게시판 1:공지사항
+     * 한 페이지에 게시글 10개
+     * List에 담아서 return
+     */
+    @GetMapping("/{category}/{page}")
+    public ResponseEntity<? extends BaseResponseBody> listBoard(@PathVariable("category") int category, @PathVariable("page") int page){
+        List<BoardDto> list = boardService.getBoardList(category, (page - 1) * 10);
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list));
     }
 }
