@@ -6,8 +6,6 @@ import Signup from "../components/user/Signup";
 import MyPage from "../components/user/MyPage";
 import UpdateProfile from "../components/user/ProfileUpdate";
 import { useSelector } from "react-redux";
-import EmailAuth from "../components/user/EmailAuth";
-import NotFound from "../components/error/NotFound";
 
 const User = () => {
   const isLogin = useSelector((state) => state.user.isLogin);

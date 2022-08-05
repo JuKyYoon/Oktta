@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutRequest } from "../../services/userService";
 import BeforeEmailAuth from "../user/BeforeEmailAuth";
+import { initState } from "../../modules/user";
 
 // 나중에 바꾸기
 const pages = [
@@ -20,11 +21,17 @@ const pages = [
 const Header = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onLogoutHandler = () => {
     dispatch(logoutRequest())
-      .then((res) => {})
-      .catch((err) => console.log(err));
+      .then((res) => { })
+      .catch((err) => {
+        state.user = initState;
+        localStorage.removeItem('persist:root');
+        navigate('/');
+        // console.log(err);
+      });
   };
 
   return (

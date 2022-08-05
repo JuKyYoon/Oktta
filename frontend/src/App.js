@@ -7,6 +7,7 @@ import User from "./routes/User";
 import Article from "./routes/Article";
 import Room from "./routes/Room";
 import EmailAuth from "./components/user/EmailAuth";
+import SocialAuth from "./components/user/SocialAuth";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route path="/user/auth/:token" element={<EmailAuth />} />
+      <Route path="/oauth/*" element={<SocialAuth />} />
+      {/* <Route path="/oauth/redirect?token=:token&nickName=:nickname" element={<EmailAuth />} /> */}
     </Routes>
   );
 }
