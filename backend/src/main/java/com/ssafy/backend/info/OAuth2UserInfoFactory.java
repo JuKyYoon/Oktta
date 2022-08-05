@@ -1,6 +1,5 @@
 package com.ssafy.backend.info;
 
-import com.ssafy.backend.info.impl.FacebookOAuth2UserInfo;
 import com.ssafy.backend.info.impl.GoogleOAuth2UserInfo;
 import com.ssafy.backend.info.impl.KakaoOAuth2UserInfo;
 import com.ssafy.backend.info.impl.NaverOAuth2UserInfo;

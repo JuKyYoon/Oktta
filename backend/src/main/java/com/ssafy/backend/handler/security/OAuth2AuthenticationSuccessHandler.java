@@ -5,19 +5,15 @@ import com.ssafy.backend.info.OAuth2UserInfo;
 import com.ssafy.backend.info.OAuth2UserInfoFactory;
 import com.ssafy.backend.model.entity.ProviderType;
 import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
-import com.ssafy.backend.security.AuthToken;
 import com.ssafy.backend.util.CookieUtil;
 import com.ssafy.backend.util.SetCookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -31,11 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 
 import static com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
 
 
 @Component
