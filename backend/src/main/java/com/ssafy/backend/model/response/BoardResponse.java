@@ -1,14 +1,14 @@
 package com.ssafy.backend.model.response;
 
 import com.ssafy.backend.model.dto.BoardDto;
-import com.ssafy.backend.model.dto.CommentDto;
+import com.ssafy.backend.model.dto.BoardCommentDto;
 
 import java.util.List;
 
 public class BoardResponse extends BaseResponseBody {
     BoardDto boardDto;
     List<BoardDto> boardList;
-    List<CommentDto> commentList;
+    List<BoardCommentDto> commentList;
     int lastPage;
 
     public BoardDto getBoardDto() {
@@ -27,11 +27,11 @@ public class BoardResponse extends BaseResponseBody {
         this.boardList = boardList;
     }
 
-    public List<CommentDto> getCommentList() {
+    public List<BoardCommentDto> getCommentList() {
         return commentList;
     }
 
-    public void setCommentList(List<CommentDto> commentList) {
+    public void setCommentList(List<BoardCommentDto> commentList) {
         this.commentList = commentList;
     }
 
@@ -43,7 +43,7 @@ public class BoardResponse extends BaseResponseBody {
         this.lastPage = lastPage;
     }
 
-    public static BoardResponse of(Integer statusCode, String message, BoardDto boardDto, List<CommentDto> list, int lastPage){
+    public static BoardResponse of(Integer statusCode, String message, BoardDto boardDto, List<BoardCommentDto> list, int lastPage){
         BoardResponse res = new BoardResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);

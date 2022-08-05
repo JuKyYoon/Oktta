@@ -1,13 +1,18 @@
 package com.ssafy.backend.model.entity;
 
 
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Comment {
+@Table
+@DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
+public class BoardComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +34,6 @@ public class Comment {
     @CreatedDate
     private LocalDateTime createTime;
 
-    @JoinColumn(name = "category", nullable = false)
-    private int category;
-
     public Long getIdx() {
         return idx;
     }
@@ -52,35 +54,28 @@ public class Comment {
         return createTime;
     }
 
-    public int getCategory() {
-        return category;
+    public BoardComment(){
     }
 
-    public Comment(){
-    }
-
-    public Comment(Builder builder){
+    public BoardComment(Builder builder){
         this.board = builder.board;
         this.user = builder.user;
         this.content = builder.content;
-        this.category = builder.category;
     }
 
-    public class Builder {
+    public static class Builder {
         private final Board board;
         private final User user;
         private final String content;
-        private final int category;
 
-        public Builder(Board board, User user, String content, int category){
+        public Builder(Board board, User user, String content){
             this.board = board;
             this.user = user;
             this.content = content;
-            this.category = category;
         }
 
-        public Comment build() {
-            return new Comment(this);
+        public BoardComment build() {
+            return new BoardComment(this);
         }
     }
 }

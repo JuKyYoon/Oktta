@@ -68,7 +68,7 @@ public class RoomServiceImpl implements RoomService {
                 () -> new RoomNotFoundException("Room Not Found in DeleteRoom")
         );
 
-        if(room.getUser().getId().equals(userId)) {
+        if(!room.getUser().getId().equals(userId)) {
             return false;
         } else {
             roomRepository.delete(room);

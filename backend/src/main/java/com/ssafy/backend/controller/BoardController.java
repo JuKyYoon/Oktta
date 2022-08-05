@@ -1,15 +1,14 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.BoardDto;
-import com.ssafy.backend.model.dto.CommentDto;
+import com.ssafy.backend.model.dto.BoardCommentDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
-import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.BoardResponse;
 import com.ssafy.backend.service.BoardService;
-import com.ssafy.backend.service.CommentService;
+import com.ssafy.backend.service.BoardCommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,12 +38,12 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    private final CommentService commentService;
+    private final BoardCommentService boardCommentService;
 
-    public BoardController(UserRepository userRepository, BoardService boardService, CommentService commentService) {
+    public BoardController(UserRepository userRepository, BoardService boardService, BoardCommentService boardCommentService) {
         this.userRepository = userRepository;
         this.boardService = boardService;
-        this.commentService = commentService;
+        this.boardCommentService = boardCommentService;
     }
 
     /**
@@ -55,7 +54,7 @@ public class BoardController {
         BoardDto board = boardService.detailBoard(boardIdx);
         boardService.updateHit(board.getIdx());
 
-        List<CommentDto> list = commentService.getCommentList(boardIdx, 0);
+        List<BoardCommentDto> list = boardCommentService.getCommentList(boardIdx);
         int lastPage = list.size() / limit + 1;
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
     }

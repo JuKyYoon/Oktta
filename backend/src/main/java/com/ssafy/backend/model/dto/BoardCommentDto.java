@@ -5,18 +5,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 @Schema
-public class CommentDto {
+public class BoardCommentDto {
+    private Long idx;
     private String nickname;
     private String content;
     private LocalDateTime createTime;
 
-    public CommentDto(){
+    public BoardCommentDto(){
     }
 
-    public CommentDto(String nickname, String content, LocalDateTime createTime){
+    public BoardCommentDto(Long idx, String nickname, String content, LocalDateTime createTime){
+        this.idx = idx;
         this.nickname = nickname;
         this.content = content;
         this.createTime = createTime;
+    }
+
+    public Long getIdx() {
+        return idx;
+    }
+
+    public void setIdx(Long idx) {
+        this.idx = idx;
     }
 
     public String getNickname() {
