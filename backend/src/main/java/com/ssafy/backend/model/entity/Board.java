@@ -1,5 +1,6 @@
 package com.ssafy.backend.model.entity;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -38,8 +39,11 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifyDate;
 
+    @Column(name = "category")
     private int category;
 
+    @Column(name = "hit")
+    @ColumnDefault("0")
     private Long hit;
 
     public Long getIdx() {
