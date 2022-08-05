@@ -113,7 +113,13 @@
 }
 
 .social_login {
-  margin: 4px;
+  width: 200px;
+  height: 45px;
+}
+
+#googleIdLogin {
+  width: 205px;
+  height: 50px;
 }
 
 .login_or {
@@ -130,4 +136,6 @@
   position: relative;
   bottom: 10px;
   color: $veripery;
+  background-color: white;
+  padding: 10px;
 }
