@@ -3,7 +3,7 @@ import RoomInfo from './RoomInfo';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, List, ListItem, Button, Stack, Pagination } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { getRoom } from '../../services/roomService';
+import { getRoomList } from '../../services/roomService';
 import '../../styles/room.scss';
 
 const RoomList = () => {
@@ -11,19 +11,23 @@ const RoomList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
   const [rooms, setRooms] = useState([]);
-
+  useEffect(() => {
+    dispatch(getRoomList(currentPage))
+      .then((res) => {
+        setRooms(res.payload.data.list);
+        setLastPage(res.payload.data.lastPage);
+      })
+      .catch((err) => console.log(err));
+  }, []);
   const onChangeHandler = (e, page) => {
     setCurrentPage(page);
-    dispatch(getRoom(page))
+
+    dispatch(getRoomList(page))
       .then((res) => {
-        if ((res.payload.data.message = 'success')) {
-          setRooms(res.payload.data.room);
-          setLastPage(res.payload.data.lastPage);
-        }
+        setRooms(res.payload.data.list);
       })
       .catch((err) => console.log(err));
   };
-
   return (
     <div className='room'>
       <h1>현재 방 목록</h1>
@@ -42,14 +46,14 @@ const RoomList = () => {
               return (
                 <ListItem
                   disablePadding
-                  key={room.id}
+                  key={room.idx}
                   sx={{ mt: 3 }}
-                  divider={true}
-                >
+                  divider={true}>
                   <RoomInfo
                     title={room.title}
-                    publisher={room.title}
-                    id={room.id}
+                    content={room.content}
+                    publisher={room.nickname}
+                    idx={room.idx}
                   />
                 </ListItem>
               );

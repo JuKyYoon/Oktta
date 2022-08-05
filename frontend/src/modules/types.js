@@ -12,6 +12,7 @@ export const EDIT_ACCOUNT = 'user/EDIT_ACCOUNT';
 export const DELETE_ACCOUNT = 'user/DELETE_ACCOUNT';
 export const UPDATE_PROFILE = 'user/UPDATE_PROFILE';
 // 게시글 관련
+export const GET_ROOM_LIST = 'room/GET_ROOM_LIST';
 export const GET_ROOM = 'room/GET_ROOM';
 export const CREATE_ROOM = 'room/CREATE_ROOM';
 export const UPDATE_ROOM = 'room/UPDATE_ROOM';

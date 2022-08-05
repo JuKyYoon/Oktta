@@ -14,7 +14,7 @@ const Room = () => {
       <Route path='create' element={<RoomCreate />} />
       <Route path='edit/:roomId' element={<RoomEdit />} />
       <Route path='popular' element={<Home />} />
-      <Route path=':roomId' element={<RoomDetail />} />
+      <Route path='/detail/:roomId' element={<RoomDetail />} />
       <Route path=':id/share' element={<ScreenShare />} />
     </Routes>
   );

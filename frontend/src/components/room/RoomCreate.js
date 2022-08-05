@@ -69,7 +69,6 @@ const RoomCreate = () => {
           }}
           onChange={(event, editor) => {
             setContent(editor.getData());
-            console.log(content);
           }}
         />
       </div>
@@ -78,8 +77,7 @@ const RoomCreate = () => {
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}
-      >
+        disabled={!isValid}>
         등록하기
       </Button>
     </div>
