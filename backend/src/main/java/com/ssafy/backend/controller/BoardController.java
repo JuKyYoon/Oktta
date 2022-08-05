@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.BoardDto;
+import com.ssafy.backend.model.dto.CommentDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
@@ -8,6 +9,7 @@ import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.BoardResponse;
 import com.ssafy.backend.service.BoardService;
+import com.ssafy.backend.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,20 +39,25 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    public BoardController(UserRepository userRepository, BoardService boardService) {
+    private final CommentService commentService;
+
+    public BoardController(UserRepository userRepository, BoardService boardService, CommentService commentService) {
         this.userRepository = userRepository;
         this.boardService = boardService;
+        this.commentService = commentService;
     }
 
     /**
      * 게시글 상세 정보
      */
     @GetMapping("/{idx}")
-    public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") String boardIdx){
-        BoardDto board = boardService.detailBoard(Long.parseLong(boardIdx));
+    public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") Long boardIdx){
+        BoardDto board = boardService.detailBoard(boardIdx);
         boardService.updateHit(board.getIdx());
 
-        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board));
+        List<CommentDto> list = commentService.getCommentList(boardIdx, 0);
+        int lastPage = list.size() / limit + 1;
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
     }
 
     /**

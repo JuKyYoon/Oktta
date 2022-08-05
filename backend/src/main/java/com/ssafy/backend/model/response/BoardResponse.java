@@ -1,31 +1,55 @@
 package com.ssafy.backend.model.response;
 
 import com.ssafy.backend.model.dto.BoardDto;
+import com.ssafy.backend.model.dto.CommentDto;
 
 import java.util.List;
 
 public class BoardResponse extends BaseResponseBody {
     BoardDto boardDto;
-    List<BoardDto> list;
+    List<BoardDto> boardList;
+    List<CommentDto> commentList;
     int lastPage;
 
-    public BoardDto getBoard() { return boardDto; }
-    public List<BoardDto> getList() { return list; }
-    public int getLastPage() { return lastPage; }
-    public void setBoard(BoardDto boardDto) {
+    public BoardDto getBoardDto() {
+        return boardDto;
+    }
+
+    public void setBoardDto(BoardDto boardDto) {
         this.boardDto = boardDto;
     }
 
-    public void setList(List<BoardDto> list){
-        this.list = list;
+    public List<BoardDto> getBoardList() {
+        return boardList;
     }
 
-    public void setLastPage(int lastPage) { this.lastPage = lastPage; }
-    public static BoardResponse of(Integer statusCode, String message, BoardDto boardDto){
+    public void setBoardList(List<BoardDto> boardList) {
+        this.boardList = boardList;
+    }
+
+    public List<CommentDto> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<CommentDto> commentList) {
+        this.commentList = commentList;
+    }
+
+    public int getLastPage() {
+        return lastPage;
+    }
+
+    public void setLastPage(int lastPage) {
+        this.lastPage = lastPage;
+    }
+
+    public static BoardResponse of(Integer statusCode, String message, BoardDto boardDto, List<CommentDto> list, int lastPage){
         BoardResponse res = new BoardResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);
-        res.setBoard(boardDto);
+        res.setBoardDto(boardDto);
+        res.setCommentList(list);
+        res.setLastPage(lastPage);
         return res;
     }
 
@@ -33,7 +57,7 @@ public class BoardResponse extends BaseResponseBody {
         BoardResponse res = new BoardResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);
-        res.setList(list);
+        res.setBoardList(list);
         res.setLastPage(lastPage);
         return res;
     }
