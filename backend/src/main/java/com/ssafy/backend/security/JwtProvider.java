@@ -2,6 +2,7 @@ package com.ssafy.backend.security;
 
 import com.ssafy.backend.util.RedisService;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
@@ -30,6 +32,8 @@ public class JwtProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private final Key key;
+
     @Value("${jwt.access-token-expire-time}")
     private long accessTokenExpireTime;
 
@@ -39,8 +43,9 @@ public class JwtProvider {
     @Autowired
     private MyUserDetailService myUserDetailService;
 
-    public JwtProvider(RedisService redisService) {
+    public JwtProvider(RedisService redisService, @Value("${jwt.secret-key}") String secretKey) {
         this.redisService = redisService;
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     /**
@@ -63,7 +68,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expireTime)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -81,7 +86,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expireTime)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         redisService.setStringValueAndExpire(refreshToken, id, refreshTokenExpireTime);
         return refreshToken;
@@ -129,7 +134,7 @@ public class JwtProvider {
         String attrName = "exception";
         try {
             LOGGER.debug("[JwtProvider.validateToken(token)]");
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             if (redisService.getStringValue(token) != null) {
                 throw new MalformedJwtException("BlackList");
             }
@@ -163,5 +168,12 @@ public class JwtProvider {
 
     public long getAccessTokenExpireTime() {
         return accessTokenExpireTime;
+    }
+
+    public AuthToken createAuthToken(String id, Date expiry) {
+        return new AuthToken(id, expiry, key);
+    }
+    public AuthToken createAuthToken(String id, String role, Date expiry){
+        return new AuthToken(id, role, expiry, key);
     }
 }

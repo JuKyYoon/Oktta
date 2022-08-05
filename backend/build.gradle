@@ -17,15 +17,25 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+//    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+// jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.7.1'
+
+
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testImplementation 'org.springframework.security:spring-security-test'
 //    testImplementation("junit:junit:4.13.2")
 //    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 
@@ -54,6 +64,15 @@ dependencies {
 // aws s3 설정
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 
+// google api 설정
+    implementation group: 'com.google.api-client', name: 'google-api-client', version: '2.0.0'
+
+// OAuth2 설정
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.6.2'
+
+// lombok
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 
