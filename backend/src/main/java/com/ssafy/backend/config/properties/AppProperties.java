@@ -1,29 +1,62 @@
 package com.ssafy.backend.config.properties;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
 
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
+
+    public Auth getAuth() {
+        return auth;
+    }
+
+    public OAuth2 getOauth2() {
+        return oauth2;
+    }
+
     public static class Auth {
         private String tokenSecret;
         private long tokenExpiry;
         private long refreshTokenExpiry;
+
+        public Auth() {
+        }
+
+        public Auth(String tokenSecret, long tokenExpiry, long refreshTokenExpiry) {
+            this.tokenSecret = tokenSecret;
+            this.tokenExpiry = tokenExpiry;
+            this.refreshTokenExpiry = refreshTokenExpiry;
+        }
+
+        public String getTokenSecret() {
+            return tokenSecret;
+        }
+
+        public void setTokenSecret(String tokenSecret) {
+            this.tokenSecret = tokenSecret;
+        }
+
+        public long getTokenExpiry() {
+            return tokenExpiry;
+        }
+
+        public void setTokenExpiry(long tokenExpiry) {
+            this.tokenExpiry = tokenExpiry;
+        }
+
+        public long getRefreshTokenExpiry() {
+            return refreshTokenExpiry;
+        }
+
+        public void setRefreshTokenExpiry(long refreshTokenExpiry) {
+            this.refreshTokenExpiry = refreshTokenExpiry;
+        }
     }
 
     public static final class OAuth2 {

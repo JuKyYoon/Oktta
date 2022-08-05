@@ -11,7 +11,6 @@ import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
 import com.ssafy.backend.util.CookieUtil;
 import com.ssafy.backend.util.SetCookie;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -33,13 +32,19 @@ import static com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBased
 
 
 @Component
-@RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
     private final AppProperties appProperties;
     private final UserRepository userRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+
+    public OAuth2AuthenticationSuccessHandler(JwtProvider jwtProvider, AppProperties appProperties, UserRepository userRepository, OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository) {
+        this.jwtProvider = jwtProvider;
+        this.appProperties = appProperties;
+        this.userRepository = userRepository;
+        this.authorizationRequestRepository = authorizationRequestRepository;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

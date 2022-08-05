@@ -1,10 +1,6 @@
 package com.ssafy.backend.model.entity;
 
 import com.ssafy.backend.util.SnsType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
     private final String userId;
     private final String password;
@@ -28,6 +20,36 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
     private final UserRole role;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
+
+    public UserPrincipal(String userId, String password, ProviderType providerType, UserRole role, Collection<GrantedAuthority> authorities) {
+        this.userId = userId;
+        this.password = password;
+        this.providerType = providerType;
+        this.role = role;
+        this.authorities = authorities;
+        this.attributes = attributes;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public ProviderType getProviderType() {
+        return providerType;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {

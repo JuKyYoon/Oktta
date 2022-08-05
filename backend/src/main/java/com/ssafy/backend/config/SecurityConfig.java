@@ -7,7 +7,6 @@ import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCooki
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
 import com.ssafy.backend.service.CustomOAuth2UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
 
@@ -75,6 +73,15 @@ public class SecurityConfig {
     private static final String[] DELETE_PUBLIC_URI = {
             "/user/reset-token/**"
     };
+
+    public SecurityConfig(AppProperties appProperties, CustomOAuth2UserService oAuth2UserService, UserRepository userRepository, JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
+        this.appProperties = appProperties;
+        this.oAuth2UserService = oAuth2UserService;
+        this.userRepository = userRepository;
+        this.jwtProvider = jwtProvider;
+        this.authenticationEntryPointHandler = authenticationEntryPointHandler;
+        this.webAccessDeniedHandler = webAccessDeniedHandler;
+    }
 
     /**
      * Spring 인증 과정 무시 URI
