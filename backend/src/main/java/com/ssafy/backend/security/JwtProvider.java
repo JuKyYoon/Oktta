@@ -30,6 +30,7 @@ public class JwtProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+
     @Value("${jwt.access-token-expire-time}")
     private long accessTokenExpireTime;
 
@@ -164,4 +165,5 @@ public class JwtProvider {
     public long getAccessTokenExpireTime() {
         return accessTokenExpireTime;
     }
+    
 }
