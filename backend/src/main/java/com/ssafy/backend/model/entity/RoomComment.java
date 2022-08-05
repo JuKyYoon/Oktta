@@ -1,5 +1,6 @@
 package com.ssafy.backend.model.entity;
 
+import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,16 +12,16 @@ import java.time.LocalDateTime;
 @Table
 @DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
-public class BoardComment {
+public class RoomComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
-    @ManyToOne(targetEntity = Board.class)
-    @JoinColumn(name = "board_idx", nullable = false)
-    private Board board;
+    @ManyToOne(targetEntity = Room.class)
+    @JoinColumn(name = "room_idx", nullable = false)
+    private Room room;
 
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_idx", nullable = false)
@@ -37,8 +38,8 @@ public class BoardComment {
         return idx;
     }
 
-    public Board getBoard() {
-        return board;
+    public Room getRoom() {
+        return room;
     }
 
     public User getUser() {
@@ -53,28 +54,28 @@ public class BoardComment {
         return createTime;
     }
 
-    public BoardComment(){
+    public RoomComment(){
     }
 
-    public BoardComment(Builder builder){
-        this.board = builder.board;
+    public RoomComment(Builder builder){
+        this.room = builder.room;
         this.user = builder.user;
         this.content = builder.content;
     }
 
     public static class Builder {
-        private final Board board;
+        private final Room room;
         private final User user;
         private final String content;
 
-        public Builder(Board board, User user, String content){
-            this.board = board;
+        public Builder(Room room, User user, String content){
+            this.room = room;
             this.user = user;
             this.content = content;
         }
 
-        public BoardComment build() {
-            return new BoardComment(this);
+        public RoomComment build() {
+            return new RoomComment(this);
         }
     }
 }

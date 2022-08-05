@@ -146,7 +146,7 @@ public class BaseControllerAdvice {
                 .body(BaseResponseBody.of(404, failMsg));
     }
 
-    @ExceptionHandler(BoardCommentNotFoundException.class)
+    @ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<BaseResponseBody> CommentNotFoundException(Exception e, HttpServletRequest req){
         LOGGER.debug("Comment NOT FOUND");
         LOGGER.error(e.getClass().getCanonicalName());

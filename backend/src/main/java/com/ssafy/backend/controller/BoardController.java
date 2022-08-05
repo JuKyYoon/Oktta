@@ -54,7 +54,7 @@ public class BoardController {
         BoardDto board = boardService.detailBoard(boardIdx);
         boardService.updateHit(board.getIdx());
 
-        List<BoardCommentDto> list = boardCommentService.getCommentList(boardIdx);
+        List<BoardCommentDto> list = boardCommentService.getBoardCommentList(boardIdx);
         int lastPage = list.size() / limit + 1;
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
     }

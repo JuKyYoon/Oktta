@@ -5,7 +5,7 @@ import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.BoardComment;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
-import com.ssafy.backend.model.exception.BoardCommentNotFoundException;
+import com.ssafy.backend.model.exception.CommentNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.BoardCommentRepository;
@@ -35,7 +35,7 @@ public class BoardCommentServiceImpl implements BoardCommentService {
      * @param boardIdx 해당 boardIdx의 Comment list
      */
     @Override
-    public List<BoardCommentDto> getCommentList(Long boardIdx) {
+    public List<BoardCommentDto> getBoardCommentList(Long boardIdx) {
         List<BoardComment> boardCommentList = boardCommentRepository.findCommentsByBoardIdxAndCategory(boardIdx);
         List<BoardCommentDto> list = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class BoardCommentServiceImpl implements BoardCommentService {
     }
 
     @Override
-    public void createComment(String id, Long boardIdx, BoardCommentDto boardCommentDto) {
+    public void createBoardComment(String id, Long boardIdx, BoardCommentDto boardCommentDto) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
@@ -61,10 +61,14 @@ public class BoardCommentServiceImpl implements BoardCommentService {
 
     }
 
+    /**
+     * @param id 접속 중인 user의 id
+     * @param idx boardComment의 idx
+     */
     @Override
-    public boolean updateComment(String id, Long idx, BoardCommentDto boardCommentDto){
+    public boolean updateBoardComment(String id, Long idx, BoardCommentDto boardCommentDto){
         BoardComment boardComment = boardCommentRepository.findById(idx).orElseThrow(
-                () -> new BoardCommentNotFoundException("Comment Not Found")
+                () -> new CommentNotFoundException("Comment Not Found")
         );
         if(!boardComment.getUser().getId().equals(id)){
             return false;
@@ -75,13 +79,13 @@ public class BoardCommentServiceImpl implements BoardCommentService {
     }
 
     /**
-     * @param id = User의 아이디(email), 본인 확인을 위해
-     * @param idx = Comment의 idx
+     * @param id User의 아이디(email), 본인 확인을 위해
+     * @param idx BoardComment의 idx
      */
     @Override
-    public boolean deleteComment(String id, Long idx) {
+    public boolean deleteBoardComment(String id, Long idx) {
         BoardComment boardComment = boardCommentRepository.findById(idx).orElseThrow(
-                () -> new BoardCommentNotFoundException("Comment Not Found")
+                () -> new CommentNotFoundException("Comment Not Found")
         );
 
         if(!boardComment.getUser().getId().equals(id)){
