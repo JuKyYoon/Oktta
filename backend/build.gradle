@@ -18,22 +18,28 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.7.1'
+
+
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testImplementation 'org.springframework.security:spring-security-test'
 //    testImplementation("junit:junit:4.13.2")
 //    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 
 //  swagger 설정
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
-
-// modelMapper 설정
-    implementation 'org.modelmapper:modelmapper:3.1.0'
+    
+// mapstruct 설정    
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 
 // smtp 설정
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.0'
@@ -47,6 +53,14 @@ dependencies {
 //openvidu 설정
     implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.22.0'
 
+// WebClient 설정
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.2'
+
+// aws s3 설정
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
+// OAuth2 설정
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.6.2'
 
 }
 

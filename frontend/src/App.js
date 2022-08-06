@@ -1,24 +1,24 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Layout from './pages/Layout';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
+import Main from './components/Main';
+import Home from './components/Home';
+import NotFound from './components/error/NotFound';
 import User from './routes/User';
-import Board from './routes/Board';
 import Article from './routes/Article';
+import Room from './routes/Room';
 
 function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route element={<Main />}>
         <Route index element={<Home />} />
-        <Route path="/user/*" element={<User />} />
-        <Route path="/board/*" element={<Board />} />
-        <Route path="/article/*" element={<Article />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path='/user/*' element={<User />} />
+        <Route path='/article/*' element={<Article />} />
+        <Route path='/room/*' element={<Room />} />
+        <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

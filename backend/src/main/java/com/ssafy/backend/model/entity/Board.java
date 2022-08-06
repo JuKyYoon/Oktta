@@ -1,5 +1,6 @@
 package com.ssafy.backend.model.entity;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,7 +18,7 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "LONG UNSIGNED")
+    @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
     @ManyToOne(targetEntity = User.class)
@@ -38,9 +39,44 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime modifyDate;
 
+    @Column(name = "category")
     private int category;
 
+    @Column(name = "hit")
+    @ColumnDefault("0")
     private Long hit;
+
+    public Long getIdx() {
+        return idx;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public LocalDateTime getModifyDate() {
+        return modifyDate;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public Long getHit() {
+        return hit;
+    }
 
     protected Board() {
     }

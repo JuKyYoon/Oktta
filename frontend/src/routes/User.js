@@ -1,20 +1,26 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-import PwInquiry from '../pages/pwInquiry';
-import Signup from '../pages/Signup';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Login from '../components/user/Login';
+import PwInquiry from '../components/user/PwInquiry';
+import Signup from '../components/user/Signup';
+import MyPage from '../components/user/MyPage';
+import UpdateProfile from '../components/user/ProfileUpdate';
+import { useSelector } from 'react-redux';
 
 const User = () => {
-
+  const isLogin = useSelector((state) => state.user.isLogin);
   return (
     <Routes>
-      <Route path="signup" element={<Signup />} />
-      <Route path="login" element={<Login />} />
-      <Route path="pwInquiry" element={<PwInquiry />} />
-      <Route path="myPage" element={<Home />} />
+      <Route path='signup' element={<Signup />} />
+      <Route path='login' element={<Login />} />
+      <Route path='pwInquiry' element={<PwInquiry />} />
+      <Route
+        path='myPage'
+        element={isLogin ? <MyPage /> : <Navigate to='/user/login' replace />}
+      />
+      <Route path='updateProfile' element={<UpdateProfile />} />
     </Routes>
-  )
-}
+  );
+};
 
 export default User;

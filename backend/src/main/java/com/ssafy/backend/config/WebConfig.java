@@ -23,4 +23,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true) // 쿠키 허용
                 .maxAge(6000);
     }
+
+
+    //	Swagger UI 실행시 404처리
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/swagger-ui/index.html**").addResourceLocations("classpath:/META-INF/resources/swagger-ui/index.html");
+//        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+//    }
 }
