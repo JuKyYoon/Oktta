@@ -1,34 +1,53 @@
 package com.ssafy.backend.model.dto;
 
+import com.ssafy.backend.model.entity.Board;
 import io.swagger.v3.oas.annotations.media.Schema;
+import net.bytebuddy.asm.Advice;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Schema
 public class BoardDto {
-    private Long userIdx;
+    private Long idx;
+    private String nickname;
     private String title;
     private String content;
-    private String createDate;
-    private String modifyDate;
+    private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
     private int category;
-    private long hit;
+    private Long hit;
 
     public BoardDto(){
 
     }
 
-    public BoardDto(String title, String content, int category) {
+    public BoardDto(String nickname, Long idx, String title, LocalDateTime createDate, Long hit){
+        this.nickname = nickname;
+        this.idx = idx;
         this.title = title;
-        this.content = content;
-        this.category = category;
+        this.createDate = createDate;
+        this.hit = hit;
     }
 
-    public Long getUserIdx() {
-        return userIdx;
+    public BoardDto(String nickname, Board board) {
+        this.nickname = nickname;
+        this.idx = board.getIdx();
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.createDate = board.getCreateDate();
+        this.modifyDate = board.getModifyDate();
+        this.category = board.getCategory();
+        this.hit = board.getHit() + 1;
     }
 
-    public void setUserIdx(String idx) {
-        this.userIdx = userIdx;
-    }
+    public Long getIdx() { return idx; }
+
+    public void setIdx(Long idx) { this.idx = idx; }
+
+    public String getNickname() { return nickname; }
+
+    public void setString(String nickname) { this.nickname = nickname; }
 
     public String getTitle() {
         return title;
@@ -46,19 +65,19 @@ public class BoardDto {
         this.content = content;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public String getModifyDate() {
+    public LocalDateTime getModifyDate() {
         return modifyDate;
     }
 
-    public void setModifyDate(String modifyDate) {
+    public void setModifyDate(LocalDateTime modifyDate) {
         this.modifyDate = modifyDate;
     }
 
@@ -70,7 +89,7 @@ public class BoardDto {
         this.category = category;
     }
 
-    public long getHit() {
+    public Long getHit() {
         return hit;
     }
 

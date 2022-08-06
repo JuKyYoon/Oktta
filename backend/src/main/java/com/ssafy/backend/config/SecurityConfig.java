@@ -1,6 +1,12 @@
 package com.ssafy.backend.config;
 
+import com.ssafy.backend.config.properties.AppProperties;
+import com.ssafy.backend.handler.security.OAuth2AuthenticationFailureHandler;
+import com.ssafy.backend.handler.security.OAuth2AuthenticationSuccessHandler;
+import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
+import com.ssafy.backend.service.CustomOAuth2UserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +29,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+    private final AppProperties appProperties;
+    private final CustomOAuth2UserService oAuth2UserService;
+
+
+    private final UserRepository userRepository;
+
     private final JwtProvider jwtProvider;
 
     /**
@@ -42,25 +55,29 @@ public class SecurityConfig {
             "/user/auth/*",
             "/user/id/*",
             "/user/name/*",
-            "/auth/refresh/**",
+            "/auth/refresh",
             "/v3/api-docs",
-            "/session/**",
-            "/swagger*/**"
+            "/swagger*/**",
+            "/user/password/**",
+            "/user/reset-token/**"
     };
 
     private static final String[] POST_PUBLIC_URI = {
             "/user",
-            "/auth/**",
-            "/session/**",
+            "/auth",
             "/v3/api-docs",
-            "/swagger*/**"
+            "/swagger*/**",
+            "/aws*/**"
     };
 
-    /**
-     * Security Config Constructor Injection
-     */
-    public SecurityConfig(JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler,
-                          AccessDeniedHandler webAccessDeniedHandler) {
+    private static final String[] DELETE_PUBLIC_URI = {
+            "/user/reset-token/**"
+    };
+
+    public SecurityConfig(AppProperties appProperties, CustomOAuth2UserService oAuth2UserService, UserRepository userRepository, JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
+        this.appProperties = appProperties;
+        this.oAuth2UserService = oAuth2UserService;
+        this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.webAccessDeniedHandler = webAccessDeniedHandler;
@@ -73,6 +90,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().antMatchers(HttpMethod.GET,GET_PUBLIC_URI).antMatchers(HttpMethod.POST, POST_PUBLIC_URI)
+                .antMatchers(HttpMethod.DELETE, DELETE_PUBLIC_URI)
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -87,7 +105,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
-                .antMatchers(HttpMethod.DELETE, "/auth").hasRole("GUEST")
+                .antMatchers(HttpMethod.DELETE, "/auth").hasAnyRole("GUEST", "USER", "ADMIN")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
@@ -102,8 +120,54 @@ public class SecurityConfig {
         http
                 .apply(new JwtSecurityConfig(jwtProvider));
 
+        http
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorization")
+                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/*")
+                .and()
+                .userInfoEndpoint()
+                .userService(oAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler())
+                .failureHandler(oAuth2AuthenticationFailureHandler());
+
         return http.build();
     }
+
+    /*
+     * 쿠키 기반 인가 Repository
+     * 인가 응답을 연계 하고 검증할 때 사용.
+     * */
+    @Bean
+    public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
+        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
+    }
+
+    /*
+     * Oauth 인증 성공 핸들러
+     * */
+    @Bean
+    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler(
+                jwtProvider,
+                appProperties,
+                userRepository,
+                oAuth2AuthorizationRequestBasedOnCookieRepository()
+        );
+    }
+
+    /*
+     * Oauth 인증 실패 핸들러
+     * */
+    @Bean
+    public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+        return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestBasedOnCookieRepository());
+    }
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

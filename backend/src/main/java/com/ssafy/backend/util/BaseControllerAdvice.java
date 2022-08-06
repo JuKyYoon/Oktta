@@ -1,13 +1,12 @@
 package com.ssafy.backend.util;
 
-import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
-import com.ssafy.backend.model.exception.PasswordNotMatchException;
-import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -25,6 +24,43 @@ public class BaseControllerAdvice {
 
     @Value("${response.fail}")
     private String failMsg;
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<BaseResponseBody> numberFormatException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("String to Number Fail");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(MessageResponse.of(400, failMsg, "Not Number"));
+    }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> roomNotFoundExceptionion(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Room Not Found");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(MessageResponse.of(404, failMsg, "Room Not Found"));
+    }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<BaseResponseBody> dataIntegrityViolationException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("SQL Integrity Error");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(MessageResponse.of(200, failMsg, "SQL Integrity Error"));
+    }
 
     @ExceptionHandler(PasswordNotMatchException.class)
     public ResponseEntity<BaseResponseBody> passwordNotMatchException(Exception e, HttpServletRequest req) {
@@ -96,6 +132,30 @@ public class BaseControllerAdvice {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseResponseBody.of(500, failMsg));
+    }
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> BoardNotFoundException(Exception e, HttpServletRequest req){
+        LOGGER.debug("Board NOT FOUND");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseResponseBody.of(404, failMsg));
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> CommentNotFoundException(Exception e, HttpServletRequest req){
+        LOGGER.debug("Comment NOT FOUND");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseResponseBody.of(404, failMsg));
     }
 
     @ExceptionHandler(Exception.class)

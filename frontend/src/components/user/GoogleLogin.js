@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import jwt_decode from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { googleLoginRequest } from "../services/userService.js";
+import React, { useEffect, useState } from 'react';
+import jwt_decode from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { googleLoginRequest } from '../../services/userService.js';
 
 const GoogleLogin = () => {
   const [user, setUser] = useState({});
@@ -15,7 +15,7 @@ const GoogleLogin = () => {
       // setUser(userObject);
       // document.getElementById("googleDiv").hidden = true;
       .then((res) => {
-        if (res.payload.message === "success") {
+        if (res.payload.message === 'success') {
           console.log(res.payload.message);
           navigate('/');
         } else {
@@ -38,10 +38,10 @@ const GoogleLogin = () => {
       client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
       callback: handleCallbackResponse,
     });
-    google.accounts.id.renderButton(document.getElementById("googleDiv"), {
+    google.accounts.id.renderButton(document.getElementById('googleDiv'), {
       // type: "icon",
-      theme: "outline",
-      size: "large",
+      theme: 'outline',
+      size: 'large',
     });
     // Google One Tap Login
     // 위치 옮기거나 쓰지 않거나
@@ -50,10 +50,10 @@ const GoogleLogin = () => {
 
   useEffect(() => {
     // add script
-    if (!document.getElementById("google_login")) {
-      const script = document.createElement("script");
-      script.id = "google_login";
-      script.src = "https://accounts.google.com/gsi/client";
+    if (!document.getElementById('google_login')) {
+      const script = document.createElement('script');
+      script.id = 'google_login';
+      script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
       script.onload = () => {
@@ -63,12 +63,12 @@ const GoogleLogin = () => {
     } else {
       global_google();
     }
-    document.body.removeChild(document.getElementById("google_login"));
+    document.body.removeChild(document.getElementById('google_login'));
   }, []);
 
   return (
     <>
-      <div id="googleDiv"></div>
+      <div id='googleDiv'></div>
       {/* {
         // 로그인이 되어있을 때 로그아웃 버튼
         Object.keys(user).length != 0 && (

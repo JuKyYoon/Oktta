@@ -1,6 +1,8 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.response.BaseResponseBody;
+import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
@@ -10,7 +12,11 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/session")
@@ -24,8 +30,11 @@ public class SessionController {
 
     private final SessionService sessionService;
 
-    public SessionController(SessionService sessionService) {
+    private final UserRepository userRepository;
+
+    public SessionController(SessionService sessionService, UserRepository userRepository) {
         this.sessionService = sessionService;
+        this.userRepository = userRepository;
     }
 
 
@@ -33,59 +42,75 @@ public class SessionController {
      * 방 만들고 입장하기.
      */
     @PostMapping("/{idx}")
-    public ResponseEntity<MessageResponse> createAndEnterSession(@PathVariable("idx") String boardIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<MessageResponse> createAndEnterSession(@PathVariable("idx") String boardIdx)
+            throws OpenViduJavaClientException, OpenViduHttpException {
         // 방을 만든다. API보낸다. 방 없으면 만들고, 토큰 리턴받는다.
+        System.out.println("enter and create session");
+
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         long sessionIdx = Long.parseLong(boardIdx);
-        sessionService.createSession(sessionIdx);
-        String token = sessionService.enterSession(sessionIdx, OpenViduRole.PUBLISHER);
+        synchronized (SessionController.class) {
+            sessionService.createSession(user.getId(), sessionIdx);
+            String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.MODERATOR);
+            return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
+        }
+    }
+
+    /**
+     * 방 퇴장
+     */
+    @DeleteMapping("/{idx}")
+    public ResponseEntity<MessageResponse> leaveSession(@PathVariable("idx") String boardIdx, @RequestBody Map<String, String> body){
+
+        long sessionIdx = Long.parseLong(boardIdx);
+        System.out.println("asdf");
+        String token = body.get("token");
+        System.out.println(token);
+        synchronized (SessionController.class) {
+            sessionService.leaveSession(sessionIdx, token);
+            System.out.println("delete session");
+            return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
+        }
+    }
+
+    /**
+     * 세션 입장
+     * @param boardIdx
+     */
+    @GetMapping("/{idx}")
+    public ResponseEntity<MessageResponse> enterSession(@PathVariable("idx") String boardIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+
+        System.out.println("enter session");
+        long sessionIdx = Long.parseLong(boardIdx);
+
+
+        String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
+
+    }
+
+    @GetMapping("/test1")
+    public ResponseEntity<JSONObject> testaaaaasdf() throws OpenViduJavaClientException, OpenViduHttpException {
+        return new ResponseEntity<>(sessionService.connectionPrint(), HttpStatus.OK);
+    }
+
+    @GetMapping("/test2")
+    public ResponseEntity<JSONObject> testaasdf() throws OpenViduJavaClientException, OpenViduHttpException {
+        return new ResponseEntity<>(sessionService.twotwotwo(), HttpStatus.OK);
     }
 
     /**
-     * 세션별 인원수 API -수정해야함-
-     * 추후 DB 컬럼 수정 후 DB에서 관리할 것
+     * 현재 모든 Session에 대한 정보 최신으로 가져옴
      */
-//    @GetMapping("/participant")
-//    public ResponseEntity<JSONObject> getNumberofParticipant() throws OpenViduJavaClientException, OpenViduHttpException {
-//        this.openVidu.fetch();
-//        JSONArray jsonArray = new JSONArray();
-//        for (Session session : this.openVidu.getActiveSessions()) {
-//            JSONObject json = new JSONObject();
-//            json.put("sessionId", session.getSessionId());
-//            json.put("numberOfPartcipants", session.getConnections().size());
-//            jsonArray.add(json);
-//        }
-//        JSONObject ret = new JSONObject();
-//        ret.put("sessions", jsonArray);
-//        return new ResponseEntity<>(ret, HttpStatus.OK);
-//    }
-
-    /**
-     * 세션 입장 시 DB 인원 수 증가 반영
-     */
-    @PostMapping("/join/{sessionId}")
-    public ResponseEntity<BaseResponseBody> joinParticipant(@PathVariable("sessionId") String sessionId) {
-
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
-    }
-
-    /**
-     * 세션 퇴장 시 DB 인원 수 감소 반영
-     * param으로 sessionId 와 userToken 정보 받아서 실제로 유저가 해당 세션에 있었을 경우 처리
-     */
-//    @PostMapping("/exit")
-//    public ResponseEntity<BaseResponseBody> exitParticipant(@RequestBody Map<String, Object> sessionNameToken) {
-//        String sessionId = (String) sessionNameToken.get("sessionId");
-//        String userToken = (String) sessionNameToken.get("userToken");
-//        if (this.mapSessions.get(sessionId) != null && this.mapSessionNamesTokens.get(sessionId) != null) {
-//
-//
-//        } else {
-//
-//        }
-//        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
-//    }
-
     @GetMapping("/test3")
     public ResponseEntity<JSONObject> testas() throws OpenViduJavaClientException, OpenViduHttpException {
 

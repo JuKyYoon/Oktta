@@ -1,10 +1,23 @@
 import { request, axiosAuth } from "./axios";
-import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT } from "../modules/types.js";
+import {
+  GET_TOKEN,
+  SIGNUP,
+  LOGIN,
+  GOOGLE_LOGIN,
+  KAKAO_LOGIN,
+  NAVER_LOGIN,
+  LOGOUT,
+  CHECK_EMAIL,
+  CHECK_NICKNAME,
+  PW_INQUIRY,
+  EDIT_ACCOUNT,
+  DELETE_ACCOUNT,
+} from "../modules/types.js";
 import { store } from "..";
 
-/* 요청 URL */
-const USER_URL = "/api/v1/user";
-const AUTH_URL = "/api/v1/auth";
+/* 요청 URL*/
+const USER_URL = '/api/v1/user'
+const AUTH_URL = '/api/v1/auth'
 
 // 토큰 재발급
 export const getToken = async () => {
@@ -16,27 +29,49 @@ export const getToken = async () => {
   };
 };
 
+// 닉네임 변경
+export const updateNicknameRequest = async (dataToSubmit) => {
+  const res = await axiosAuth.put(USER_URL, dataToSubmit)
+  const data = { ...res, userId: dataToSubmit.nickname}
+  return {
+    type: UPDATE_PROFILE,
+    payload: data,
+  };
+};
+
+// 비밀번호 변경 -- 500
+export const updatePasswordRequest = async (dataToSubmit) => {
+  const data = await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit)
+  return {
+    type: UPDATE_PASSWORD,
+    payload: data,
+  };
+};
+
 // 회원가입
 export const signupRequest = async (dataToSubmit) => {
   const data = await request.post(USER_URL, dataToSubmit);
   return {
     type: SIGNUP,
     payload: data,
-  }
+  };
 };
 
 // 로그인
 export const loginRequest = async (dataToSubmit) => {
-  const data = await request.post(`${AUTH_URL}/authorize`, dataToSubmit)
+  const data = await request.post(`${AUTH_URL}`, dataToSubmit);
   return {
     type: LOGIN,
     payload: data,
-  }
+  };
 };
 
 // 소셜 로그인
 export const googleLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/google`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/google`,
+    dataToSubmit
+  );
   return {
     type: GOOGLE_LOGIN,
     payload: data,
@@ -44,7 +79,10 @@ export const googleLoginRequest = async (dataToSubmit) => {
 };
 
 export const kakaoLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/kakao`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/kakao`,
+    dataToSubmit
+  );
   return {
     type: KAKAO_LOGIN,
     payload: data,
@@ -52,7 +90,10 @@ export const kakaoLoginRequest = async (dataToSubmit) => {
 };
 
 export const naverLoginRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.post(`${AUTH_URL}/authorize/naver`, dataToSubmit);
+  const data = await axiosAuth.post(
+    `${AUTH_URL}/authorize/naver`,
+    dataToSubmit
+  );
   return {
     type: NAVER_LOGIN,
     payload: data,
@@ -61,7 +102,7 @@ export const naverLoginRequest = async (dataToSubmit) => {
 
 // 로그아웃
 export const logoutRequest = async () => {
-  const data = await axiosAuth.delete(`${AUTH_URL}/logout`);
+  const data = await axiosAuth.delete(`${AUTH_URL}`);
   return {
     type: LOGOUT,
     payload: data,

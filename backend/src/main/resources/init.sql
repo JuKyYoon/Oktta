@@ -32,7 +32,10 @@ DROP TABLE IF EXISTS `lol_auth`;
 CREATE TABLE IF NOT EXISTS `lol_auth` (
 >>>>>>> dev
     `user_id` VARCHAR(50) NOT NULL UNIQUE,
-    `refresh_token_expire_time` datetime DEFAULT NULL,
+    `puuid` VARCHAR(100) NOT NULL UNIQUE,
+    `tier` tinyint NOT NULL,
+    `account_id` VARCHAR(100) NOT NULL,
+    `summoner_name` VARCHAR(50) NOT NULL,
     `create_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `revoked_date` TIMESTAMP DEFAULT NULL,
     `ip_address` INT UNSIGNED NULL,
