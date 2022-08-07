@@ -12,16 +12,15 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import '../../styles/room.scss';
 
 const RoomEdit = () => {
-  const { roomId } = useParams();
+  const { idx } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   useEffect(() => {
-    dispatch(detailRoom(roomId))
+    detailRoom(idx)
       .then((res) => {
-        setTitle(res.payload.data.result.title);
-        setContent(res.payload.data.result.content);
+        setTitle(res.data.result.title);
+        setContent(res.data.result.content);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -32,17 +31,14 @@ const RoomEdit = () => {
 
   const onSubmitClicked = (e) => {
     e.preventDefault();
-    const dataToSubmit = {
-      roomId,
-      body: { title, content },
-    };
+
+    const body = { title, content };
 
     if (title && content) {
-      console.log(dataToSubmit);
-      dispatch(updateRoom(dataToSubmit))
+      updateRoom(idx, body)
         .then((res) => {
-          if (res.payload.data.message === 'success') {
-            navigate(`/room/detail/${roomId}`);
+          if (res.data.message === 'success') {
+            navigate(`/room/${idx}`);
           }
         })
         .catch((err) => console.log(err));

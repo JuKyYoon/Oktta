@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { createRoom } from '../../services/roomService';
@@ -11,8 +10,6 @@ import '../../styles/room.scss';
 const RoomCreate = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
@@ -24,17 +21,15 @@ const RoomCreate = () => {
       title,
       content,
     };
-    console.log(body);
-    dispatch(createRoom(body))
+
+    createRoom(body)
       .then((res) => {
-        if (res.payload.data.message === 'success') {
-          navigate(`/room/detail/${res.payload.data.result}`);
+        console.log(res);
+        if (res.data.message === 'success') {
+          navigate(`/room/${res.data.result}`);
         }
       })
-      .catch((err) => {
-        console.log(err);
-        console.log('이거 와 안되노;;');
-      });
+      .catch((err) => console.log(err));
   };
 
   const isValid = Boolean(title) && Boolean(content);

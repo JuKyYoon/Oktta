@@ -1,35 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { deleteRoom, detailRoom } from '../../services/roomService';
-import { Navigate, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
+import { deleteRoom, detailRoom } from '../../services/roomService';
+import { Button } from '@mui/material';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import '../../styles/room.scss';
+import { useSelector } from 'react-redux';
 
 const RoomDetail = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { roomId } = useParams();
+  const user = useSelector((state) => state.user);
+
+  const { idx } = useParams();
   const [room, setRoom] = useState({});
-  console.log('나는 왜 2번 호출 되는가...??');
+
   useEffect(() => {
-    dispatch(detailRoom(roomId))
+    detailRoom(idx)
       .then((res) => {
-        setRoom(res.payload.data.result);
+        setRoom(res.data.result);
       })
       .catch((err) => console.log(err));
   }, []);
 
   const onDeleteButtonClicked = () => {
-    dispatch(deleteRoom(roomId)).then((res) => {
-      console.log(res);
-      if (res.payload.data.message === 'success') {
-        navigate('../list');
-      }
-    });
+    deleteRoom(idx)
+      .then((res) => {
+        if (res.data.message === 'success') {
+          navigate('../list');
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -58,17 +60,21 @@ const RoomDetail = () => {
             목록으로
           </Button>
         </Link>
-        <Link to={`../edit/${room.idx}`} style={{ textDecoration: 'none' }}>
-          <Button variant='outlined' color='veryperi'>
-            수정하기
+        {room.nickname === user.nickname ? (
+          <Link to={`../edit/${room.idx}`} style={{ textDecoration: 'none' }}>
+            <Button variant='outlined' color='veryperi'>
+              수정하기
+            </Button>
+          </Link>
+        ) : null}
+        {room.nickname === user.nickname ? (
+          <Button
+            variant='contained'
+            color='veryperi'
+            onClick={onDeleteButtonClicked}>
+            방 삭제하기
           </Button>
-        </Link>
-        <Button
-          variant='contained'
-          color='veryperi'
-          onClick={onDeleteButtonClicked}>
-          방 삭제하기
-        </Button>
+        ) : null}
       </div>
     </div>
   );

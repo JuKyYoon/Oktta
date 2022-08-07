@@ -12,9 +12,9 @@ const Room = () => {
     <Routes>
       <Route path='list' element={<RoomList />} />
       <Route path='create' element={<RoomCreate />} />
-      <Route path='edit/:roomId' element={<RoomEdit />} />
+      <Route path='edit/:idx' element={<RoomEdit />} />
       <Route path='popular' element={<Home />} />
-      <Route path='/detail/:roomId' element={<RoomDetail />} />
+      <Route path='/:idx' element={<RoomDetail />} />
       <Route path=':id/share' element={<ScreenShare />} />
     </Routes>
   );

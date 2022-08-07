@@ -1,56 +1,33 @@
-import {
-  GET_ROOM_LIST,
-  GET_ROOM,
-  CREATE_ROOM,
-  UPDATE_ROOM,
-  DETAIL_ROOM,
-  DELETE_ROOM,
-} from '../modules/types.js';
-
-import { axiosAuth, request } from './axios.js';
+import { axiosAuth } from './axios.js';
 
 const ROOM_URL = 'api/v1/room';
 
-// 액션 생성함수
-export const getRoomList = async (dataToSubmit) => {
-  const payload = await axiosAuth.get(`${ROOM_URL}?page=${dataToSubmit}`);
-
-  return {
-    type: GET_ROOM_LIST,
-    payload,
-  };
-};
-
+// room 생성
 export const createRoom = async (dataToSubmit) => {
   const payload = await axiosAuth.post(ROOM_URL, dataToSubmit);
-  return {
-    type: CREATE_ROOM,
-    payload,
-  };
+  return payload;
 };
 
-export const updateRoom = async (dataToSubmit) => {
-  const payload = await axiosAuth.put(
-    `${ROOM_URL}/${dataToSubmit.roomId}`,
-    dataToSubmit.body
-  );
-  return {
-    type: UPDATE_ROOM,
-    payload,
-  };
-};
-export const detailRoom = async (dataToSubmit) => {
-  const payload = await axiosAuth.get(`${ROOM_URL}/${dataToSubmit}`);
-  return {
-    type: DETAIL_ROOM,
-    payload,
-  };
+// room 상세보기
+export const detailRoom = async (idx) => {
+  const payload = await axiosAuth.get(`${ROOM_URL}/${idx}`);
+  return payload;
 };
 
-export const deleteRoom = async (dataToSubmit) => {
-  const payload = await axiosAuth.delete(`${ROOM_URL}/${dataToSubmit}`);
-  return {
-    type: DELETE_ROOM,
-    payload,
-  };
+// room 삭제
+export const deleteRoom = async (idx) => {
+  const payload = await axiosAuth.delete(`${ROOM_URL}/${idx}`);
+  return payload;
+};
+
+// room 수정
+export const updateRoom = async (idx, dataToSubmit) => {
+  const payload = await axiosAuth.put(`${ROOM_URL}/${idx}`, dataToSubmit);
+  return payload;
+};
+
+// room 목록 조회
+export const getRoomList = async (pageNum) => {
+  const payload = await axiosAuth.get(`${ROOM_URL}?page=${pageNum}`);
+  return payload;
 };
