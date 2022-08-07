@@ -43,19 +43,28 @@ public class SessionServiceImpl implements SessionService {
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
     }
 
-
-    @Override
-    public void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
-        // 검증 과정을 먼저 해줘야, 강제로 세션을 만들고, 입장하려는 시도를 막을 수 있다.
+    public boolean checkSessionOwner(String userId, long sessionIdx) {
         // DB에서 room 엔티티 가져온다.
         Room room = roomRepository.findById(sessionIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found in Session Create")
         );
 
-        // 글 작성자가 아닌 사람이 생성 시도했을 경우
-        if(!userId.equals(room.getUser().getId())) {
-            throw new InvalidSessionCreate("Not Room's writer in Session Create Try");
+        // 글 작성자가 아닌 사람이 시도
+        if(userId.equals(room.getUser().getId())) {
+            // 이 경우는 무조건 만든다.
+            room.updateRoomState(true);
+            roomRepository.save(room);
+            return true;
+        } else {
+            return false;
         }
+
+    }
+
+
+    @Override
+    public void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+        // 검증 과정을 먼저 해줘야, 강제로 세션을 만들고, 입장하려는 시도를 막을 수 있다.
 
         // 만약 세션이 없다면 세션을 만든다.
         if(searchSession(sessionIdx) == null) {
@@ -69,10 +78,9 @@ public class SessionServiceImpl implements SessionService {
             // 유저 토큰 저장할 Map 생성
             this.mapSessionNamesTokens.put(sessionIdx, new ConcurrentHashMap<>());
 
-            // 라이브 여부 반영
-            room.updateRoomState(true);
         } else {
             // 이미 존재하는 세션일 때 어떤 행동 해줘야 할까
+            // 어차피 Session 객체 있으니깐 행동 안해줘도 상관 없다.
         }
     }
 
@@ -80,7 +88,7 @@ public class SessionServiceImpl implements SessionService {
     public String enterSession(User user, long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException {
         try {
             // 연결 정보를 설정한다.
-            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"0\"}", user.getNickname());
+            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"0\", \"idx\":\"%d\"}", user.getNickname(), sessionIdx);
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                     .role(role).data(userData).build();
 
@@ -91,8 +99,10 @@ public class SessionServiceImpl implements SessionService {
             }
 
             // 세션에 이미 들어가 있는지 검사한다.
-            Object sessionUser = redisService.getHashValue(session.getSessionId(), user.getNickname());
+            String sessionUser = (String) redisService.getHashValue(session.getSessionId(), user.getNickname());
             if(sessionUser != null) {
+                // 이 때, 원래 토큰 찾아서 return 해주나?
+                System.out.println(sessionUser);
                 throw new DuplicatedEnterSession("You are already in the Session");
             }
 
@@ -122,8 +132,10 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void leaveSession(long sessionIdx, String token) {
+    public void leaveSession(long sessionIdx, String token, String nickname) {
         // 나갈 세션을 찾는다.
+        System.out.println(sessionIdx);
+        System.out.println(token);
         Session session = searchSession(sessionIdx);
         if(session == null || this.mapSessionNamesTokens.get(sessionIdx) == null) {
             throw new SessionNotFoundException("Session Not Found");
@@ -131,12 +143,18 @@ public class SessionServiceImpl implements SessionService {
 
         // 토큰을 제거한다.
         if (this.mapSessionNamesTokens.get(sessionIdx).remove(token) != null) {
+            // redis 에서도 토큰 제거
+            redisService.deleteKey(session.getSessionId(), nickname);
+
             // 만약 토큰이 있었다면 ( 제거에 성공 ) 세션에 남은 사람들 체크
             if (this.mapSessionNamesTokens.get(sessionIdx).isEmpty()) {
                 // 만약 다 나갔으면 세션도 제거해준다.
                 this.mapSessions.remove(sessionIdx);
                 this.mapSessionNamesTokens.remove(sessionIdx);
                 redisService.deleteKey(session.getSessionId());
+            } else {
+
+
             }
         } else {
             // 토큰이 유효하지 않음.

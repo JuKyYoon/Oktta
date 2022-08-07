@@ -89,7 +89,7 @@ const ScreenShare = () => {
 
     // --- 4) Connect to the session with a valid user token ---
     mySession
-      .connect(token)
+      .connect(token, { clientData: {idx: params.id,token:token} })
       .then(() => {
         // --- 5) Get your own camera stream ---
         if (role === 'publisher') {
@@ -157,11 +157,11 @@ const ScreenShare = () => {
     console.log(sessionRef.current)
     if (sessionRef.current) {
       sessionRef.current.disconnect();
-      const result = await deleteSessionRequest(params.id, token);
-      console.log("위에 안보내져")
-      console.log(result);
+      // const result = await deleteSessionRequest(params.id, token);
+      // console.log("위에 안보내져")
+      // console.log(result);
     }
-    console.log("Asdfadf")
+    // console.log("Asdfadf")
     // navigate(`/article/${params.id}/`);
   };
 
@@ -178,20 +178,28 @@ const ScreenShare = () => {
 
   const printSession = () => {
     console.log(session);
+    console.log(sessionRef.current);
   }
 
   const closeWindow = (e) => {
     // e.preventDefault();
-    e.returnValue = '';
-    deleteSessionRequest(params.id, token);
+    // e.returnValue = '';
+    // console.log(session)
+    // console.log(sessionRef.current)
+    if(sessionRef.current) {
+      sessionRef.current.disconnect()
+    }
+    
+
   };
 
 
   // 세션 상태 업데이트
   useEffect(() => {
-    return () => {
+    // return () => {
+      console.log("uuuuuuuuuuuuuuuuuuupdate")
       sessionRef.current = session;
-    }
+    // }
   }, [session])
  
 

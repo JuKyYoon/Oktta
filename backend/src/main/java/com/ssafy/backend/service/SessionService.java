@@ -7,9 +7,10 @@ import io.openvidu.java.client.OpenViduRole;
 import org.json.simple.JSONObject;
 
 public interface SessionService {
+    boolean checkSessionOwner(String userId, long sessionIdx);
     void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException;
     String enterSession(User user, long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException;
-    void leaveSession(long sessionIdx, String token);
+    void leaveSession(long sessionIdx, String token, String nickname);
 
     JSONObject getSessionsFromOpenVidu() throws OpenViduJavaClientException, OpenViduHttpException;
     JSONObject getSessionsFromJava() throws OpenViduJavaClientException, OpenViduHttpException;

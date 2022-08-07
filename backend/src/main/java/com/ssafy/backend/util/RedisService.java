@@ -103,6 +103,15 @@ public class RedisService {
     }
 
     /**
+     * Delete Hash
+     * @param hashKey
+     * @param key
+     */
+    public void deleteKey(String hashKey, String key) {
+        redisTemplate.opsForHash().delete(hashKey, key);
+    }
+
+    /**
      * Set Token BlackList to Redis
      * @param token
      * @param value

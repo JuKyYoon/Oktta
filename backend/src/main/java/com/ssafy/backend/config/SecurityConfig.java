@@ -54,7 +54,8 @@ public class SecurityConfig {
             "/auth",
             "/v3/api-docs",
             "/swagger*/**",
-            "/aws*/**"
+            "/aws*/**",
+            "/session/callback"
     };
 
     private static final String[] DELETE_PUBLIC_URI = {
