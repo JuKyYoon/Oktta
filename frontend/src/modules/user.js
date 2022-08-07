@@ -1,20 +1,47 @@
-import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT, UPDATE_PROFILE } from "../modules/types.js";
+import {
+  EMAIL_AUTH,
+  GET_TOKEN,
+  SIGNUP,
+  LOGIN,
+  GOOGLE_LOGIN,
+  KAKAO_LOGIN,
+  NAVER_LOGIN,
+  LOGOUT,
+  EDIT_ACCOUNT,
+  DELETE_ACCOUNT,
+  UPDATE_PROFILE,
+} from "../modules/types.js";
 
-const initState = {
+export const initState = {
   isLogin: false,
-  userId: "",
+  nickname: "",
+  auth: "",
   token: "",
-}
+};
 
 export default function (state = initState, action) {
   switch (action.type) {
+    case EMAIL_AUTH:
+      if (action.payload.data.message === "success") {
+        return {
+          ...state,
+          auth: "1"
+        }
+      }
+      return { ...state }
     case GET_TOKEN:
       return { ...state };
     case SIGNUP:
       return { ...state };
     case LOGIN:
       if (action.payload.data.message === "success") {
-        return { ...state, isLogin: true, userId: action.payload.data.result.userId, token: action.payload.data.result.accessToken };
+        return {
+          ...state,
+          isLogin: true,
+          nickname: action.payload.data.result.nickname,
+          auth: action.payload.data.result.auth,
+          token: action.payload.data.result.accessToken,
+        };
       }
       return { ...state };
     case GOOGLE_LOGIN:
@@ -25,12 +52,6 @@ export default function (state = initState, action) {
       return { ...state, data: action.payload };
     case LOGOUT:
       return initState;
-    case CHECK_EMAIL:
-      return { ...state, data: action.payload };
-    case CHECK_NICKNAME:
-      return { ...state, data: action.payload };
-    case PW_INQUIRY:
-      return { ...state, data: action.payload };
     case EDIT_ACCOUNT:
       return { ...state, data: action.payload };
     case DELETE_ACCOUNT:
