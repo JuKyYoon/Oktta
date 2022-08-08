@@ -30,6 +30,7 @@ public class JwtProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+
     @Value("${jwt.access-token-expire-time}")
     private long accessTokenExpireTime;
 
@@ -130,7 +131,7 @@ public class JwtProvider {
         try {
             LOGGER.debug("[JwtProvider.validateToken(token)]");
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            if (redisService.getStringValue(token) != null) {
+            if ("logout".equals(redisService.getStringValue(token))){
                 throw new MalformedJwtException("BlackList");
             }
             return true;
@@ -164,4 +165,5 @@ public class JwtProvider {
     public long getAccessTokenExpireTime() {
         return accessTokenExpireTime;
     }
+    
 }

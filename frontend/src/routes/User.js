@@ -17,10 +17,11 @@ const User = () => {
       <Route path='pwInquiry' element={<PwInquiryEmailSend />} />
       <Route path='auth/:token' element={<PwInquiryNewPassword />} />
       <Route
-        path='myPage'
-        element={isLogin ? <MyPage /> : <Navigate to='/user/login' replace />}
+        path="myPage"
+        element={isLogin ? <MyPage /> : <Navigate to="/user/login" replace />}
       />
-      <Route path='updateProfile' element={<UpdateProfile />} />
+      <Route path="updateProfile" element={<UpdateProfile />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

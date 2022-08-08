@@ -1,32 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   FormControl,
   InputLabel,
   Input,
   FormHelperText,
   Button,
-} from '@mui/material';
+} from "@mui/material";
 import {
   checkEmailRequest,
   checkNicknameRequest,
   signupRequest,
-} from '../../services/userService';
-import { debounce } from 'lodash';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+} from "../../services/userService";
+import { debounce } from "lodash";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 
-const debounceFunc = debounce((promise, save) => {
-  promise.then((res) => {
-    save(res);
-  });
+const debounceFunc = debounce((value, request, setState) => {
+  request(value)
+  .then((res) => setState(res.data.message))
 }, 500);
 
 const Signup = () => {
   // input값들 useState
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordCheck, setPasswordCheck] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [nickname, setNickname] = useState("");
 
   // 유효성 확인 결과 변수
   const [isEmailValid, setIsEmailValid] = useState(false);
@@ -51,9 +50,8 @@ const Signup = () => {
 
     if (isEmailValid) {
       debounceFunc(
-        dispatch(checkEmailRequest(event.target.value)).then((res) => {
-          return res.payload.data.message;
-        }),
+        event.target.value,
+        checkEmailRequest,
         setEmailChecked
       );
     }
@@ -88,9 +86,8 @@ const Signup = () => {
 
       if (isNicknameValid) {
         debounceFunc(
-          dispatch(checkNicknameRequest(event.target.value)).then((res) => {
-            return res.payload.data.message;
-          }),
+          event.target.value,
+          checkNicknameRequest,
           setNicknameChecked
         );
       }
@@ -106,11 +103,11 @@ const Signup = () => {
     };
     dispatch(signupRequest(body))
       .then((res) => {
-        if (res.payload.data.message === 'success') {
-          alert('회원가입을 축하드립니다!');
-          navigate('/');
+        if (res.payload.data.message === "success") {
+          alert("회원가입을 축하드립니다!");
+          navigate("/");
         } else {
-          alert('회원가입에 실패하였습니다!');
+          alert("회원가입에 실패하였습니다!");
         }
       })
       .catch((err) => {
@@ -119,27 +116,28 @@ const Signup = () => {
   };
 
   return (
-    <div className='form'>
+    <div className="form">
       <h2>회원가입</h2>
       <br />
       <FormControl>
-        <InputLabel htmlFor='email' color='veryperi'>
+        <InputLabel htmlFor="email" color="veryperi">
           이메일
         </InputLabel>
         <Input
-          id='email'
-          color='veryperi'
+          id="email"
+          color="veryperi"
           value={email}
           onChange={emailChange}
         />
         <FormHelperText
-          error={!!email && (!isEmailValid || emailChecked === 'fail')}>
+          error={!!email && (!isEmailValid || emailChecked === "fail")}
+        >
           {email
             ? isEmailValid
               ? emailChecked
-                ? emailChecked === 'fail'
-                  ? '이미 사용중인 이메일입니다.'
-                  : '사용 가능한 이메일입니다.'
+                ? emailChecked === 'success'
+                  ? '사용 가능한 이메일입니다.'
+                  : '이미 사용중인 이메일입니다.'
                 : '이메일 중복 여부를 확인중입니다.'
               : '유효하지 않은 이메일입니다.'
             : '이메일을 입력해 주세요.'}
@@ -147,54 +145,53 @@ const Signup = () => {
       </FormControl>
       <br />
       <FormControl>
-        <InputLabel htmlFor='password' color='veryperi'>
+        <InputLabel htmlFor="password" color="veryperi">
           비밀번호
         </InputLabel>
         <Input
-          id='password'
-          type='password'
-          color='veryperi'
+          id="password"
+          type="password"
+          color="veryperi"
           value={password}
           onChange={passwordChange}
         />
         <FormHelperText error={!!password && !isPasswordValid}>
           {isPasswordValid
-            ? '안전한 비밀번호입니다.'
-            : '영문 + 숫자 조합으로 8자 이상으로 설정해주세요.'}
+            ? "안전한 비밀번호입니다."
+            : "영문 + 숫자 조합으로 8자 이상으로 설정해주세요."}
         </FormHelperText>
       </FormControl>
       <br />
       <FormControl>
-        <InputLabel htmlFor='passwordCheck' color='veryperi'>
+        <InputLabel htmlFor="passwordCheck" color="veryperi">
           비밀번호 확인
         </InputLabel>
         <Input
-          type='password'
-          color='veryperi'
+          type="password"
+          color="veryperi"
           value={passwordCheck}
           onChange={passwordCheckChange}
         />
         <FormHelperText error={!!passwordCheck && !isPasswordSame}>
           {!passwordCheck || isPasswordSame
-            ? ' '
-            : '비밀번호가 일치하지 않습니다.'}
+            ? " "
+            : "비밀번호가 일치하지 않습니다."}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <InputLabel htmlFor='nickname' color='veryperi'>
+        <InputLabel htmlFor="nickname" color="veryperi">
           닉네임
         </InputLabel>
-        <Input color='veryperi' value={nickname} onChange={nicknameChange} />
+        <Input color="veryperi" value={nickname} onChange={nicknameChange} />
         <FormHelperText
-          error={
-            !!nickname && (!isNicknameValid || nicknameChecked === 'fail')
-          }>
+          error={!!nickname && (!isNicknameValid || nicknameChecked === "fail")}
+        >
           {nickname
             ? isNicknameValid
               ? nicknameChecked
-                ? nicknameChecked === 'fail'
-                  ? '이미 사용중인 닉네임입니다.'
-                  : '사용 가능한 닉네임입니다.'
+                ? nicknameChecked === 'success'
+                  ? '사용 가능한 닉네임입니다.'
+                  : '이미 사용중인 닉네임입니다.'
                 : '닉네임 중복 여부를 확인중입니다.'
               : '닉네임에 특수문자를 사용할 수 없습니다.'
             : '특수문자를 제외한 닉네임을 입력해주세요.'}
@@ -203,17 +200,18 @@ const Signup = () => {
       <br />
       <br />
       <Button
-        variant='contained'
-        color='veryperi'
+        variant="contained"
+        color="veryperi"
         onClick={handleSubmit}
         disabled={
           !isEmailValid ||
-          emailChecked === 'fail' ||
+          emailChecked === "fail" ||
           !isPasswordValid ||
           !isPasswordSame ||
           !isNicknameValid ||
-          nicknameChecked === 'fail'
-        }>
+          nicknameChecked === "fail"
+        }
+      >
         가입하기
       </Button>
     </div>
