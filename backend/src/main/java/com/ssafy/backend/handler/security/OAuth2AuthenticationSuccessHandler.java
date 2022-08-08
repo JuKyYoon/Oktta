@@ -11,6 +11,7 @@ import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
 import com.ssafy.backend.util.CookieUtil;
 import com.ssafy.backend.util.SetCookie;
+import com.ssafy.backend.util.SnsType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -84,6 +85,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken)
                 .queryParam("nickName", loginUser.getNickname())
+                .queryParam("snsType", SnsType.getSnsType(loginUser.getSnsType()).toString())
                 .build().toUriString();
     }
 
