@@ -1,4 +1,3 @@
-
 export const GET_TOKEN = 'user/GET_TOKEN';
 export const SIGNUP = 'user/SIGNUP';
 export const LOGIN = 'user/LOGIN';
@@ -11,8 +10,11 @@ export const CHECK_NICKNAME = 'user/CHECK_NICKNAME';
 export const PW_INQUIRY = 'user/PW_INQUIRY';
 export const EDIT_ACCOUNT = 'user/EDIT_ACCOUNT';
 export const DELETE_ACCOUNT = 'user/DELETE_ACCOUNT';
-export const UPDATE_PROFILE = "user/UPDATE_PROFILE";
+export const UPDATE_PROFILE = 'user/UPDATE_PROFILE';
 // 게시글 관련
-export const GET_ARTICLE = 'article/GET_ARTICLE';
-export const CREATE_ARTICLE = 'article/CREATE_ARTICLE';
-export const UPDATE_ARTICLE = 'article/UPDATE_ARTICLE';
+export const GET_ROOM_LIST = 'room/GET_ROOM_LIST';
+export const GET_ROOM = 'room/GET_ROOM';
+export const CREATE_ROOM = 'room/CREATE_ROOM';
+export const UPDATE_ROOM = 'room/UPDATE_ROOM';
+export const DETAIL_ROOM = 'room/DETAIL_ROOM';
+export const DELETE_ROOM = 'room/DELETE_ROOM';

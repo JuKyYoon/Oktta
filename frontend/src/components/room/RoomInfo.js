@@ -20,24 +20,19 @@ const RoomInfo = (props) => {
         <Grid item xs={6}>
           {props.title}
         </Grid>
+
         <Grid item xs={3}>
           {props.publisher}
         </Grid>
         <Grid item xs={3}>
-          <Link to={`../${props.id}`} style={{ textDecoration: 'none' }}>
+          <Link
+            to={`../detail/${props.idx}`}
+            style={{ textDecoration: 'none' }}>
             <Button
               variant='text'
               color='veriperi'
               endIcon={<LoginOutlinedIcon />}>
               입장하기
-            </Button>
-          </Link>
-          <Link to={`../edit/${props.id}`} style={{ textDecoration: 'none' }}>
-            <Button
-              variant='text'
-              color='veriperi'
-              endIcon={<LoginOutlinedIcon />}>
-              [임시] 수정하기 버튼
             </Button>
           </Link>
         </Grid>
