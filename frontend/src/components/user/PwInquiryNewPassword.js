@@ -47,7 +47,8 @@ const PwInquiryNewPassword = () => {
       alert('비밀번호가 변경되었습니다.')
       navigate('../login')
     } else {
-      alert('토큰이 유효하지 않습니다..')
+      alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
+      navigate('../pwInquiry/emailSend')
     }
   };
 
@@ -59,7 +60,7 @@ const PwInquiryNewPassword = () => {
         const timeLimit = Date.parse(data.result) + 5 * 60 * 1000;
         setTimeLimit(timeLimit);
       } else {
-        alert('토큰이 유효하지 않습니다.')
+        alert('잘못된 접근입니다.')
         navigate('../pwInquiry/emailSend')
       };
     };
