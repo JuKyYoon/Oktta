@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { OpenVidu } from 'openvidu-browser';
 import Button from '@mui/material/Button';
 import MessageItem from './MessageItem';
-import { createSessionRequest, deleteSessionRequest } from '../../services/sessionService';
+import { createSessionRequest, closeSessionRequest} from '@/services/sessionService';
 
 
 const ScreenShare = () => {
@@ -165,6 +165,17 @@ const ScreenShare = () => {
     // navigate(`/article/${params.id}/`);
   };
 
+  const closeSession = async () => {
+    const result= await closeSessionRequest(params.id);
+    console.log(result);
+    if (result?.message == "success") {
+      // 리다이렉트
+      location.href = "/";
+    } else {
+      alert("Err");
+    }
+  }
+
   const creaetSession = async () => {
     const result= await createSessionRequest(params.id);
     if (result?.message == "success") {
@@ -225,6 +236,9 @@ const ScreenShare = () => {
       </div>
       <Button variant='contained' onClick={leaveSession}>
         LeaveSession
+      </Button>
+      <Button variant='contained' onClick={closeSession}>
+        CloseSession
       </Button>
       <Button onClick={printSession}>
         세션 출력

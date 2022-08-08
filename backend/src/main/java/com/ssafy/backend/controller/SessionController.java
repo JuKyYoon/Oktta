@@ -4,6 +4,7 @@ import com.ssafy.backend.model.dto.SessionEventDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
@@ -104,6 +105,23 @@ public class SessionController {
         String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
 
+    }
+
+    /**
+     * 세션 닫기
+     */
+    @DeleteMapping("/{idx}")
+    public ResponseEntity<BaseResponseBody> closeSession(@PathVariable("idx") String boardIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+        System.out.println("session close!!!!!!!!!!!!!");
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), Long.parseLong(boardIdx));
+
+        if(isOwner) {
+            sessionService.closeSession(Long.parseLong(boardIdx));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        } else {
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
+        }
     }
 
     @GetMapping("/test1")

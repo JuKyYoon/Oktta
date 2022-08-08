@@ -12,6 +12,8 @@ public interface SessionService {
     String enterSession(User user, long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException;
     void leaveSession(long sessionIdx, String token, String nickname);
 
+    void closeSession(long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException;
+
     JSONObject getSessionsFromOpenVidu() throws OpenViduJavaClientException, OpenViduHttpException;
     JSONObject getSessionsFromJava() throws OpenViduJavaClientException, OpenViduHttpException;
     JSONObject connectionPrint() throws OpenViduJavaClientException, OpenViduHttpException;

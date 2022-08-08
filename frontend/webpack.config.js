@@ -19,6 +19,9 @@ module.exports = {
   resolve: {
   // 파일 확장자 처리
     extensions: [".js", ".jsx"],
+    alias: {
+      '@': path.resolve(__dirname, 'src/')
+    }
   },
 
   plugins: [

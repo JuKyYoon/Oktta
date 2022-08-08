@@ -138,7 +138,8 @@ public class SessionServiceImpl implements SessionService {
         System.out.println(token);
         Session session = searchSession(sessionIdx);
         if(session == null || this.mapSessionNamesTokens.get(sessionIdx) == null) {
-            throw new SessionNotFoundException("Session Not Found");
+//            throw new SessionNotFoundException("Session Not Found");
+            return;
         }
 
         // 토큰을 제거한다.
@@ -227,5 +228,18 @@ public class SessionServiceImpl implements SessionService {
         return ret;
     }
 
+    @Override
+    public void closeSession(long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+        // 세션을 찾는다.
+        Session session = this.searchSession(sessionIdx);
 
+        if(session != null) {
+            String sessionId = session.getSessionId();
+            session.close();
+            this.mapSessions.remove(sessionIdx);
+            this.mapSessionNamesTokens.remove(sessionIdx);
+            redisService.deleteKey(sessionId);
+        }
+
+    }
 }
