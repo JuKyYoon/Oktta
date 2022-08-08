@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
+import com.ssafy.backend.model.exception.SocialUserException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
@@ -79,7 +80,9 @@ public class UserController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Modify Password");
+        }
         int result = userService.modifyPassword(user.getId(), passwords);
         if(result == 1) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
@@ -111,6 +114,9 @@ public class UserController {
         User user = userRepository.findById(principal.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Send ReAuth Mail");
+        }
         userService.resendAuthMail(user.getId());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
@@ -188,6 +194,12 @@ public class UserController {
      */
     @GetMapping("/password/{id}")
     public ResponseEntity<BaseResponseBody> findPassword(@PathVariable("id")String id) throws MessagingException {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Find Password!");
+        }
         userService.findPassword(id);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
