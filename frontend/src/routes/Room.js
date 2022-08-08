@@ -13,9 +13,9 @@ const Room = () => {
     <Routes>
       <Route path='list' element={<RoomList />} />
       <Route path='create' element={<RoomCreate />} />
-      <Route path='edit/:articleId' element={<RoomEdit />} />
+      <Route path='edit/:idx' element={<RoomEdit />} />
       <Route path='popular' element={<Home />} />
-      <Route path=':id' element={<RoomDetail />} />
+      <Route path='/:idx' element={<RoomDetail />} />
       <Route path=':id/share' element={<ScreenShare />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
