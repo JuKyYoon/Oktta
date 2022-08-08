@@ -111,20 +111,14 @@ export const logoutRequest = async () => {
 
 // 이메일이 중복이면 fail, 이메일이 중복이 아니면 success
 export const checkEmailRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.get(`${USER_URL}/id/${dataToSubmit}`);
-  return {
-    type: CHECK_EMAIL,
-    payload: data,
-  };
+  const res = await axiosAuth.get(`${USER_URL}/id/${dataToSubmit}`);
+  return res
 };
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
-  return {
-    type: CHECK_NICKNAME,
-    payload: data,
-  };
+  const res = await axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
+  return res;
 };
 
 // 비밀번호 수정
