@@ -22,7 +22,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      res = await getProfileRequest()
+      const res = await getProfileRequest()
       setProfile(res.data?.result)
     }
 
