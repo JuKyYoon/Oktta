@@ -1,7 +1,8 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Login from '../components/user/Login';
-import PwInquiry from '../components/user/PwInquiry';
+import PwInquiryEmailSend from '../components/user/PwInquiryEmailSend';
+import PwInquiryNewPassword from '../components/user/PwInquiryNewPassword';
 import Signup from '../components/user/Signup';
 import MyPage from '../components/user/MyPage';
 import UpdateProfile from '../components/user/ProfileUpdate';
@@ -13,7 +14,8 @@ const User = () => {
     <Routes>
       <Route path='signup' element={<Signup />} />
       <Route path='login' element={<Login />} />
-      <Route path='pwInquiry' element={<PwInquiry />} />
+      <Route path='pwInquiry/emailSend' element={<PwInquiryEmailSend />} />
+      <Route path='pwInquiry/newPassword' element={<PwInquiryNewPassword />} />
       <Route
         path='myPage'
         element={isLogin ? <MyPage /> : <Navigate to='/user/login' replace />}

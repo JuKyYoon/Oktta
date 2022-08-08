@@ -22,11 +22,15 @@ const AUTH_URL = '/api/v1/auth'
 // 토큰 재발급
 export const getToken = async () => {
   const userId = store.getState().user.userId;
-  const data = await request.get(`${AUTH_URL}/refresh/${userId}`);
-  return {
-    type: GET_TOKEN,
-    payload: data,
-  };
+  try {
+    const data = await request.get(`${AUTH_URL}/refresh/${userId}`);
+    return {
+      type: GET_TOKEN,
+      payload: data,
+    };
+  } catch(err) {
+    console.log(err);
+  }
 };
 
 // 닉네임 변경
@@ -39,13 +43,10 @@ export const updateNicknameRequest = async (dataToSubmit) => {
   };
 };
 
-// 비밀번호 변경 -- 500
+// 비밀번호 변경
 export const updatePasswordRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit)
-  return {
-    type: UPDATE_PASSWORD,
-    payload: data,
-  };
+  const res = await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit)
+  return res;
 };
 
 // 회원가입
@@ -127,22 +128,49 @@ export const checkNicknameRequest = async (dataToSubmit) => {
   };
 };
 
-// 비밀번호 수정
-export const pwInquiry = async (dataToSubmit) => {
-  const data = await axiosAuth.patch(`${USER_URL}/password/${dataToSubmit}`);
-  return {
-    type: PW_INQUIRY,
-    payload: data,
-  };
+// 프로필 정보 받아오기
+export const getProfileRequest = async () => {
+  try {
+    const res = await axiosAuth.get(`${USER_URL}/info`);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+
 };
 
-// 회원 정보 수정
-export const editAccount = async (dataToSubmit) => {
-  const data = await axiosAuth.put(USER_URL, dataToSubmit);
-  return {
-    type: EDIT_ACCOUNT,
-    payload: data,
-  };
+// 비밀번호 찾기
+export const pwInquiryEmailSendRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/password/${dataToSubmit}`);
+    return res.payload.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/reset-token/${dataToSubmit}`);
+    return res.payload.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.delete(
+      `${USER_URL}/reset-token/${dataToSubmit.param}`,
+      dataToSubmit.body);
+    return res.payload.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 };
 
 // 회원 탈퇴

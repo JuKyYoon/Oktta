@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import '../../styles/user.scss';
+import { getProfileRequest } from '../../services/userService';
+import EditIcon from '@mui/icons-material/Edit';
 
 const MyPage = () => {
   const [mode, setMode] = useState('info');
+  const [profile, setProfile] = useState({});
   const alist = ['내가 작성한 글 1', '내가 작성한 글 2', '내가 작성한 글 3'];
   const clist = [
     '내가 작성한 댓글 1',
@@ -17,12 +20,24 @@ const MyPage = () => {
     '내가 투표한 내역 3',
   ];
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      res = await getProfileRequest()
+      setProfile(res.data?.result)
+    }
+
+    fetchProfile()
+    .catch((err) => console.log(err))
+  }, [])
+
   return (
     <div className='mypage'>
       <div className='mypage-left'>
-        <h2>마이페이지</h2>
         <div className='mypage-image-profile'></div>
-        <Link to='/user/updateProfile'>회원정보수정</Link>
+        <div>
+          {profile ? profile.nickname : null}
+          <Link to='/user/updateProfile'><EditIcon fontSize='inherit' /></Link>
+        </div>
       </div>
       <div className='mypage-right'>
         <div>
@@ -63,7 +78,7 @@ const MyPage = () => {
                 티어 인증 했으면 소환사명 뭐 그런거
               </div>
               <div className='mypage-contents-item'>
-                티어 인증 안했으면 티어인증 버튼
+                안했으면 티어 인증 버튼 넣기
               </div>
             </div>
           )}
