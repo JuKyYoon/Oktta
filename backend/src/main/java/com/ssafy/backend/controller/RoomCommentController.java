@@ -1,9 +1,7 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.dto.BoardCommentDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.response.BaseResponseBody;
-import com.ssafy.backend.service.BoardCommentService;
 import com.ssafy.backend.service.RoomCommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,7 @@ public class RoomCommentController {
      */
     @PostMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> createComment(@PathVariable("idx") Long idx, @RequestBody RoomCommentDto roomCommentDto){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         roomCommentService.createRoomComment(principal.getUsername(), idx, roomCommentDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
