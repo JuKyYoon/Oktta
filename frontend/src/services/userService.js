@@ -41,7 +41,7 @@ export const updateNicknameRequest = async (dataToSubmit) => {
   };
 };
 
-// 비밀번호 변경 -- 500
+// 비밀번호 변경
 export const updatePasswordRequest = async (dataToSubmit) => {
   return await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit);
 };
@@ -80,7 +80,57 @@ export const checkEmailRequest = async (dataToSubmit) => {
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest = async (dataToSubmit) => {
-  return await request.get(`${USER_URL}/name/${dataToSubmit}`);
+  const data = await axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
+  return {
+    type: CHECK_NICKNAME,
+    payload: data,
+  };
+};
+
+// 프로필 정보 받아오기
+export const getProfileRequest = async () => {
+  try {
+    const res = await axiosAuth.get(`${USER_URL}/info`);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+
+};
+
+// 비밀번호 찾기
+export const pwInquiryEmailSendRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/password/${dataToSubmit}`);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/reset-token/${dataToSubmit}`);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
+  console.log(dataToSubmit.body)
+  try {
+    const res = await request.delete(
+      `${USER_URL}/reset-token/${dataToSubmit.param}`,
+      dataToSubmit.body);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 };
 
 // 회원 탈퇴
