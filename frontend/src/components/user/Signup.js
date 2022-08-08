@@ -15,10 +15,9 @@ import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
-const debounceFunc = debounce((promise, save) => {
-  promise.then((res) => {
-    save(res);
-  });
+const debounceFunc = debounce((value, request, setState) => {
+  request(value)
+  .then((res) => setState(res.data.message))
 }, 500);
 
 const Signup = () => {
@@ -51,9 +50,8 @@ const Signup = () => {
 
     if (isEmailValid) {
       debounceFunc(
-        dispatch(checkEmailRequest(event.target.value)).then((res) => {
-          return res.payload.data.message;
-        }),
+        event.target.value,
+        checkEmailRequest,
         setEmailChecked
       );
     }
@@ -88,9 +86,8 @@ const Signup = () => {
 
       if (isNicknameValid) {
         debounceFunc(
-          dispatch(checkNicknameRequest(event.target.value)).then((res) => {
-            return res.payload.data.message;
-          }),
+          event.target.value,
+          checkNicknameRequest,
           setNicknameChecked
         );
       }
@@ -137,9 +134,9 @@ const Signup = () => {
           {email
             ? isEmailValid
               ? emailChecked
-                ? emailChecked === 'fail'
-                  ? '이미 사용중인 이메일입니다.'
-                  : '사용 가능한 이메일입니다.'
+                ? emailChecked === 'success'
+                  ? '사용 가능한 이메일입니다.'
+                  : '이미 사용중인 이메일입니다.'
                 : '이메일 중복 여부를 확인중입니다.'
               : '유효하지 않은 이메일입니다.'
             : '이메일을 입력해 주세요.'}
@@ -192,9 +189,9 @@ const Signup = () => {
           {nickname
             ? isNicknameValid
               ? nicknameChecked
-                ? nicknameChecked === 'fail'
-                  ? '이미 사용중인 닉네임입니다.'
-                  : '사용 가능한 닉네임입니다.'
+                ? nicknameChecked === 'success'
+                  ? '사용 가능한 닉네임입니다.'
+                  : '이미 사용중인 닉네임입니다.'
                 : '닉네임 중복 여부를 확인중입니다.'
               : '닉네임에 특수문자를 사용할 수 없습니다.'
             : '특수문자를 제외한 닉네임을 입력해주세요.'}
