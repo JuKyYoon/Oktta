@@ -6,6 +6,7 @@ import RoomList from '../components/room/RoomList';
 import RoomCreate from '../components/room/RoomCreate';
 import RoomDetail from '../components/room/RoomDetail';
 import RoomEdit from '../components/room/RoomEdit';
+import NotFound from '../components/error/NotFound';
 
 const Room = () => {
   return (
@@ -16,6 +17,7 @@ const Room = () => {
       <Route path='popular' element={<Home />} />
       <Route path='/:idx' element={<RoomDetail />} />
       <Route path=':id/share' element={<ScreenShare />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

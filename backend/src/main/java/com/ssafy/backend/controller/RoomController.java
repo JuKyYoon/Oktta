@@ -1,13 +1,11 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.dto.BoardDto;
+import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
-import com.ssafy.backend.model.repository.RoomRepository;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
-import com.ssafy.backend.model.response.BoardResponse;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
+import com.ssafy.backend.service.RoomCommentService;
 import com.ssafy.backend.service.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +32,11 @@ public class RoomController {
     private String failMsg;
 
     private final RoomService roomService;
+    private final RoomCommentService roomCommentService;
 
-    public RoomController(RoomService roomService) {
+    public RoomController(RoomService roomService, RoomCommentService roomCommentService) {
         this.roomService = roomService;
+        this.roomCommentService = roomCommentService;
     }
 
     @PostMapping("")
@@ -50,7 +50,12 @@ public class RoomController {
     @GetMapping("/{idx}")
     public ResponseEntity<RoomResponse> getRoom(@PathVariable("idx") String idx) {
         RoomDto roomDto = roomService.getRoom(Long.parseLong(idx));
-        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto));
+        roomService.updateHit(roomDto.getIdx());
+
+        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
+        int temp = list.size() / limit;
+        int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
     @PutMapping("/{idx}")

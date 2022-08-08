@@ -146,6 +146,31 @@ public class BaseControllerAdvice {
                 .body(BaseResponseBody.of(404, failMsg));
     }
 
+    
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> CommentNotFoundException(Exception e, HttpServletRequest req){
+        LOGGER.debug("Comment NOT FOUND");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseResponseBody.of(404, failMsg));
+    }
+
+    @ExceptionHandler(SocialUserException.class)
+    public ResponseEntity<BaseResponseBody> SocialUserException(Exception e, HttpServletRequest req){
+        LOGGER.debug("SOCIAL USER ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200, failMsg));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponseBody> unknownException(Exception e, HttpServletRequest req) {
         LOGGER.debug("UNKNOWN ERROR");

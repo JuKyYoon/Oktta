@@ -85,6 +85,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modifyUser(User user, UserDto changeUser) {
+        if(user.getSnsType() != 0){
+            user.updateInfo(changeUser.getNickname());
+            userRepository.save(user);
+            return;
+        }
         // 비밀번호 체크
         boolean isValidate = BCrypt.checkpw(changeUser.getPassword(), user.getPassword());
         if(isValidate) {
@@ -234,11 +239,16 @@ public class UserServiceImpl implements UserService {
 
     /**
      * User entity의 내용을 UserDto로 매핑 후, 비밀번호 제외
-     * @param user
+     * 소셜 로그인 유저의 경우 아이디, 비밀번호 제외하여 UserDto 반환
      * @param user
      */
     @Override
     public UserDto setUserInfo(User user) {
+        if(user.getSnsType() != 0){
+            return new UserDto(user.getNickname(), user.getCreateDate().toString(),
+                    user.getModifyDate().toString(), user.getProfileImg(),
+                    user.getSnsType(), user.getRole().toString());
+        }
         return UserMapper.mapper.toDto(user);
     }
 

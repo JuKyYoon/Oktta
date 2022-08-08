@@ -1,5 +1,6 @@
 package com.ssafy.backend.model.response;
 
+import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 public class RoomResponse extends BaseResponseBody {
     RoomDto result;
     List<RoomDto> list;
+    List<RoomCommentDto> commentList;
     int lastPage;
 
     public RoomDto getResult() {
@@ -25,11 +27,21 @@ public class RoomResponse extends BaseResponseBody {
 
     public void setLastPage(int lastPage) { this.lastPage = lastPage; }
 
-    public static RoomResponse of(Integer statusCode, String message, RoomDto dto) {
+    public List<RoomCommentDto> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<RoomCommentDto> commentList) {
+        this.commentList = commentList;
+    }
+
+    public static RoomResponse of(Integer statusCode, String message, RoomDto dto, List<RoomCommentDto> list, int lastPage) {
         RoomResponse res = new RoomResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);
         res.setResult(dto);
+        res.setCommentList(list);
+        res.setLastPage(lastPage);
         return res;
     }
 
