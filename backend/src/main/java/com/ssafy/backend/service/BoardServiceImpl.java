@@ -8,7 +8,6 @@ import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,12 +62,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int getLastPage(int category, int limit) {
-        int lastPage = boardRepository.findLastPage(category) / limit;
-        if(boardRepository.findLastPage(category) % limit == 0) {
-            return lastPage;
-        } else {
-            return lastPage + 1;
-        }
+        int temp = boardRepository.findLastPage(category);
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
     }
 
     @Override

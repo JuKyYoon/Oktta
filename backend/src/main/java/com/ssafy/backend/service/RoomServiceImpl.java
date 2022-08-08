@@ -97,6 +97,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public int getLastPage(int limit) {
-        return roomRepository.findLastPage() / limit + 1;
+        int temp = roomRepository.findLastPage();
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
     }
 }
