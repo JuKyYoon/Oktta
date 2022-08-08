@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { pwInquiryTokenCheckRequest, pwInquiryNewPasswordRequest } from "../../services/userService";
 import { Countdown } from 'react-time-sync';
 import { Button } from "@mui/material";
@@ -8,8 +8,8 @@ import { FormControl, FormHelperText, InputLabel, Input } from "@mui/material";
 
 const PwInquiryNewPassword = () => {
   const navigate = useNavigate('');
+  const { token } = useParams();
   const [timeLimit, setTimeLimit] = useState(0);
-  const [resetToken, setResetToken] = useState('');
 
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -35,40 +35,38 @@ const PwInquiryNewPassword = () => {
     setIsPasswordSame(password === event.target.value);
   };
 
-  const handleSubmit = () => {
-    console.log(resetToken)
+  const handleSubmit = async () => {
     const dataToSubmit = {
-      param: resetToken,
-      data: password
+      param: token,
+      body: {
+        data: { "password": password }
+      }
     };
 
-    const data = pwInquiryNewPasswordRequest(dataToSubmit);
+    const data = await pwInquiryNewPasswordRequest(dataToSubmit);
     if (data.message === 'success') {
       alert('비밀번호가 변경되었습니다.')
       navigate('../login')
     } else {
       alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
-      navigate('../pwInquiry/emailSend')
+      navigate('../pwInquiry')
     }
   };
 
-  useEffect(() =>{
-    const tokenCheck = async (resetToken) => {
-      const data = await pwInquiryTokenCheckRequest(resetToken);
+  useEffect(() => {
+    const tokenCheck = async (token) => {
+      const data = await pwInquiryTokenCheckRequest(token);
       if (data.message === 'success') {
-        setResetToken(resetToken);
-        const timeLimit = Date.parse(data.result) + 5 * 60 * 1000;
+        const timeLimit = Date.parse(data.result);
         setTimeLimit(timeLimit);
       } else {
-        alert('잘못된 접근입니다.')
-        navigate('../pwInquiry/emailSend')
+        alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
+        navigate('../pwInquiry')
       };
     };
-    
-    const params = new URLSearchParams(location.search);
-    const resetToken = params.get('reset-token');
-    tokenCheck(resetToken)
-    .catch((err) => console.log(err));
+
+    tokenCheck(token)
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -111,10 +109,10 @@ const PwInquiryNewPassword = () => {
           </FormHelperText>
         </FormControl>
         <br />
-        { timeLimit ? 
-          <Countdown until={ timeLimit }>
+        {timeLimit ?
+          <Countdown until={timeLimit}>
             {({ timeLeft }) => (
-              <div>{timeLeft > 0 ? `남은시간: ${parseInt(timeLeft / 60)}분 ${timeLeft % 60}초`  : '인증이 만료되었습니다. 다시 인증해주세요.'}</div>
+              <div>{timeLeft > 0 ? `남은시간: ${parseInt(timeLeft / 60)}분 ${timeLeft % 60}초` : '인증이 만료되었습니다. 다시 인증해주세요.'}</div>
             )}
           </Countdown>
           : <p> </p>
@@ -132,7 +130,7 @@ const PwInquiryNewPassword = () => {
           <Button
             variant="text"
             color="veryperi"
-            onClick={() => navigate('../pwInquiry/emailSend')}
+            onClick={() => navigate('../pwInquiry')}
             size="large"
           >
             이메일 재입력

@@ -14,8 +14,8 @@ const User = () => {
     <Routes>
       <Route path='signup' element={<Signup />} />
       <Route path='login' element={<Login />} />
-      <Route path='pwInquiry/emailSend' element={<PwInquiryEmailSend />} />
-      <Route path='pwInquiry/newPassword' element={<PwInquiryNewPassword />} />
+      <Route path='pwInquiry' element={<PwInquiryEmailSend />} />
+      <Route path='auth/:token' element={<PwInquiryNewPassword />} />
       <Route
         path='myPage'
         element={isLogin ? <MyPage /> : <Navigate to='/user/login' replace />}

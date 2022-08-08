@@ -28,7 +28,7 @@ export const getToken = async () => {
       type: GET_TOKEN,
       payload: data,
     };
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 };
@@ -36,7 +36,7 @@ export const getToken = async () => {
 // 닉네임 변경
 export const updateNicknameRequest = async (dataToSubmit) => {
   const res = await axiosAuth.put(USER_URL, dataToSubmit)
-  const data = { ...res, userId: dataToSubmit.nickname}
+  const data = { ...res, userId: dataToSubmit.nickname }
   return {
     type: UPDATE_PROFILE,
     payload: data,
@@ -144,7 +144,7 @@ export const getProfileRequest = async () => {
 export const pwInquiryEmailSendRequest = async (dataToSubmit) => {
   try {
     const res = await request.get(`${USER_URL}/password/${dataToSubmit}`);
-    return res.payload.data;
+    return res.data;
   } catch (err) {
     console.log(err)
     return err
@@ -154,7 +154,7 @@ export const pwInquiryEmailSendRequest = async (dataToSubmit) => {
 export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
   try {
     const res = await request.get(`${USER_URL}/reset-token/${dataToSubmit}`);
-    return res.payload.data;
+    return res.data;
   } catch (err) {
     console.log(err)
     return err
@@ -162,11 +162,12 @@ export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
 };
 
 export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
+  console.log(dataToSubmit.body)
   try {
     const res = await request.delete(
       `${USER_URL}/reset-token/${dataToSubmit.param}`,
       dataToSubmit.body);
-    return res.payload.data;
+    return res.data;
   } catch (err) {
     console.log(err)
     return err

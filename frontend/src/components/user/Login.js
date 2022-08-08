@@ -89,7 +89,7 @@ const Login = () => {
       </div>
       <div>
         <Button>
-          <Link to='/user/pwInquiry/emailSend'>비밀번호 찾기</Link>
+          <Link to='/user/pwInquiry'>비밀번호 찾기</Link>
         </Button>
         <Button>
           <Link to='/user/signUp'>회원가입</Link>
