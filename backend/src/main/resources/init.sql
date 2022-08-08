@@ -30,58 +30,16 @@ CREATE TABLE IF NOT EXISTS `profile_image` (
 
 DROP TABLE IF EXISTS `lol_auth`;
 CREATE TABLE IF NOT EXISTS `lol_auth` (
+>>>>>>> dev
     `user_id` VARCHAR(50) NOT NULL UNIQUE,
     `puuid` VARCHAR(100) NOT NULL UNIQUE,
     `tier` tinyint NOT NULL,
     `account_id` VARCHAR(100) NOT NULL,
     `summoner_name` VARCHAR(50) NOT NULL,
     `create_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT `fk_user_lol_auth_id_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
-    PRIMARY KEY(`user_id`)
-);
-
-DROP TABLE IF EXISTS `login_log`;
-CREATE TABLE IF NOT EXISTS `login_log` (
-    `idx` INT NOT NULL AUTO_INCREMENT,
-    `user_id` VARCHAR(50) NOT NULL UNIQUE,
-    `login_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `revoked_date` TIMESTAMP DEFAULT NULL,
     `ip_address` INT UNSIGNED NULL,
-    CONSTRAINT `fk_login_log_user_id_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
-    PRIMARY KEY(`idx`)
-);
-
-DROP TABLE IF EXISTS `board`;
-CREATE TABLE IF NOT EXISTS `board` (
-    `idx` INT NOT NULL AUTO_INCREMENT,
-    `user_idx` INT NOT NULL,
-    `title` VARCHAR(100) NOT NULL,
-    `content` TEXT NOT NULL,
-    `create_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `modify_date` TIMESTAMP NULL,
-    `category` INT NOT NULL,
-    `hit` INT DEFAULT 0,
-    PRIMARY KEY(`idx`),
-    CONSTRAINT `fk_user_board_idx_user_idx` FOREIGN KEY (`user_idx`) REFERENCES `user` (`idx`) ON DELETE CASCADE
-);
-
-DROP TABLE IF EXISTS `champion`;
-CREATE TABLE IF NOT EXISTS `champion`(
-    `idx` INT NOT NULL,
-    `name` VARCHAR(20) NOT NULL,
-    PRIMARY KEY(`idx`)
-);
-
-
-DROP TABLE IF EXISTS `vote`;
-CREATE TABLE IF NOT EXISTS `vote`(
-    `idx` INT NOT NULL AUTO_INCREMENT,
-    `candidate1` INT NOT NULL,
-    `candidate2` INT NOT NULL,
-    `candidate3` INT NOT NULL,
-    `candidate4` INT NOT NULL,
-    `candidate5` INT NOT NULL,  
-    -- 외래키 해야할까?  
-    `end_date` TIMESTAMP NOT NULL,
+    CONSTRAINT `fk_refresh_token_user_id_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
     PRIMARY KEY(`idx`)
 );
 

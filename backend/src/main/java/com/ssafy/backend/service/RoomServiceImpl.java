@@ -51,6 +51,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public int updateHit(Long idx) {
+        return roomRepository.updateHit(idx);
+    }
+
+    @Override
     public boolean updateRoom(RoomDto roomDto, String userId) {
         // 현재 요청을 보낸 유저
         User user = userRepository.findById(userId).orElseThrow(
@@ -68,7 +73,7 @@ public class RoomServiceImpl implements RoomService {
                 () -> new RoomNotFoundException("Room Not Found in DeleteRoom")
         );
 
-        if(room.getUser().getId().equals(userId)) {
+        if(!room.getUser().getId().equals(userId)) {
             return false;
         } else {
             roomRepository.delete(room);
@@ -92,6 +97,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public int getLastPage(int limit) {
-        return roomRepository.findLastPage() / limit + 1;
+        int temp = roomRepository.findLastPage();
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
     }
 }
