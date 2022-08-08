@@ -6,7 +6,7 @@ import { OpenVidu } from 'openvidu-browser';
 import Button from '@mui/material/Button';
 import MessageItem from './MessageItem';
 import { createSessionRequest, closeSessionRequest} from '@/services/sessionService';
-
+import '@/styles/session.scss';
 
 const ScreenShare = () => {
   const params = useParams();
@@ -20,6 +20,7 @@ const ScreenShare = () => {
   const [role, setRole] = useState('publisher');
   const [publisher, setPublisher] = useState('');
   const [subscribers, setSubscribers] = useState([]);
+  const [participants, setParticipants] = useState([]);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(false);
   const [openVidu, setOpenVidu] = useState();
@@ -63,15 +64,50 @@ const ScreenShare = () => {
     // 세션 초기화
     const mySession = openVidu.initSession();
     setSession(mySession);
-    // 이벤트 설정
+
+    // 유저 입장
+    mySession.on("connectionCreated", (event) => {
+      console.log("connecion CREATEDddddddddddddddddddddddd");
+      let data = event.connection.data.split("%/%")
+      let user = JSON.parse(data[1]);
+      console.log(user);
+      setParticipants( prevArr => [...prevArr, user]); 
+    })
+
+    // 유저 퇴장
+    mySession.on("connectionDestroyed", (event) => {
+      console.log(event);
+      let data = event.connection.data.split("%/%")
+      let user = JSON.parse(data[1]);
+      console.log(user.nickname);
+      setParticipants((participants) => participants.filter((e)=>(e.nickname != user.nickname)))
+    })
+
+    // 영상 or 음성 활성화
     mySession.on('streamCreated', (event) => {
+      console.log("streamCreated on Sessionnnnnnnnnnnnnnnnnnn")
       console.log(event)
+
+      // '내'가 구독할 stream
       const subscriber = mySession.subscribe(event.stream, 'video-container');
+
+      // 타인이 공유하는 것을 내가 본다.
+      subscriber.on('videoElementCreated', event => {
+        console.log("subscriber videoElementCreated")
+			});
+
+			// 타인이 공유
+			subscriber.on('videoElementDestroyed', event => {
+        console.log("subscriber videoElementDestroyed")
+
+			});
+
       setSubscribers([...subscribers, subscriber]);
     });
 
-    // 누군가 나감
+    // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
     mySession.on('streamDestroyed', (event) => {
+      console.log("streamDestroyed on Sessssssssssssssssssssssion")
       console.log(event)
       deleteSubscriber(event.stream.streamManager);
     });
@@ -89,21 +125,23 @@ const ScreenShare = () => {
 
     // --- 4) Connect to the session with a valid user token ---
     mySession
-      .connect(token, { clientData: {idx: params.id,token:token} })
+      .connect(token, { clientData: {idx: params.id, token:token} })
       .then(() => {
-        // --- 5) Get your own camera stream ---
-        if (role === 'publisher') {
-          const newPublisher = openVidu.initPublisher(undefined, {
-            audioSource: undefined, // The source of audio. If undefined default microphone
-            videoSource: undefined, // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
-            publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-            publishVideo: false, // Whether you want to start publishing with your video enabled or not
-            insertMode: undefined, // How the video is inserted in the target element 'video-container'
-            mirror: false, // Whether to mirror your local video or not
-          });
-          mySession.publish(newPublisher);
-          setPublisher(() => newPublisher);
-        }
+        console.log("연결 되었다!")
+
+        // 만약 내가 글 작성자라면
+        // let newPublisher = openVidu.initPublisher('video-container',{ 
+        //   videoSource: 'screen',
+        //   resolution: '640x480',
+        //   publishAudio: true,
+        //   publishVideo: false,
+        // })
+
+        // mySession.publish(newPublisher);
+        // setPublisher(() => newPublisher);
+        
+
+
       })
       .catch((error) => {
         console.log(
@@ -120,14 +158,20 @@ const ScreenShare = () => {
     publisher.publishAudio(newAudioEnabled);
   };
 
+  const videoToggle = () => {
+    const newVideoEnabled = !videoEnabled;
+    setVideoEnabled(newVideoEnabled, 'screen');
+    publisher.publishVideo(newVideoEnabled);
+  }
+
   const screenToggle = () => {
     const newVideoEnabled = !videoEnabled;
-    let newPublisher;
+    // 킨다
     if (newVideoEnabled) {
-      newPublisher = openVidu.initPublisher('video-container', {
+      let newPublisher = openVidu.initPublisher('video-container', {
         audioSource: undefined, // The source of audio. If undefined default microphone
         videoSource: 'screen', // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
-        publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
         publishVideo: true, // Whether you want to start publishing with your video enabled or not
         resolution: '640x480', // The resolution of your video
         frameRate: 30, // The frame rate of your video
@@ -135,19 +179,25 @@ const ScreenShare = () => {
         mirror: false, // Whether to mirror your local video or not
       });
 
-      // --- 6) Publish your stream ---
+      // 내가 공유한 것을 내가 본다.
+      newPublisher.on('videoElementCreated', event => {
+        console.log("publishre on videoElementCreated")
 
-      if (publisher) {
-        session.unpublish(publisher).then(() => session.publish(newPublisher));
-      } else {
-        session.publish(newPublisher);
-      }
+      });
 
-      // Set the main video in the page to display our webcam and store our Publisher
-      setPublisher(() => newPublisher);
-      console.log(publisher);
+      // 내가 공유한 것을 내가 취소한다.
+      newPublisher.on('videoElementDestroyed', event => {
+        // Add a new HTML element for the user's name and nickname over its video
+        console.log("publishre on videoElementDestroyed")
+      });
+
+      // 화면 공유 킨다.
+      session.publish(newPublisher);
+      setPublisher(newPublisher);
     } else {
-      publisher.publishVideo(newVideoEnabled);
+      // 끈다
+      session.unpublish(publisher);
+      setPublisher(null);
     }
     setVideoEnabled(newVideoEnabled);
   };
@@ -157,12 +207,7 @@ const ScreenShare = () => {
     console.log(sessionRef.current)
     if (sessionRef.current) {
       sessionRef.current.disconnect();
-      // const result = await deleteSessionRequest(params.id, token);
-      // console.log("위에 안보내져")
-      // console.log(result);
     }
-    // console.log("Asdfadf")
-    // navigate(`/article/${params.id}/`);
   };
 
   const closeSession = async () => {
@@ -191,18 +236,16 @@ const ScreenShare = () => {
     console.log(session);
     console.log(sessionRef.current);
   }
+  const pringParticipants = () => {
+    console.log(participants);
+  }
 
   const closeWindow = (e) => {
-    // e.preventDefault();
-    // e.returnValue = '';
-    // console.log(session)
-    // console.log(sessionRef.current)
     if(sessionRef.current) {
       sessionRef.current.disconnect()
     }
-    
-
   };
+
 
 
   // 세션 상태 업데이트
@@ -218,7 +261,6 @@ const ScreenShare = () => {
     console.log("이게 업데이트야???????????")
     window.addEventListener("beforeunload", closeWindow);  
     
-    // 만약, 세션이 없다면, 서버에서 세션을 만들고.
     if(!session) {
       creaetSession();
     }
@@ -229,6 +271,7 @@ const ScreenShare = () => {
     };
   }, []);
   console.log("렌더")
+
   return (
     <div id='session'>
       <div id='session-header'>
@@ -243,6 +286,9 @@ const ScreenShare = () => {
       <Button onClick={printSession}>
         세션 출력
       </Button>
+      <Button onClick={pringParticipants}>
+        유저 출력
+      </Button>
       {role === 'publisher' ? (
         <div>
           <Button variant='contained' onClick={audioToggle}>
@@ -255,6 +301,7 @@ const ScreenShare = () => {
       ) : null}
       <div className='session-content'>
         <div id='video-container'></div>
+        <div id='audio-container'></div>
         <div className='chat-box'>
           <ul>
             {messages.map((message, idx) => {
@@ -274,7 +321,9 @@ const ScreenShare = () => {
         </div>
         <div>
           <h3>참가자 목록</h3>
-          {/* {subscribers ? subscribers.map((subscriber) => <p>{subscriber}</p>) : null} */}
+          <ul id="user-list">
+            {participants.map(item => <li key={item.nickname}>{item.rank} : {item.nickname}</li>)}
+          </ul>
         </div>
       </div>
     </div>
