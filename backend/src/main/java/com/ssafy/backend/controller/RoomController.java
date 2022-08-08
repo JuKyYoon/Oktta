@@ -1,13 +1,8 @@
 package com.ssafy.backend.controller;
 
-import com.ssafy.backend.model.dto.BoardCommentDto;
-import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
-import com.ssafy.backend.model.repository.RoomRepository;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
-import com.ssafy.backend.model.response.BoardResponse;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
 import com.ssafy.backend.service.RoomCommentService;
@@ -58,7 +53,8 @@ public class RoomController {
         roomService.updateHit(roomDto.getIdx());
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
-        int lastPage = list.size() / limit + 1;
+        int temp = list.size() / limit;
+        int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
