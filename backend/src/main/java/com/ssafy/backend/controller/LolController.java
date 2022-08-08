@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -55,5 +52,13 @@ public class LolController {
         }else{
             return ResponseEntity.status(200).body(BaseResponseBody.of(200,failMsg));
         }
+    }
+
+    @GetMapping("/game/{summonerName}")
+    public ResponseEntity<BaseResponseBody> getRecentGames(@PathVariable("summonerName") String summonerName){
+        String puuid = lolService.getUserInfo(summonerName).block().getPuuid();
+        lolService.getRecentGames(puuid);
+
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }
