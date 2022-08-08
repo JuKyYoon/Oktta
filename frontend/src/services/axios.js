@@ -69,6 +69,7 @@ axiosAuth.interceptors.response.use(
         window.location.replace('/user/login');
       };
     }
+    console.log("qadfadfsdf")
     return Promise.reject(error);
   }
 );

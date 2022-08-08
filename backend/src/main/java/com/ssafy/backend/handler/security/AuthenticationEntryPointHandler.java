@@ -48,7 +48,7 @@ public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint
         JSONObject json = new JSONObject();
         response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("utf-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus("401".equals(code) ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_FORBIDDEN);
         json.put("status", msg);
         json.put("result", code);
         response.getWriter().print(json);

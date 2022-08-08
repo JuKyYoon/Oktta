@@ -2,6 +2,10 @@ package com.ssafy.backend.model.dto;
 
 import com.ssafy.backend.model.entity.Board;
 import io.swagger.v3.oas.annotations.media.Schema;
+import net.bytebuddy.asm.Advice;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Schema
 public class BoardDto {
@@ -9,13 +13,21 @@ public class BoardDto {
     private String nickname;
     private String title;
     private String content;
-    private String createDate;
-    private String modifyDate;
+    private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
     private int category;
-    private long hit;
+    private Long hit;
 
     public BoardDto(){
 
+    }
+
+    public BoardDto(String nickname, Long idx, String title, LocalDateTime createDate, Long hit){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.hit = hit;
     }
 
     public BoardDto(String nickname, Board board) {
@@ -23,8 +35,8 @@ public class BoardDto {
         this.idx = board.getIdx();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.createDate = board.getCreateDate().toString();
-        this.modifyDate = board.getModifyDate().toString();
+        this.createDate = board.getCreateDate();
+        this.modifyDate = board.getModifyDate();
         this.category = board.getCategory();
         this.hit = board.getHit() + 1;
     }
@@ -53,19 +65,19 @@ public class BoardDto {
         this.content = content;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public String getModifyDate() {
+    public LocalDateTime getModifyDate() {
         return modifyDate;
     }
 
-    public void setModifyDate(String modifyDate) {
+    public void setModifyDate(LocalDateTime modifyDate) {
         this.modifyDate = modifyDate;
     }
 
@@ -77,7 +89,7 @@ public class BoardDto {
         this.category = category;
     }
 
-    public long getHit() {
+    public Long getHit() {
         return hit;
     }
 

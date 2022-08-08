@@ -54,8 +54,8 @@ public class SessionController {
 
         long sessionIdx = Long.parseLong(boardIdx);
         synchronized (SessionController.class) {
-            sessionService.createSession(sessionIdx);
-            String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
+            sessionService.createSession(user.getId(), sessionIdx);
+            String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.MODERATOR);
             return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
         }
     }
@@ -93,7 +93,7 @@ public class SessionController {
         long sessionIdx = Long.parseLong(boardIdx);
 
 
-        String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.SUBSCRIBER);
+        String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
 
     }

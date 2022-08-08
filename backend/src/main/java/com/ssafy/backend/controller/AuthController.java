@@ -37,6 +37,8 @@ public class AuthController {
 
     private final UserRepository userRepository;
 
+
+
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
     public AuthController(AuthService authService, UserRepository userRepository) {
@@ -85,7 +87,6 @@ public class AuthController {
 
     /**
      * AccessToken 재발급
-     * @param userId 유저 아이디
      * @return { accessToken, refreshToken }
      */
     @GetMapping("/refresh")
@@ -123,6 +124,5 @@ public class AuthController {
             return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "token not found"));
         }
     }
-
 
 }
