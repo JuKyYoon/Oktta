@@ -5,7 +5,19 @@ import { getToken } from "./userService";
 
 export const request = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
+  withCredentials: true,
 });
+
+request.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error);
+    window.location.replace('/');
+    return Promise.reject(error);
+  }
+);
 
 export const axiosAuth = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
@@ -17,6 +29,10 @@ axiosAuth.interceptors.request.use(
     const accessToken = store.getState().user.token;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    // 로그인이 되어있지 않을 때 로그인 페이지로 이동
+    else {
+      window.location.replace('/user/login');
     }
     return config;
   },
@@ -50,6 +66,7 @@ axiosAuth.interceptors.response.use(
       if (store.getState().user.isLogin === true) {
         console.log("deleted user data from local storage");
         store.getState().user = initState;
+        window.location.replace('/user/login');
       };
     }
     return Promise.reject(error);

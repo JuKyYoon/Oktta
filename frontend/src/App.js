@@ -21,7 +21,6 @@ function App() {
       </Route>
       <Route path="/user/auth/:token" element={<EmailAuth />} />
       <Route path="/oauth/*" element={<SocialAuth />} />
-      {/* <Route path="/oauth/redirect?token=:token&nickName=:nickname" element={<EmailAuth />} /> */}
     </Routes>
   );
 }

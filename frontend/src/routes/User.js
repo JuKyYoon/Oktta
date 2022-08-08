@@ -6,6 +6,7 @@ import Signup from "../components/user/Signup";
 import MyPage from "../components/user/MyPage";
 import UpdateProfile from "../components/user/ProfileUpdate";
 import { useSelector } from "react-redux";
+import NotFound from "../components/error/NotFound";
 
 const User = () => {
   const isLogin = useSelector((state) => state.user.isLogin);
@@ -19,6 +20,7 @@ const User = () => {
         element={isLogin ? <MyPage /> : <Navigate to="/user/login" replace />}
       />
       <Route path="updateProfile" element={<UpdateProfile />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
