@@ -112,14 +112,20 @@
   background-color: $veripery !important;
 }
 
-.social_login {
+#naverIdLogin {
+  padding-top: 8px;
   width: 200px;
-  height: 45px;
+}
+
+#kakaoIdLogin {
+  padding-top: 8px;
+  width: 200px;
+  height: 55px;
 }
 
 #googleIdLogin {
   width: 205px;
-  height: 50px;
+  height: 60px;
 }
 
 .login_or {

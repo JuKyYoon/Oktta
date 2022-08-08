@@ -1,3 +1,4 @@
+import { Stack } from '@mui/material';
 import React from 'react';
 const SocialLogin = () => {
   const base_uri = "http://localhost:8080/api/v1/oauth2/authorization/"
@@ -7,7 +8,7 @@ const SocialLogin = () => {
   const kakao_uri = base_uri + 'kakao' + redirect_uri;
 
   return (
-    <>
+    <Stack direction="row" spacing={2}>
       <a href={google_uri}>
         <img src='../assets/google_button.png' className='social_login' id='googleIdLogin' alt="구글 로그인 버튼" />
       </a>
@@ -17,7 +18,7 @@ const SocialLogin = () => {
       <a href={kakao_uri}>
         <img src='../assets/kakao_button.png' className='social_login' id='kakaoIdLogin' alt="카카오 로그인 버튼" />
       </a>
-    </>
+    </Stack>
   );
 };
 
