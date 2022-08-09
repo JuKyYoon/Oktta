@@ -168,32 +168,53 @@ const ScreenShare = () => {
     const newVideoEnabled = !videoEnabled;
     // 킨다
     if (newVideoEnabled) {
-      let newPublisher = openVidu.initPublisher('video-container', {
-        audioSource: undefined, // The source of audio. If undefined default microphone
-        videoSource: 'screen', // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
-        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-        resolution: '640x480', // The resolution of your video
-        frameRate: 30, // The frame rate of your video
-        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-        mirror: false, // Whether to mirror your local video or not
-      });
+      let mediaDevices = navigator.mediaDevices;
 
-      // 내가 공유한 것을 내가 본다.
-      newPublisher.on('videoElementCreated', event => {
-        console.log("publishre on videoElementCreated")
+      mediaDevices.getDisplayMedia({
+        video: { cursor: "always"}, audio: true
+      }).then((screenStream) => {
+        let screenVideoTrack = screenStream.getVideoTracks()[0];
+        let screenAudioTrack = screenStream.getAudioTracks()[0];
 
-      });
-
-      // 내가 공유한 것을 내가 취소한다.
-      newPublisher.on('videoElementDestroyed', event => {
-        // Add a new HTML element for the user's name and nickname over its video
-        console.log("publishre on videoElementDestroyed")
-      });
-
-      // 화면 공유 킨다.
-      session.publish(newPublisher);
-      setPublisher(newPublisher);
+        let screenPublisher = openVidu.initPublisher('video-container', {
+          audioSource: screenAudioTrack, // The source of audio. If undefined default microphone
+          videoSource: screenVideoTrack , // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
+          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          publishVideo: true, // Whether you want to start publishing with your video enabled or not
+          resolution: '640x480', // The resolution of your video
+          frameRate: 30, // The frame rate of your video
+          insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+          mirror: false, // Whether to mirror your local video or not
+        });
+  
+        // 내가 공유한 것을 내가 본다.
+        screenPublisher.on('videoElementCreated', event => {
+          console.log("publishre on videoElementCreated")
+        });
+        
+        // 내가 공유한 것을 내가 취소한다.
+        screenPublisher.on('videoElementDestroyed', event => {
+          // Add a new HTML element for the user's name and nickname over its video
+          console.log("publishre on videoElementDestroyed")
+        });
+  
+        // 권한 허용
+        screenPublisher.once('accessAllowed', (event) => {
+          // It is very important to define what to do when the stream ends.
+          screenPublisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
+              console.log('User pressed the "Stop sharing" button');
+              session.unpublish(screenPublisher);
+              setVideoEnabled(false);
+          });
+          session.publish(screenPublisher);
+          setPublisher(screenPublisher);
+        });
+  
+        screenPublisher.once('accessDenied', (event) => {
+          setVideoEnabled(false);
+          return;
+        });
+      })
     } else {
       // 끈다
       session.unpublish(publisher);
@@ -262,6 +283,7 @@ const ScreenShare = () => {
     window.addEventListener("beforeunload", closeWindow);  
     
     if(!session) {
+      console.log("입장")
       creaetSession();
     }
 
