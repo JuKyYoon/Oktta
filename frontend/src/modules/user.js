@@ -37,7 +37,6 @@ export default function (state = initState, action) {
       }
       return { ...state };
     case SOCIAL_LOGIN:
-      console.log(action.payload)
       return {
         isLogin: action.payload.isLogin,
         nickname: action.payload.nickname,
@@ -50,7 +49,6 @@ export default function (state = initState, action) {
     case DELETE_ACCOUNT:
       return initState;
     case UPDATE_NICKNAME:
-      console.log(action.payload)
       return {
         ...state,
         nickname: action.payload.nickname,
