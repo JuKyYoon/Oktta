@@ -4,6 +4,7 @@ import {
   LOGIN,
   LOGOUT,
   DELETE_ACCOUNT,
+  UPDATE_NICKNAME,
 } from "../modules/types.js";
 
 /* 요청 URL*/
@@ -33,10 +34,11 @@ export const emailAuth = async (dataToSubmit) => {
 
 // 닉네임 변경
 export const updateNicknameRequest = async (dataToSubmit) => {
-  const res = await axiosAuth.put(USER_URL, dataToSubmit);
+  const res = await axiosAuth.put(USER_URL, dataToSubmit)
+  .catch((err) => console.log(err));
   const data = { ...res, nickname: dataToSubmit.nickname };
   return {
-    type: UPDATE_PROFILE,
+    type: UPDATE_NICKNAME,
     payload: data,
   };
 };
@@ -80,11 +82,8 @@ export const checkEmailRequest = async (dataToSubmit) => {
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest = async (dataToSubmit) => {
-  const data = await axiosAuth.get(`${USER_URL}/name/${dataToSubmit}`);
-  return {
-    type: CHECK_NICKNAME,
-    payload: data,
-  };
+  const data = await request.get(`${USER_URL}/name/${dataToSubmit}`);
+  return data;
 };
 
 // 프로필 정보 받아오기
@@ -96,7 +95,6 @@ export const getProfileRequest = async () => {
     console.log(err);
     return err;
   }
-
 };
 
 // 비밀번호 찾기
@@ -121,7 +119,6 @@ export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
 };
 
 export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
-  console.log(dataToSubmit.body)
   try {
     const res = await request.delete(
       `${USER_URL}/reset-token/${dataToSubmit.param}`,
