@@ -61,10 +61,10 @@ public class SessionController {
             if(isOwner) {
                 sessionService.createSession(user.getId(), sessionIdx);
                 String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.MODERATOR);
-                return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
+                return ResponseEntity.status(200).body(MessageResponse.of(200, "owner", token));
             } else {
                 String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
-                return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
+                return ResponseEntity.status(200).body(MessageResponse.of(200, "participant", token));
             }
         }
     }

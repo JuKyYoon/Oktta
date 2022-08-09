@@ -26,6 +26,7 @@ const ScreenShare = () => {
   const [openVidu, setOpenVidu] = useState();
 
   let token = "";
+  let isOwner = false;
 
   const changeMessage = (event) => {
     setInputMessage(event.target.value);
@@ -55,7 +56,7 @@ const ScreenShare = () => {
     }
   };
 
-  const joinSession = (role) => {
+  const joinSession = () => {
     console.log(token)
     // OpenVidu 객체 생성.
     const openVidu = new OpenVidu();
@@ -129,16 +130,16 @@ const ScreenShare = () => {
       .then(() => {
         console.log("연결 되었다!")
 
-        // 만약 내가 글 작성자라면
-        // let newPublisher = openVidu.initPublisher('video-container',{ 
-        //   videoSource: 'screen',
-        //   resolution: '640x480',
-        //   publishAudio: true,
-        //   publishVideo: false,
-        // })
-
-        // mySession.publish(newPublisher);
-        // setPublisher(() => newPublisher);
+        // 전원 자신의 오디오를 publish 한다.
+        let audioPublisher = openVidu.initPublisher('audio-container', {
+          videoSource: false,
+          audioSource: undefined, // The source of audio. If undefined default microphone
+          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+          publishVideo: false, // Whether you want to start publishing with your video enabled or not
+        });
+        console.log("Audio Activated")
+        mySession.publish(audioPublisher);
+        setPublisher(audioPublisher);
         
 
 
@@ -164,9 +165,29 @@ const ScreenShare = () => {
     publisher.publishVideo(newVideoEnabled);
   }
 
-  const screenToggle = () => {
+  const publishOnlyAudio = () => {
+
+    let audioPublisher = openVidu.initPublisher('audio-container', {
+      videoSource: false,
+      audioSource: undefined, // The source of audio. If undefined default microphone
+      publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+      publishVideo: false, // Whether you want to start publishing with your video enabled or not
+    });
+    console.log("Audio Activated")
+    
+    session.publish(audioPublisher);
+    setPublisher(audioPublisher);
+  }
+
+  const screenToggle = async () => {
     const newVideoEnabled = !videoEnabled;
-    // 킨다
+    if(publisher) {
+      console.log("here?")
+      session.unpublish(publisher);
+      setPublisher(null);
+    }
+
+
     if (newVideoEnabled) {
       let mediaDevices = navigator.mediaDevices;
 
@@ -201,9 +222,11 @@ const ScreenShare = () => {
         // 권한 허용
         screenPublisher.once('accessAllowed', (event) => {
           // It is very important to define what to do when the stream ends.
+          console.log("alloweeeeeeeeeeeeeed")
           screenPublisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
               console.log('User pressed the "Stop sharing" button');
               session.unpublish(screenPublisher);
+              setPublisher(null);
               setVideoEnabled(false);
           });
           session.publish(screenPublisher);
@@ -214,17 +237,22 @@ const ScreenShare = () => {
           setVideoEnabled(false);
           return;
         });
+      }).catch((err) => {
+        console.log(err)
+        setVideoEnabled(false);
       })
     } else {
-      // 끈다
-      session.unpublish(publisher);
-      setPublisher(null);
+      // 오디오 퍼블리서로 전환시킨다.
+      console.log("취소했자나")
+      publishOnlyAudio();
     }
     setVideoEnabled(newVideoEnabled);
   };
 
   const leaveSession = async () => {
     console.log("leave session")
+    // publishing 하고있는거 취소하고 나가기!!!!!
+    // publisher state에 어떻게 접근하지????????????
     console.log(sessionRef.current)
     if (sessionRef.current) {
       sessionRef.current.disconnect();
@@ -232,11 +260,11 @@ const ScreenShare = () => {
   };
 
   const closeSession = async () => {
-    const result= await closeSessionRequest(params.id);
+    // const result= await closeSessionRequest(params.id);
+    location.href = "/";
     console.log(result);
     if (result?.message == "success") {
       // 리다이렉트
-      location.href = "/";
     } else {
       alert("Err");
     }
@@ -244,11 +272,16 @@ const ScreenShare = () => {
 
   const creaetSession = async () => {
     const result= await createSessionRequest(params.id);
-    if (result?.message == "success") {
+    if (result?.message == "owner") {
       // 세션에 접속한다.
       token = result.result;
-      joinSession('publisher') 
+      isOwner = true;
+      joinSession() 
+    } else if (result?.message == "participant") {
+      token = result.result;
+      joinSession() 
     } else {
+      console.log(result)
       alert("Err");
     }
   }
