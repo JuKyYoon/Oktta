@@ -1,52 +1,106 @@
 /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { useSelector } from 'react-redux';
-import { OpenVidu } from 'openvidu-browser';
-import Button from '@mui/material/Button';
-import MessageItem from './MessageItem';
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router";
 import { createSessionRequest, closeSessionRequest} from '@/services/sessionService';
-import '@/styles/session.scss';
+
+import { OpenVidu } from "openvidu-browser";
+import Button from "@mui/material/Button";
+import MessageItem from "./MessageItem";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+
+import "@/styles/session.scss";
 
 const ScreenShare = () => {
   const params = useParams();
-  const [inputMessage, setInputMessage] = useState('');
-  const [messages, setMessages] = useState([
-    { from: 'system', data: '환영합니다!' },
-  ]);
   const [session, setSession] = useState(null);
   const sessionRef = useRef();
 
-  const [role, setRole] = useState('publisher');
-  const [publisher, setPublisher] = useState('');
-  const [subscribers, setSubscribers] = useState([]);
-  const [participants, setParticipants] = useState([]);
+  const [participants, setParticipants] = useState([
+    { nickname: "samsung", rank: 1, connectionId: "conid1" },
+    { nickname: "apple", rank: 1, connectionId: "conid2" },
+    { nickname: "blackberry", rank: 1, connectionId: "conid3" },
+    { nickname: "sony", rank: 1, connectionId: "conid4" },
+  ]);
+
+  const [chat, setChat] = useState([
+    { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+  ]);
+
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(false);
   const [openVidu, setOpenVidu] = useState();
+  const [subscribers, setSubscribers] = useState([]);
+  const [role, setRole] = useState("publisher");
+  const [open, setOpen] = useState(false);
+  const [owner, setOwner] = useState(false);
+  const [publisher, setPublisher] = useState('');
 
   let token = "";
-  let isOwner = false;
 
-  const changeMessage = (event) => {
-    setInputMessage(event.target.value);
-  };
-
-  const sendMessage = (event) => {
-    event.preventDefault();
-    if (inputMessage) {
-      session
-        .signal({
-          data: inputMessage,
-        })
-        .then(() => {
-          setInputMessage('');
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+  const toggleDrawer = (isOpen) => (event) => {
+    // 닫을려고 할 때
+    if (!isOpen) {
+      if (
+        event.type === "click" ||
+        (event.type === "keydown" &&
+          (event.key === "Tab" || event.key === "Shift"))
+      ) {
+        return;
+      }
     }
+
+    setOpen(isOpen);
   };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const list = (anchor) => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onKeyDown={toggleDrawer(false)}
+    >
+      <div>
+        <IconButton onClick={handleDrawerClose}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </div>
+      <Divider />
+
+      <List>
+        {participants.map((user, index) => (
+          <ListItem key={user.connectionId} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary={user.nickname} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <Button onClick={handleDrawerClose}>닫기</Button>
+    </Box>
+  );
 
   const deleteSubscriber = (streamManager) => {
     const index = subscribers.indexOf(streamManager, 0);
@@ -72,6 +126,9 @@ const ScreenShare = () => {
       let data = event.connection.data.split("%/%")
       let user = JSON.parse(data[1]);
       console.log(user);
+      user.audioActive = false;
+      user.connectionId = event.connection.connectionId;
+      user.role = event.connection.role ? event.connection.role : "publisher";
       setParticipants( prevArr => [...prevArr, user]); 
     })
 
@@ -105,6 +162,19 @@ const ScreenShare = () => {
 
       setSubscribers([...subscribers, subscriber]);
     });
+
+    mySession.on('streamPropertyChanged', (event) => {
+      console.log('streamPropertyChanged')
+      // 유저 찾기
+      if(event.changedProperty === "audioActive") {
+        let userId = event.target.connection.connectionId;
+        setParticipants((participants) => 
+          participants.map(e => 
+            e.connectionId == userId ? {...e, audioActive : event.newValue } : e
+          )
+        )
+      }
+    })
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
     mySession.on('streamDestroyed', (event) => {
@@ -153,19 +223,24 @@ const ScreenShare = () => {
       });
   };
 
+  /**
+   * 음소거
+   */
   const audioToggle = () => {
     const newAudioEnabled = !audioEnabled;
     setAudioEnabled(newAudioEnabled);
     publisher.publishAudio(newAudioEnabled);
   };
 
-  const videoToggle = () => {
-    const newVideoEnabled = !videoEnabled;
-    setVideoEnabled(newVideoEnabled, 'screen');
-    publisher.publishVideo(newVideoEnabled);
-  }
-
+  /**
+   * 오디오 스트림 연결
+   */
   const publishOnlyAudio = () => {
+    if(publisher) {
+      console.log("here?")
+      session.unpublish(publisher);
+      setPublisher(null);
+    }
 
     let audioPublisher = openVidu.initPublisher('audio-container', {
       videoSource: false,
@@ -174,35 +249,32 @@ const ScreenShare = () => {
       publishVideo: false, // Whether you want to start publishing with your video enabled or not
     });
     console.log("Audio Activated")
-    
+    setAudioEnabled(false); 
     session.publish(audioPublisher);
     setPublisher(audioPublisher);
   }
 
+  /**
+   * 화면 공유 스트림 연결
+   */
   const screenToggle = async () => {
     const newVideoEnabled = !videoEnabled;
-    if(publisher) {
-      console.log("here?")
-      session.unpublish(publisher);
-      setPublisher(null);
-    }
-
 
     if (newVideoEnabled) {
       let mediaDevices = navigator.mediaDevices;
-
-      mediaDevices.getDisplayMedia({
-        video: { cursor: "always"}, audio: true
+      
+      mediaDevices.getUserMedia({
+        video: false, audio: true
       }).then((screenStream) => {
-        let screenVideoTrack = screenStream.getVideoTracks()[0];
+        // let screenVideoTrack = screenStream.getVideoTracks()[0];
         let screenAudioTrack = screenStream.getAudioTracks()[0];
 
         let screenPublisher = openVidu.initPublisher('video-container', {
           audioSource: screenAudioTrack, // The source of audio. If undefined default microphone
-          videoSource: screenVideoTrack , // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          videoSource: 'screen', // The source of video. If undefined default webcam: screen으로 설정하면 화면공유
+          publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: '640x480', // The resolution of your video
+          resolution: '1280x720', // The resolution of your video
           frameRate: 30, // The frame rate of your video
           insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
@@ -229,6 +301,12 @@ const ScreenShare = () => {
               setPublisher(null);
               setVideoEnabled(false);
           });
+          // 만약 뭔가 publish 하고 있다면 취소한다.
+          if(publisher) {
+            session.unpublish(publisher);
+            setPublisher(null);
+          }
+
           session.publish(screenPublisher);
           setPublisher(screenPublisher);
         });
@@ -249,6 +327,9 @@ const ScreenShare = () => {
     setVideoEnabled(newVideoEnabled);
   };
 
+  /**
+   * 화면 나갈 때 작동
+   */
   const leaveSession = async () => {
     console.log("leave session")
     // publishing 하고있는거 취소하고 나가기!!!!!
@@ -259,23 +340,24 @@ const ScreenShare = () => {
     }
   };
 
-  const closeSession = async () => {
-    // const result= await closeSessionRequest(params.id);
-    location.href = "/";
-    console.log(result);
-    if (result?.message == "success") {
-      // 리다이렉트
-    } else {
-      alert("Err");
+  /**
+   * 브라우저 닫히면 작동
+   */
+  const closeWindow = (e) => {
+    if(sessionRef.current) {
+      sessionRef.current.disconnect()
     }
-  }
+  };
 
+  /**
+   * 세션 생성 or 입장한다.
+   */
   const creaetSession = async () => {
     const result= await createSessionRequest(params.id);
     if (result?.message == "owner") {
       // 세션에 접속한다.
       token = result.result;
-      isOwner = true;
+      setOwner(true);
       joinSession() 
     } else if (result?.message == "participant") {
       token = result.result;
@@ -286,37 +368,16 @@ const ScreenShare = () => {
     }
   }
 
-  const printSession = () => {
-    console.log(session);
-    console.log(sessionRef.current);
-  }
-  const pringParticipants = () => {
-    console.log(participants);
-  }
-
-  const closeWindow = (e) => {
-    if(sessionRef.current) {
-      sessionRef.current.disconnect()
-    }
-  };
-
-
-
   // 세션 상태 업데이트
   useEffect(() => {
-    // return () => {
-      console.log("uuuuuuuuuuuuuuuuuuupdate")
-      sessionRef.current = session;
-    // }
-  }, [session])
- 
+    sessionRef.current = session;
+  }, [session]);
+
 
   useEffect(() => {
-    console.log("이게 업데이트야???????????")
-    window.addEventListener("beforeunload", closeWindow);  
-    
-    if(!session) {
-      console.log("입장")
+    window.addEventListener("beforeunload", closeWindow);
+    if (!session) {
+      console.log("세션 입장");
       creaetSession();
     }
 
@@ -325,62 +386,68 @@ const ScreenShare = () => {
       leaveSession();
     };
   }, []);
-  console.log("렌더")
+
+
+  console.log("렌더링 했습니다.");
 
   return (
-    <div id='session'>
-      <div id='session-header'>
-        <h1 id='session-title'>{`Session ${params.id}`}</h1>
-      </div>
-      <Button variant='contained' onClick={leaveSession}>
-        LeaveSession
-      </Button>
-      <Button variant='contained' onClick={closeSession}>
-        CloseSession
-      </Button>
-      <Button onClick={printSession}>
-        세션 출력
-      </Button>
-      <Button onClick={pringParticipants}>
-        유저 출력
-      </Button>
-      {role === 'publisher' ? (
-        <div>
-          <Button variant='contained' onClick={audioToggle}>
-            {audioEnabled ? '마이크 끄기' : '마이크 켜기'}
-          </Button>
-          <Button variant='contained' onClick={screenToggle}>
-            {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
-          </Button>
+    <div id="main-session">
+      <div id="video-div">
+        <div id="title-div">타이틀</div>
+
+        <div id="video-container">
+          {/* <video autoPlay loop>
+            <source src="/flower.webm" type="video/webm" />
+            Sorry, your browser doesn't support embedded videos.
+          </video> */}
         </div>
-      ) : null}
-      <div className='session-content'>
-        <div id='video-container'></div>
-        <div id='audio-container'></div>
-        <div className='chat-box'>
-          <ul>
-            {messages.map((message, idx) => {
-              return (
-                <MessageItem
-                  key={idx}
-                  from={message.from}
-                  data={message.data}
-                />
-              );
-            })}
-          </ul>
-          <form className='chat-input' onSubmit={sendMessage}>
-            <input type='text' onChange={changeMessage} value={inputMessage} />
-            <button type='submit'>전송</button>
-          </form>
-        </div>
-        <div>
-          <h3>참가자 목록</h3>
-          <ul id="user-list">
-            {participants.map(item => <li key={item.nickname}>{item.rank} : {item.nickname}</li>)}
-          </ul>
+
+        <div id="session-button-div">
+          <Button className="user-session-button" variant="contained" onClick={audioToggle}>
+            {audioEnabled ? "음소거 하기" : "마이크 켜기"}
+          </Button>
+          <Button className="user-session-button" variant="contained">
+            손들기
+          </Button>
+          {owner ? 
+            <Button variant='contained' onClick={screenToggle}>
+              {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
+            </Button> : null}
+          <Button className="show-session-user" onClick={toggleDrawer(true)}>
+            참가자 보기
+          </Button>
         </div>
       </div>
+      <div id="chat-div">
+        <div id="chatting-list">
+          {chat.map((item, index) => (
+            <div className={item.me ? "my-chat" : "other-chat"} key={index}>
+              <div className="chat-nickname">{item.nickname}</div>
+              <div className="chat-content">{item.content}</div>
+            </div>
+          ))}
+        </div>
+        <div id="chatting-input">
+          <TextField
+            id="standard-multiline-static"
+            multiline
+            style={{ margin: "0", width: "100%" }}
+            margin="none"
+            rows={2}
+            placeholder="chatting"
+            variant="standard"
+          />
+          <Button variant="contained">보내기</Button>
+        </div>
+      </div>
+      <Drawer
+        anchor="right"
+        variant="temporary"
+        open={open}
+        onClose={toggleDrawer(false)}
+      >
+        {list("right")}
+      </Drawer>
     </div>
   );
 };
