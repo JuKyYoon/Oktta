@@ -56,6 +56,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<RoomDto> myRooms(String id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        List<Room> roomList = roomRepository.findAllByUser(user);
+        List<RoomDto> list = new ArrayList<>();
+
+        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        for(Room r : roomList){
+            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit()));
+        }
+
+        return list;
+    }
+
+    @Override
     public boolean updateRoom(RoomDto roomDto, String userId) {
         // 현재 요청을 보낸 유저
         User user = userRepository.findById(userId).orElseThrow(
