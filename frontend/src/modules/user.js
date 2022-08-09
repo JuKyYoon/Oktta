@@ -1,8 +1,10 @@
 import {
   EMAIL_AUTH,
   LOGIN,
+  SOCIAL_LOGIN,
   LOGOUT,
   DELETE_ACCOUNT,
+  UPDATE_NICKNAME
 } from "../modules/types.js";
 
 export const initState = {
@@ -34,10 +36,25 @@ export default function (state = initState, action) {
         };
       }
       return { ...state };
+    case SOCIAL_LOGIN:
+      console.log(action.payload)
+      return {
+        isLogin: action.payload.isLogin,
+        nickname: action.payload.nickname,
+        auth: action.payload.auth,
+        token: action.payload.token,
+        snsType: action.payload.snsType,
+      }
     case LOGOUT:
       return initState;
     case DELETE_ACCOUNT:
       return initState;
+    case UPDATE_NICKNAME:
+      console.log(action.payload)
+      return {
+        ...state,
+        nickname: action.payload.nickname,
+      };
     default:
       return state;
   }
