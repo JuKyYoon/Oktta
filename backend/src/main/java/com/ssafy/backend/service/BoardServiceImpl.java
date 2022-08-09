@@ -4,6 +4,7 @@ import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.slf4j.Logger;
@@ -62,12 +63,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int getLastPage(int category, int limit) {
-        int lastPage = boardRepository.findLastPage(category) / limit;
-        if(boardRepository.findLastPage(category) % limit == 0) {
-            return lastPage;
-        } else {
-            return lastPage + 1;
-        }
+        int temp = boardRepository.findLastPage(category);
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
     }
 
     @Override
@@ -98,5 +95,21 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.updateBoard(idx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
             return true;
         }
+    }
+
+    @Override
+    public List<BoardDto> myBoards(String id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        List<Board> boardList = boardRepository.findAllByUser(user);
+        List<BoardDto> list = new ArrayList<>();
+
+        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        for(Board b : boardList) {
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getCreateDate(), b.getHit()));
+        }
+
+        return list;
     }
 }

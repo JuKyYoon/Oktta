@@ -1,6 +1,5 @@
 package com.ssafy.backend.service;
 
-import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomDto;
 
 import java.util.List;
@@ -13,4 +12,5 @@ public interface RoomService {
     public List<RoomDto> getRoomList(int page, int limit);
     public int getLastPage(int limit);
     int updateHit(Long idx);
+    List<RoomDto> myRooms(String id);
 }

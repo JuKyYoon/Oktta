@@ -1,6 +1,5 @@
 package com.ssafy.backend.model.repository;
 
-import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +32,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Modifying
     @Query("UPDATE Room room SET room.hit = room.hit+1 WHERE room.idx = :idx")
     int updateHit(Long idx);
+
+    List<Room> findAllByUser(User user);
 }

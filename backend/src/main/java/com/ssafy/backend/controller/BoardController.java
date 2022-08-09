@@ -26,7 +26,10 @@ public class BoardController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
 
     @Value("${pagingLimit}")
-    private int limit;
+    private int pagingLimit;
+
+    @Value("${myLimit}")
+    private int myLimit;
 
     @Value("${response.success}")
     private String successMsg;
@@ -55,7 +58,8 @@ public class BoardController {
         boardService.updateHit(board.getIdx());
 
         List<BoardCommentDto> list = boardCommentService.getBoardCommentList(boardIdx);
-        int lastPage = list.size() / limit + 1;
+        int temp = list.size() / pagingLimit;
+        int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
     }
 
@@ -79,8 +83,8 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
-        List<BoardDto> list = boardService.getBoardList(category, page, limit);
-        int lastPage = boardService.getLastPage(category, limit);
+        List<BoardDto> list = boardService.getBoardList(category, page, pagingLimit);
+        int lastPage = boardService.getLastPage(category, pagingLimit);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
     }
 
@@ -110,5 +114,15 @@ public class BoardController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<? extends BaseResponseBody> myBoards() {
+        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<BoardDto> list = boardService.myBoards(principal.getUsername());
+
+        int temp = list.size() / myLimit;
+        int lastPage = (list.size() % myLimit == 0) ? temp : temp + 1;
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
     }
 }

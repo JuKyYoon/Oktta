@@ -13,4 +13,5 @@ public interface BoardService {
     public int getLastPage(int category, int limit);
     public boolean deleteBoard(String id, Long idx);
     public boolean updateBoard(String id, Long idx, BoardDto boardDto);
+    public List<BoardDto> myBoards(String id);
 }

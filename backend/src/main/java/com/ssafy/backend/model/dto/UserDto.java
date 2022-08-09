@@ -26,6 +26,15 @@ public class UserDto {
         this.password = password;
     }
 
+    public UserDto(String nickname, String createDate, String modifyDate, int profileImg, int snsType, String role){
+        this.nickname = nickname;
+        this.createDate = createDate;
+        this.modifyDate = modifyDate;
+        this.profileImg = profileImg;
+        this.snsType = snsType;
+        this.role = role;
+    }
+
     public String getId() {
         return id;
     }
