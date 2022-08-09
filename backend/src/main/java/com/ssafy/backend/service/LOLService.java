@@ -1,7 +1,7 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.LolInfoDto;
-import com.ssafy.backend.model.dto.lol.InfoDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -13,5 +13,5 @@ public interface LOLService {
     boolean createLolAuth(String userId, String summonerName);
     Mono<ArrayList> getRecentGames(String summonerId);
 
-    InfoDto getGameDetails(String matchId);
+    MatchDto getGameDetails(String matchId, MatchDto matchDto);
 }

@@ -1,7 +1,7 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.LolInfoDto;
-import com.ssafy.backend.model.dto.lol.InfoDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
 import com.ssafy.backend.model.dto.lol.ParticipantDto;
 import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.repository.LolAuthRepository;
@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class LOLServiceImpl implements LOLService {
@@ -31,6 +30,9 @@ public class LOLServiceImpl implements LOLService {
 
     @Value("${riot.api-key}")
     private String apiKey;
+
+    @Value("${riot.game-count}")
+    private int gameCount;
 
     public LOLServiceImpl(WebClient webClient, @Value("${riot.url}") String riotUrl,
                           @Value("${riot.asia-url}") String riotAsiaUrl, WebClient asiaWebClinet, LolAuthRepository lolAuthRepository) {
@@ -83,40 +85,46 @@ public class LOLServiceImpl implements LOLService {
     public Mono<ArrayList> getRecentGames(String puuid) {
         return asiaWebClinet.get().uri(uriBuilder -> uriBuilder
                         .path("/lol/match/v5/matches/by-puuid/" + puuid + "/ids")
-                        .queryParam("count",10)
+                        .queryParam("count",gameCount)
                         .queryParam("api_key", apiKey)
                         .build())
                 .retrieve().bodyToMono(ArrayList.class);
     }
 
     @Override
-    public InfoDto getGameDetails(String matchId) {
+    public MatchDto getGameDetails(String matchId, MatchDto matchDto) {
         JSONObject jsonObject = asiaWebClinet.get().uri(uriBuilder -> uriBuilder
                         .path("/lol/match/v5/matches/" + matchId)
                         .queryParam("api_key", apiKey)
                         .build())
                 .retrieve().bodyToMono(JSONObject.class).block();
-        LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) jsonObject.get("info");
-        Set<String> keys = lhm.keySet();
-        InfoDto infoDto = new InfoDto();
-        infoDto.setGameMode(lhm.get("gameMode").toString());
-        infoDto.setGameStartTimestamp(Long.parseLong(lhm.get("gameStartTimestamp").toString()));
-        infoDto.setMapId(Integer.parseInt(lhm.get("mapId").toString()));
-        System.out.println(infoDto);
-        List<ParticipantDto> participants = new ArrayList<>();
 
-        for(ParticipantDto participant : (List<ParticipantDto>) lhm.get("participants")){
-            participants.add(participant);
+        LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) jsonObject.get("info");
+        matchDto.setMatchId(matchId);
+        matchDto.setQueueId(Integer.parseInt(lhm.get("queueId").toString()));
+        matchDto.setMapId(Integer.parseInt(lhm.get("mapId").toString()));
+        matchDto.setGameMode(lhm.get("gameMode").toString());
+        matchDto.setGameStartTimestamp(Long.parseLong(lhm.get("gameStartTimestamp").toString()));
+        matchDto.setGameEndTimestamp(Long.parseLong(lhm.get("gameEndTimestamp").toString()));
+        List<ParticipantDto> participants = new ArrayList<>();
+        for(LinkedHashMap<String, Object> participantsMap : (ArrayList<LinkedHashMap<String, Object>>) lhm.get("participants")){
+            ParticipantDto participantDto = new ParticipantDto();
+            participantDto.setParticipantId(Integer.parseInt(participantsMap.get("participantId").toString()));
+            participantDto.setTeamId(Integer.parseInt(participantsMap.get("teamId").toString()));
+            participantDto.setSummonerId(participantsMap.get("summonerId").toString());
+            participantDto.setSummonerName(participantsMap.get("summonerName").toString());
+            participantDto.setTeamPosition(participantsMap.get("teamPosition").toString());
+            participantDto.setChampionId(Integer.parseInt(participantsMap.get("championId").toString()));
+            participantDto.setChampionName(participantsMap.get("championName").toString());
+            participantDto.setKills(Integer.parseInt(participantsMap.get("kills").toString()));
+            participantDto.setDeaths(Integer.parseInt(participantsMap.get("deaths").toString()));
+            participantDto.setAssists(Integer.parseInt(participantsMap.get("assists").toString()));
+            participantDto.setPuuid(participantsMap.get("puuid").toString());
+            participantDto.setWin(participantsMap.get("win").toString().equals("win") ? true : false);
+            participants.add(participantDto);
         }
-//        System.out.println(participants);
-        // printing the elements of LinkedHashMap
-//        for (String key : keys) {
-//            System.out.println(key + " -- "
-//                    + lhm.get(key));
-//        }
-//        InfoDto infoDto = (InfoDto) Objects.requireNonNull(jsonObject).get("info");
-//        return infoDto;
-        return null;
+        matchDto.setParticipants(participants);
+        return matchDto;
     }
 
 

@@ -1,39 +1,35 @@
 package com.ssafy.backend.model.dto.lol;
 
 public class ParticipantDto {
-    private int assists;
-    private int championId;
-    private String championName;
-    private int deaths;
-    private String individualPosition;
-    private int kills;
     private int participantId;
-    private String puuid;
-    private String role;
-    private String riotIdName;
-    private String riotIdTagline;
+    private int teamId;
+    private String summonerId;
     private String summonerName;
     private String teamPosition;
+    private int championId;
+    private String championName;
+    private int kills;
+    private int assists;
+    private int deaths;
+    private String puuid;
     private boolean win;
 
     public ParticipantDto() {
     }
 
-    public ParticipantDto(int assists, int championId, String championName, int deaths, String individualPosition, int kills, int participantId, String puuid, String role, String riotIdName, String riotIdTagline, String summonerName, String teamPosition, boolean win) {
+    public ParticipantDto(int assists, int championId, String championName, int deaths, int kills, int participantId, String puuid, String summonerId, String summonerName, String teamPosition, boolean win, int teamId) {
         this.assists = assists;
         this.championId = championId;
         this.championName = championName;
         this.deaths = deaths;
-        this.individualPosition = individualPosition;
         this.kills = kills;
         this.participantId = participantId;
         this.puuid = puuid;
-        this.role = role;
-        this.riotIdName = riotIdName;
-        this.riotIdTagline = riotIdTagline;
+        this.summonerId = summonerId;
         this.summonerName = summonerName;
         this.teamPosition = teamPosition;
         this.win = win;
+        this.teamId = teamId;
     }
 
     public int getAssists() {
@@ -68,14 +64,6 @@ public class ParticipantDto {
         this.deaths = deaths;
     }
 
-    public String getIndividualPosition() {
-        return individualPosition;
-    }
-
-    public void setIndividualPosition(String individualPosition) {
-        this.individualPosition = individualPosition;
-    }
-
     public int getKills() {
         return kills;
     }
@@ -98,30 +86,6 @@ public class ParticipantDto {
 
     public void setPuuid(String puuid) {
         this.puuid = puuid;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getRiotIdName() {
-        return riotIdName;
-    }
-
-    public void setRiotIdName(String riotIdName) {
-        this.riotIdName = riotIdName;
-    }
-
-    public String getRiotIdTagline() {
-        return riotIdTagline;
-    }
-
-    public void setRiotIdTagline(String riotIdTagline) {
-        this.riotIdTagline = riotIdTagline;
     }
 
     public String getSummonerName() {
@@ -148,6 +112,22 @@ public class ParticipantDto {
         this.win = win;
     }
 
+    public String getSummonerId() {
+        return summonerId;
+    }
+
+    public void setSummonerId(String summonerId) {
+        this.summonerId = summonerId;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
     @Override
     public String toString() {
         return "ParticipantDto{" +
@@ -155,16 +135,14 @@ public class ParticipantDto {
                 ", championId=" + championId +
                 ", championName='" + championName + '\'' +
                 ", deaths=" + deaths +
-                ", individualPosition='" + individualPosition + '\'' +
                 ", kills=" + kills +
                 ", participantId=" + participantId +
                 ", puuid='" + puuid + '\'' +
-                ", role='" + role + '\'' +
-                ", riotIdName='" + riotIdName + '\'' +
-                ", riotIdTagline='" + riotIdTagline + '\'' +
+                ", summonerId='" + summonerId + '\'' +
                 ", summonerName='" + summonerName + '\'' +
                 ", teamPosition='" + teamPosition + '\'' +
                 ", win=" + win +
+                ", teamId=" + teamId +
                 '}';
     }
 }

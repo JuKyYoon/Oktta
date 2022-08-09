@@ -1,9 +1,14 @@
 package com.ssafy.backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.ssafy.backend.model.dto.BoardCommentDto;
 import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
+import com.ssafy.backend.model.entity.Match;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
@@ -12,6 +17,7 @@ import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
 import com.ssafy.backend.service.RoomCommentService;
 import com.ssafy.backend.service.RoomService;
+import net.bytebuddy.description.method.MethodDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/room")
@@ -45,8 +52,13 @@ public class RoomController {
     }
 
     @PostMapping("")
-    public ResponseEntity<MessageResponse> createRoom(@RequestBody RoomDto roomDto) {
+    public ResponseEntity<MessageResponse> createRoom(@RequestBody Map<String, Object> map) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoomDto roomDto = new RoomDto();
+        roomDto.setTitle(map.get("title").toString());
+        roomDto.setContent(map.get("content").toString());
+        MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
+        roomDto.setMatch(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
 
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, String.valueOf(roomIdx)));

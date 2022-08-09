@@ -1,10 +1,17 @@
 package com.ssafy.backend.controller;
 
+import com.google.gson.Gson;
+import com.ssafy.backend.model.dto.LolInfoDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
+import com.ssafy.backend.model.response.MatchResponse;
 import com.ssafy.backend.service.LOLService;
+import com.ssafy.backend.util.LolTier;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,11 +63,32 @@ public class LolController {
         }
     }
 
-    @GetMapping("/game/{summonerName}")
-    public ResponseEntity<BaseResponseBody> getRecentGames(@PathVariable("summonerName") String summonerName){
-        String puuid = lolService.getUserInfo(summonerName).block().getPuuid();
-        lolService.getRecentGames(puuid);
+    /**
+     * 소환사 명으로 최근 게임 정보 반환
+     * @param summonerName
+     * @return
+     */
 
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    @GetMapping("/match/{summonerName}")
+    public ResponseEntity<BaseResponseBody> getRecentGames(@PathVariable("summonerName") String summonerName){
+        LolInfoDto userInfo = lolService.getUserInfo(summonerName).block();
+        String puuid = userInfo.getPuuid();
+        String summonerId = userInfo.getId();
+        LolInfoDto tierInfo = lolService.getTierInfo(summonerId).blockFirst();
+        int rank = 0;
+        if(tierInfo != null){
+            rank = LolTier.getTier(tierInfo.getTier(), tierInfo.getRank());
+        }
+        List<String> matchIdList = lolService.getRecentGames(puuid).block();
+        List<MatchDto> recentGames = new ArrayList<>();
+        for(String matchId : matchIdList){
+            MatchDto matchDto = new MatchDto();
+            matchDto.setMatchRank(rank);
+            recentGames.add(lolService.getGameDetails(matchId, matchDto));
+        }
+        if(recentGames.size() == 0){
+            return  ResponseEntity.status(204).body(BaseResponseBody.of(204, failMsg));
+        }
+        return ResponseEntity.status(200).body(MatchResponse.of(200, successMsg, recentGames));
     }
 }

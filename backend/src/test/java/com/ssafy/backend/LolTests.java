@@ -1,8 +1,9 @@
 package com.ssafy.backend;
 
 import com.ssafy.backend.model.dto.LolInfoDto;
-import com.ssafy.backend.model.dto.lol.InfoDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
 import com.ssafy.backend.service.LOLService;
+import com.ssafy.backend.util.LolTier;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -51,9 +52,16 @@ public class LolTests {
         String summonerId = lolService.getUserInfo(summonerName).block().getPuuid();
         ArrayList<String> result = lolService.getRecentGames(summonerId).block();
         System.out.println(result);
-        for(String matchId : result){
-            InfoDto infoDto = lolService.getGameDetails(matchId);
-            System.out.println(infoDto);
-        }
+        MatchDto matchDto = new MatchDto();
+        LolInfoDto tierInfo = lolService.getTierInfo(summonerId).blockFirst();
+//        int rank = 0;
+//        if(tierInfo != null){
+//            rank = LolTier.getTier(tierInfo.getTier(), tierInfo.getRank());
+//        }
+//        matchDto.setAvgRank(rank);
+//        for(String matchId : result){
+//            MatchDto matchDto = lolService.getGameDetails(matchId);
+//            System.out.println(matchDto);
+//        }
     }
 }
