@@ -17,8 +17,9 @@ import {
 } from '../../services/userService';
 import { debounce } from 'lodash';
 
-const debounceFunc = debounce((value, func, save) => {
-  save(func(value));
+const debounceFunc = debounce((value, request, setState) => {
+  request(value)
+  .then((res) => setState(res.data.message))
 }, 500);
 
 const ProfileUpdate = () => {
@@ -28,10 +29,8 @@ const ProfileUpdate = () => {
   const dispatch = useDispatch();
 
   // 닉네임 관련
-  const currentNickname = useSelector((state) => {
-    state.user.userId ? state.user.userId : null
-  }
-  );
+  const currentNickname = useSelector((state) => state.user.nickname);
+  const snsType = useSelector((state) => state.user.snsType);
   const [nickname, setNickname] = useState(currentNickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [nicknameChecked, setNicknameChecked] = useState(false);
@@ -153,32 +152,40 @@ const ProfileUpdate = () => {
           color='veryperi'>
           프로필 사진 변경
         </Button>
-        <Button
-          variant={mode === 'password' ? 'contained' : 'text'}
-          onClick={() => setMode('password')}
-          color='veryperi'>
-          비밀번호 변경
-        </Button>
+        { snsType ? 
+          null :
+          <Button
+            variant={mode === 'password' ? 'contained' : 'text'}
+            onClick={() => setMode('password')}
+            color='veryperi'>
+            비밀번호 변경
+          </Button>
+        }
         <br />
         <br />
-        <FormControl>
-          <InputLabel htmlFor='password' color='veryperi'>
-            비밀번호
-          </InputLabel>
-          <Input
-            id='password'
-            type='password'
-            aria-describedby='password-helper-text'
-            color='veryperi'
-            value={password}
-            onChange={passwordChange}
-          />
-          <FormHelperText id='password-helper-text'>
-            비밀번호를 입력해주세요.
-          </FormHelperText>
-        </FormControl>
-        <br />
-        <br />
+        { snsType ? 
+        null :
+        <div>
+          <FormControl>
+            <InputLabel htmlFor='password' color='veryperi'>
+              비밀번호
+            </InputLabel>
+            <Input
+              id='password'
+              type='password'
+              aria-describedby='password-helper-text'
+              color='veryperi'
+              value={password}
+              onChange={passwordChange}
+              />
+            <FormHelperText id='password-helper-text'>
+              비밀번호를 입력해주세요.
+            </FormHelperText>
+          </FormControl>
+          <br />
+          <br />
+        </div>
+        }
         {mode === 'nickname' ? (
           <div>
             <br />
@@ -205,9 +212,9 @@ const ProfileUpdate = () => {
                       ? '새로운 닉네임을 입력해주세요.'
                       : isNicknameValid
                       ? nicknameChecked
-                        ? nicknameChecked == 'fail'
-                          ? '이미 사용중인 닉네임입니다.'
-                          : '사용 가능한 닉네임입니다.'
+                        ? nicknameChecked == 'success'
+                          ? '사용 가능한 닉네임입니다.'
+                          : '이미 사용중인 닉네임입니다.'
                         : '닉네임 중복 여부를 확인중입니다.'
                       : '닉네임에 특수문자를 사용할 수 없습니다.'
                     : '특수문자를 제외한 닉네임을 입력해주세요.'}
@@ -286,7 +293,7 @@ const ProfileUpdate = () => {
             onClick={handleSubmit}
             disabled={
               (mode === 'nickname' &&
-                (!nickname || !isNicknameValid || !nicknameChecked)) ||
+                (nickname === currentNickname || !nickname || !isNicknameValid || nicknameChecked == 'fail')) ||
               (mode === 'password' &&
                 (!password || !isNewPasswordSame || !isNewPasswordValid)) ||
               (mode === 'profileImage' && true)

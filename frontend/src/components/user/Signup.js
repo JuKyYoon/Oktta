@@ -101,9 +101,9 @@ const Signup = () => {
       password: password,
       nickname: nickname,
     };
-    dispatch(signupRequest(body))
+    signupRequest(body)
       .then((res) => {
-        if (res.payload.data.message === "success") {
+        if (res.data.message === "success") {
           alert("회원가입을 축하드립니다!");
           navigate("/");
         } else {

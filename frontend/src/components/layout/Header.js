@@ -25,7 +25,7 @@ const Header = () => {
 
   const onLogoutHandler = () => {
     dispatch(logoutRequest())
-      .then((res) => { })
+      .then((res) => navigate('/'))
       .catch((err) => {
         state.user = initState;
         localStorage.removeItem('persist:root');

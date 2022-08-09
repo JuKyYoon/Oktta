@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@mui/material';
 import '../../styles/user.scss';
@@ -6,6 +7,7 @@ import { getProfileRequest } from '../../services/userService';
 import EditIcon from '@mui/icons-material/Edit';
 
 const MyPage = () => {
+  const nickname = useSelector((state) => state.user.nickname)
   const [mode, setMode] = useState('info');
   const [profile, setProfile] = useState({});
   const alist = ['내가 작성한 글 1', '내가 작성한 글 2', '내가 작성한 글 3'];
@@ -35,7 +37,7 @@ const MyPage = () => {
       <div className='mypage-left'>
         <div className='mypage-image-profile'></div>
         <div>
-          {profile ? profile.nickname : null}
+          {nickname}
           <Link to='/user/updateProfile'><EditIcon fontSize='inherit' /></Link>
         </div>
       </div>

@@ -24,7 +24,6 @@ const RoomCreate = () => {
 
     createRoom(body)
       .then((res) => {
-        console.log(res);
         if (res.data.message === 'success') {
           navigate(`/room/${res.data.result}`);
         }

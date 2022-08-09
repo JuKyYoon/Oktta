@@ -1,7 +1,8 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useSearchParams } from 'react-router-dom'
+import { SOCIAL_LOGIN } from '../../modules/types'
 
 const SocialAuth = () => {
   const [param, setParam] = useSearchParams();
@@ -9,12 +10,18 @@ const SocialAuth = () => {
   const nickname = param.get("nickName")
   const snsType = param.get("snsType")
 
-  const user = useSelector((state) => state.user);
-  user.isLogin = true;
-  user.nickname = nickname;
-  user.auth = "1";
-  user.token = token;
-  user.snsType = snsType;
+  const dispatch = useDispatch();
+  const user = {
+    isLogin: true,
+    nickname: nickname,
+    auth: "1",
+    token: token,
+    snsType: snsType,
+  }
+  dispatch({
+    type: SOCIAL_LOGIN,
+    payload: user,
+  });
 
   const navigate = useNavigate();
   setTimeout(() => {
