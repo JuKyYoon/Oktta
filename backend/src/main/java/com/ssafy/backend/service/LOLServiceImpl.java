@@ -120,7 +120,7 @@ public class LOLServiceImpl implements LOLService {
             participantDto.setDeaths(Integer.parseInt(participantsMap.get("deaths").toString()));
             participantDto.setAssists(Integer.parseInt(participantsMap.get("assists").toString()));
             participantDto.setPuuid(participantsMap.get("puuid").toString());
-            participantDto.setWin(participantsMap.get("win").toString().equals("win") ? true : false);
+            participantDto.setWin((Boolean) participantsMap.get("win"));
             participants.add(participantDto);
         }
         matchDto.setParticipants(participants);

@@ -59,6 +59,10 @@ public class RoomServiceImpl implements RoomService {
                 () -> new RoomNotFoundException("Room Not Found in Get Room")
         );
         RoomDto roomDto = RoomMapper.mapper.toDto(room);
+        Match match = matchRepository.getReferenceById(room.getMatch().getMatchId());
+        System.out.println(match.getChampionId());
+        System.out.println(match.getChampionName());
+        roomDto.setMatch(matchMapper.entityToDto(match));
         roomDto.setNickname(room.getUser().getNickname());
         return roomDto;
     }
