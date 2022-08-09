@@ -30,7 +30,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public long createRoom(RoomDto roomDto, String userId) {
+    public Long createRoom(RoomDto roomDto, String userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );

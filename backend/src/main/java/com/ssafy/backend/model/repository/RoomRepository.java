@@ -14,8 +14,6 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    Optional<Room> findByIdx(Long idx);
-
     // update와 delete에는 @Transactional 추가 필수
     // Modifying의 return은 void or int(Integer)만 가능
     @Transactional
