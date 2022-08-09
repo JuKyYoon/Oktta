@@ -23,7 +23,10 @@ public class RoomController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class);
 
     @Value("${pagingLimit}")
-    private int limit;
+    private int pagingLimit;
+    
+    @Value("${myLimit}")
+    private int myLimit;
 
     @Value("${response.success}")
     private String successMsg;
@@ -53,8 +56,8 @@ public class RoomController {
         roomService.updateHit(roomDto.getIdx());
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
-        int temp = list.size() / limit;
-        int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
+        int temp = list.size() / pagingLimit;
+        int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
@@ -78,8 +81,18 @@ public class RoomController {
 
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listRoom(@RequestParam(defaultValue = "1") int page){
-        List<RoomDto> list = roomService.getRoomList(page, limit);
-        int lastPage = roomService.getLastPage(limit);
+        List<RoomDto> list = roomService.getRoomList(page, pagingLimit);
+        int lastPage = roomService.getLastPage(pagingLimit);
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<? extends BaseResponseBody> myRooms() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<RoomDto> list = roomService.myRooms(principal.getUsername());
+        
+        int temp = list.size() / myLimit;
+        int lastPage = (list.size() % myLimit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
     }
 }
