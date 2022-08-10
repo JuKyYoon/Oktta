@@ -46,14 +46,14 @@ public class LolTests {
 //        });
     }
 
-    @Test
+//    @Test
     public void getGames(){
-        String summonerName = "cs포기요";
-        String summonerId = lolService.getUserInfo(summonerName).block().getPuuid();
-        ArrayList<String> result = lolService.getRecentGames(summonerId).block();
-        System.out.println(result);
-        MatchDto matchDto = new MatchDto();
-        LolInfoDto tierInfo = lolService.getTierInfo(summonerId).blockFirst();
+//        String summonerName = "cs포기요";
+//        String summonerId = lolService.getUserInfo(summonerName).block().getPuuid();
+//        ArrayList<String> result = lolService.getRecentGames(summonerId).block();
+//        System.out.println(result);
+//        MatchDto matchDto = new MatchDto();
+//        LolInfoDto tierInfo = lolService.getTierInfo(summonerId).blockFirst();
 //        int rank = 0;
 //        if(tierInfo != null){
 //            rank = LolTier.getTier(tierInfo.getTier(), tierInfo.getRank());
