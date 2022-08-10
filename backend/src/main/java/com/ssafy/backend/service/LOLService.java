@@ -12,7 +12,7 @@ public interface LOLService {
     Flux<LolInfoDto> getTierInfo(String summonerName);
     Mono<LolInfoDto> getUserInfo(String summonerName);
     boolean createLolAuth(String userId, String summonerName);
-    Mono<ArrayList> getRecentGames(String summonerId);
+    Mono<ArrayList> getRecentGames(String summonerId, int start);
 
 //    MatchDto getGameDetails(String matchId, MatchDto matchDto);
 

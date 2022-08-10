@@ -82,10 +82,11 @@ public class LOLServiceImpl implements LOLService {
     }
 
     @Override
-    public Mono<ArrayList> getRecentGames(String puuid) {
+    public Mono<ArrayList> getRecentGames(String puuid, int start) {
         return asiaWebClinet.get().uri(uriBuilder -> uriBuilder
                         .path("/lol/match/v5/matches/by-puuid/" + puuid + "/ids")
-                        .queryParam("count",gameCount)
+                        .queryParam("start", start)
+                        .queryParam("count", gameCount)
                         .queryParam("api_key", apiKey)
                         .build())
                 .retrieve().bodyToMono(ArrayList.class);

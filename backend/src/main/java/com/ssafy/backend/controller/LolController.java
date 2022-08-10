@@ -65,10 +65,10 @@ public class LolController {
      */
 
     @GetMapping("/match/{summonerName}")
-    public ResponseEntity<BaseResponseBody> getRecentGames(@PathVariable("summonerName") String summonerName){
+    public ResponseEntity<BaseResponseBody> getRecentGames(@PathVariable("summonerName") String summonerName, @RequestParam("page") String page){
         LolInfoDto userInfo = lolService.getUserInfo(summonerName).block();
         String puuid = userInfo.getPuuid();
-        List<String> matchIdList = lolService.getRecentGames(puuid).block();
+        List<String> matchIdList = lolService.getRecentGames(puuid, Integer.parseInt(page) * 10).block();
         return ResponseEntity.status(200).body(MatchResponse.of(200, successMsg, matchIdList));
 
 
