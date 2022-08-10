@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router';
 import { deleteRoom, detailRoom } from '../../services/roomService';
+import { createVote, deleteVote, quitVote } from '../../services/voteService';
 import { Button } from '@mui/material';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
@@ -9,6 +10,7 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import '../../styles/room.scss';
 import { useSelector } from 'react-redux';
 import VoteChart from './VoteChart';
+import Comment from './Comment';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ const RoomDetail = () => {
 
   const { idx } = useParams();
   const [room, setRoom] = useState({});
-  const [vote, setVote] = useState({});
+  const [vote, setVote] = useState('');
 
   useEffect(() => {
     detailRoom(idx)
@@ -35,13 +37,25 @@ const RoomDetail = () => {
       })
       .catch((err) => console.log(err));
   };
+
+  const onVoteQuitButtonClicked = () => {
+    quitVote(idx)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
   const handleVoteChanged = (e) => {
     setVote(e.target.value);
   };
 
   const onVoteButtonClicked = () => {
     alert('투표하였습니다.');
+    createVote(idx, vote);
     setVote('');
+  };
+
+  const onVoteCancelButtonClicked = () => {
+    alert('투표를 취소하였습니다.');
+    deleteVote(idx);
   };
 
   return (
@@ -64,16 +78,29 @@ const RoomDetail = () => {
         />
 
         <div className='vote-body'>
-          <h2>투표현황</h2>
           <div className='vote-component'>
-            <VoteChart top={10} jungle={20} mid={15} adc={10} supporter={1} />
+            {!null ? (
+              <VoteChart top={10} jungle={20} mid={15} adc={10} supporter={1} />
+            ) : (
+              <div className='vote-body'>
+                <h3>투표가 진행중입니다!</h3>
+                <img
+                  src='../assets/donut_chart.png'
+                  className='donut-chart'
+                  id='donutChart'
+                  alt='도넛차트'
+                />
+              </div>
+            )}
+
             <div className='radio-button'>
               <h3>범인 고르기</h3>
               <label>
                 <input
                   type='radio'
-                  value='top'
-                  checked={vote === 'top'}
+                  name='top'
+                  value='1'
+                  checked={vote === '1'}
                   onChange={handleVoteChanged}
                 />
                 탑
@@ -82,8 +109,9 @@ const RoomDetail = () => {
               <label>
                 <input
                   type='radio'
-                  value='jungle'
-                  checked={vote === 'jungle'}
+                  name='jungle'
+                  value='2'
+                  checked={vote === '2'}
                   onChange={handleVoteChanged}
                 />
                 정글
@@ -91,8 +119,9 @@ const RoomDetail = () => {
               <label>
                 <input
                   type='radio'
-                  value='mid'
-                  checked={vote === 'mid'}
+                  name='mid'
+                  value='3'
+                  checked={vote === '3'}
                   onChange={handleVoteChanged}
                 />
                 미드
@@ -100,8 +129,9 @@ const RoomDetail = () => {
               <label>
                 <input
                   type='radio'
-                  value='adc'
-                  checked={vote === 'adc'}
+                  name='adc'
+                  value='4'
+                  checked={vote === '4'}
                   onChange={handleVoteChanged}
                 />
                 원딜
@@ -109,8 +139,9 @@ const RoomDetail = () => {
               <label>
                 <input
                   type='radio'
-                  value='supporter'
-                  checked={vote === 'supporter'}
+                  name='supporter'
+                  value='5'
+                  checked={vote === '5'}
                   onChange={handleVoteChanged}
                 />
                 서포터
@@ -119,9 +150,15 @@ const RoomDetail = () => {
                 size='small'
                 variant='outlined'
                 color='veryperi'
-                onClick={onVoteButtonClicked}
-              >
+                onClick={onVoteButtonClicked}>
                 투표하기
+              </Button>
+              <Button
+                size='small'
+                variant='outlined'
+                color='veryperi'
+                onClick={onVoteCancelButtonClicked}>
+                투표취소
               </Button>
             </div>
           </div>
@@ -145,12 +182,21 @@ const RoomDetail = () => {
           <Button
             variant='contained'
             color='veryperi'
-            onClick={onDeleteButtonClicked}
-          >
+            onClick={onDeleteButtonClicked}>
+            방 삭제하기
+          </Button>
+        ) : null}
+        {room.nickname === user.nickname ? (
+          <Button
+            variant='contained'
+            color='veryperi'
+            onClick={onVoteQuitButtonClicked}>
             방 삭제하기
           </Button>
         ) : null}
       </div>
+      <hr className='hrLine'></hr>
+      <Comment />
     </div>
   );
 };
