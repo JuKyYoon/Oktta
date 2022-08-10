@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService {
 
         String nickname = userRepository.findNicknameByIdx(user.getIdx());
         for(Room r : roomList){
-            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit()));
+            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchMapper.entityToDto(r.getMatch())));
         }
 
         return list;

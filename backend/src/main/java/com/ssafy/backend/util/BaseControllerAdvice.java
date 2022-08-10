@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -169,6 +170,19 @@ public class BaseControllerAdvice {
         
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponseBody.of(200, failMsg));
+    }
+
+    @ExceptionHandler(WebClientResponseException.NotFound.class)
+    public ResponseEntity<BaseResponseBody> WebClientNotFoundException(Exception e, HttpServletRequest req){
+        LOGGER.debug("WEB CLIENT NOT FOUND ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseResponseBody.of(404, failMsg));
+
     }
 
     @ExceptionHandler(Exception.class)

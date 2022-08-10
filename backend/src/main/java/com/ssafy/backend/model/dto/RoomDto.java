@@ -21,6 +21,16 @@ public class RoomDto {
     public RoomDto() {
     }
 
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
+    }
+
     public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit, MatchDto matchDto){
         this.nickname = nickname;
         this.idx = idx;

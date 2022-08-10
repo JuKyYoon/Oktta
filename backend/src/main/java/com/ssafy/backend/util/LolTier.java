@@ -32,7 +32,7 @@ public class LolTier {
                 case "GRANDMASTER":
                     result = 80;
                     break;
-                case "CHANLLENGER":
+                case "CHALLENGER":
                     result = 90;
                     break;
                 default:

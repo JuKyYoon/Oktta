@@ -91,41 +91,41 @@ public class LOLServiceImpl implements LOLService {
                 .retrieve().bodyToMono(ArrayList.class);
     }
 
-    @Override
-    public MatchDto getGameDetails(String matchId, MatchDto matchDto) {
-        JSONObject jsonObject = asiaWebClinet.get().uri(uriBuilder -> uriBuilder
-                        .path("/lol/match/v5/matches/" + matchId)
-                        .queryParam("api_key", apiKey)
-                        .build())
-                .retrieve().bodyToMono(JSONObject.class).block();
-
-        LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) jsonObject.get("info");
-        matchDto.setMatchId(matchId);
-        matchDto.setQueueId(Integer.parseInt(lhm.get("queueId").toString()));
-        matchDto.setMapId(Integer.parseInt(lhm.get("mapId").toString()));
-        matchDto.setGameMode(lhm.get("gameMode").toString());
-        matchDto.setGameStartTimestamp(Long.parseLong(lhm.get("gameStartTimestamp").toString()));
-        matchDto.setGameEndTimestamp(Long.parseLong(lhm.get("gameEndTimestamp").toString()));
-        List<ParticipantDto> participants = new ArrayList<>();
-        for(LinkedHashMap<String, Object> participantsMap : (ArrayList<LinkedHashMap<String, Object>>) lhm.get("participants")){
-            ParticipantDto participantDto = new ParticipantDto();
-            participantDto.setParticipantId(Integer.parseInt(participantsMap.get("participantId").toString()));
-            participantDto.setTeamId(Integer.parseInt(participantsMap.get("teamId").toString()));
-            participantDto.setSummonerId(participantsMap.get("summonerId").toString());
-            participantDto.setSummonerName(participantsMap.get("summonerName").toString());
-            participantDto.setTeamPosition(participantsMap.get("teamPosition").toString());
-            participantDto.setChampionId(Integer.parseInt(participantsMap.get("championId").toString()));
-            participantDto.setChampionName(participantsMap.get("championName").toString());
-            participantDto.setKills(Integer.parseInt(participantsMap.get("kills").toString()));
-            participantDto.setDeaths(Integer.parseInt(participantsMap.get("deaths").toString()));
-            participantDto.setAssists(Integer.parseInt(participantsMap.get("assists").toString()));
-            participantDto.setPuuid(participantsMap.get("puuid").toString());
-            participantDto.setWin((Boolean) participantsMap.get("win"));
-            participants.add(participantDto);
-        }
-        matchDto.setParticipants(participants);
-        return matchDto;
-    }
+//    @Override
+//    public MatchDto getGameDetails(String matchId, MatchDto matchDto) {
+//        JSONObject jsonObject = asiaWebClinet.get().uri(uriBuilder -> uriBuilder
+//                        .path("/lol/match/v5/matches/" + matchId)
+//                        .queryParam("api_key", apiKey)
+//                        .build())
+//                .retrieve().bodyToMono(JSONObject.class).block();
+//
+//        LinkedHashMap<String, Object> lhm = (LinkedHashMap<String, Object>) jsonObject.get("info");
+//        matchDto.setMatchId(matchId);
+//        matchDto.setQueueId(Integer.parseInt(lhm.get("queueId").toString()));
+//        matchDto.setMapId(Integer.parseInt(lhm.get("mapId").toString()));
+//        matchDto.setGameMode(lhm.get("gameMode").toString());
+//        matchDto.setGameStartTimestamp(Long.parseLong(lhm.get("gameStartTimestamp").toString()));
+//        matchDto.setGameEndTimestamp(Long.parseLong(lhm.get("gameEndTimestamp").toString()));
+//        List<ParticipantDto> participants = new ArrayList<>();
+//        for(LinkedHashMap<String, Object> participantsMap : (ArrayList<LinkedHashMap<String, Object>>) lhm.get("participants")){
+//            ParticipantDto participantDto = new ParticipantDto();
+//            participantDto.setParticipantId(Integer.parseInt(participantsMap.get("participantId").toString()));
+//            participantDto.setTeamId(Integer.parseInt(participantsMap.get("teamId").toString()));
+//            participantDto.setSummonerId(participantsMap.get("summonerId").toString());
+//            participantDto.setSummonerName(participantsMap.get("summonerName").toString());
+//            participantDto.setTeamPosition(participantsMap.get("teamPosition").toString());
+//            participantDto.setChampionId(Integer.parseInt(participantsMap.get("championId").toString()));
+//            participantDto.setChampionName(participantsMap.get("championName").toString());
+//            participantDto.setKills(Integer.parseInt(participantsMap.get("kills").toString()));
+//            participantDto.setDeaths(Integer.parseInt(participantsMap.get("deaths").toString()));
+//            participantDto.setAssists(Integer.parseInt(participantsMap.get("assists").toString()));
+//            participantDto.setPuuid(participantsMap.get("puuid").toString());
+//            participantDto.setWin((Boolean) participantsMap.get("win"));
+//            participants.add(participantDto);
+//        }
+//        matchDto.setParticipants(participants);
+//        return matchDto;
+//    }
 
 
 }
