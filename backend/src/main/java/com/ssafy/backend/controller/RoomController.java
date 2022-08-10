@@ -1,7 +1,16 @@
 package com.ssafy.backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.ssafy.backend.model.dto.BoardCommentDto;
+import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
+import com.ssafy.backend.model.dto.lol.MatchDto;
+import com.ssafy.backend.model.entity.Match;
+import com.ssafy.backend.model.repository.RoomRepository;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
@@ -18,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/room")
@@ -25,7 +35,10 @@ public class RoomController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomController.class);
 
     @Value("${pagingLimit}")
-    private int limit;
+    private int pagingLimit;
+    
+    @Value("${myLimit}")
+    private int myLimit;
 
     @Value("${response.success}")
     private String successMsg;
@@ -44,11 +57,15 @@ public class RoomController {
     }
 
     @PostMapping("")
-    public ResponseEntity<MessageResponse> createRoom(@RequestBody RoomDto roomDto) {
+    public ResponseEntity<MessageResponse> createRoom(@RequestBody Map<String, Object> map) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
+        RoomDto roomDto = new RoomDto();
+        roomDto.setTitle(map.get("title").toString());
+        roomDto.setContent(map.get("content").toString());
+        MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
+        roomDto.setMatch(matchDto);
+        long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
         voteService.createVote(roomIdx, LocalDateTime.now());
-
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, String.valueOf(roomIdx)));
     }
 
@@ -60,7 +77,7 @@ public class RoomController {
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
         int temp = list.size() / limit;
         int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
-
+        
         if(voteService.checkEnd(Long.parseLong(idx), LocalDateTime.now())) {
             roomDto.setVoteDto(voteService.getVoteDto(Long.parseLong(idx)));
         }
@@ -90,8 +107,18 @@ public class RoomController {
 
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listRoom(@RequestParam(defaultValue = "1") int page){
-        List<RoomDto> list = roomService.getRoomList(page, limit);
-        int lastPage = roomService.getLastPage(limit);
+        List<RoomDto> list = roomService.getRoomList(page, pagingLimit);
+        int lastPage = roomService.getLastPage(pagingLimit);
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<? extends BaseResponseBody> myRooms() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<RoomDto> list = roomService.myRooms(principal.getUsername());
+        
+        int temp = list.size() / myLimit;
+        int lastPage = (list.size() % myLimit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
     }
 }

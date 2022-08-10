@@ -1,5 +1,8 @@
 package com.ssafy.backend.model.dto;
 
+import com.ssafy.backend.model.dto.lol.MatchDto;
+import com.ssafy.backend.model.entity.Match;
+
 import java.time.LocalDateTime;
 
 public class RoomDto {
@@ -14,6 +17,7 @@ public class RoomDto {
     private int people;
     private int hit;
     private VoteDto voteDto;
+    private MatchDto matchDto;
 
     public RoomDto() {
     }
@@ -26,6 +30,17 @@ public class RoomDto {
         this.live = live;
         this.people = people;
         this.hit = hit;
+    }
+
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit, MatchDto matchDto){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
+        this.matchDto = matchDto;
     }
 
     public Long getIdx() {
@@ -106,5 +121,12 @@ public class RoomDto {
 
     public void setVoteDto(VoteDto voteDto) {
         this.voteDto = voteDto;
+    }
+    public MatchDto getMatch() {
+        return matchDto;
+    }
+
+    public void setMatch(MatchDto match) {
+        this.matchDto = match;
     }
 }

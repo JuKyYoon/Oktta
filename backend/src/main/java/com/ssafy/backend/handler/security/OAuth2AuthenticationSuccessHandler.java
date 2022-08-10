@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -85,7 +86,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken)
                 .queryParam("nickName", loginUser.getNickname())
-                .queryParam("snsType", SnsType.getSnsType(loginUser.getSnsType()).toString())
+                .queryParam("snsType", SnsType.getSnsType(loginUser.getSnsType()).toString()).encode(StandardCharsets.UTF_8)
                 .build().toUriString();
     }
 

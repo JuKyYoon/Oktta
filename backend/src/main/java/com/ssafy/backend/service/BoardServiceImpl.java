@@ -4,6 +4,7 @@ import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.slf4j.Logger;
@@ -94,5 +95,21 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.updateBoard(idx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
             return true;
         }
+    }
+
+    @Override
+    public List<BoardDto> myBoards(String id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        List<Board> boardList = boardRepository.findAllByUser(user);
+        List<BoardDto> list = new ArrayList<>();
+
+        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        for(Board b : boardList) {
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getCreateDate(), b.getHit()));
+        }
+
+        return list;
     }
 }

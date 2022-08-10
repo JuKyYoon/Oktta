@@ -4,6 +4,7 @@ import {
   LOGIN,
   LOGOUT,
   DELETE_ACCOUNT,
+  UPDATE_NICKNAME,
 } from "../modules/types.js";
 
 /* 요청 URL*/
@@ -33,15 +34,16 @@ export const emailAuth = async (dataToSubmit) => {
 
 // 닉네임 변경
 export const updateNicknameRequest = async (dataToSubmit) => {
-  const res = await axiosAuth.put(USER_URL, dataToSubmit);
+  const res = await axiosAuth.put(USER_URL, dataToSubmit)
+  .catch((err) => console.log(err));
   const data = { ...res, nickname: dataToSubmit.nickname };
   return {
-    type: UPDATE_PROFILE,
+    type: UPDATE_NICKNAME,
     payload: data,
   };
 };
 
-// 비밀번호 변경 -- 500
+// 비밀번호 변경
 export const updatePasswordRequest = async (dataToSubmit) => {
   return await axiosAuth.patch(`${USER_URL}/password`, dataToSubmit);
 };
@@ -80,7 +82,52 @@ export const checkEmailRequest = async (dataToSubmit) => {
 
 // 닉네임이 중복이면 fail, 닉네임이 중복이 아니면 success
 export const checkNicknameRequest = async (dataToSubmit) => {
-  return await request.get(`${USER_URL}/name/${dataToSubmit}`);
+  const data = await request.get(`${USER_URL}/name/${dataToSubmit}`);
+  return data;
+};
+
+// 프로필 정보 받아오기
+export const getProfileRequest = async () => {
+  try {
+    const res = await axiosAuth.get(`${USER_URL}/info`);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+// 비밀번호 찾기
+export const pwInquiryEmailSendRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/password/${dataToSubmit}`);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryTokenCheckRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.get(`${USER_URL}/reset-token/${dataToSubmit}`);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
+};
+
+export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
+  try {
+    const res = await request.delete(
+      `${USER_URL}/reset-token/${dataToSubmit.param}`,
+      dataToSubmit.body);
+    return res.data;
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 };
 
 // 회원 탈퇴

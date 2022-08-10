@@ -46,6 +46,7 @@ public class Board {
     @ColumnDefault("0")
     private Long hit;
 
+
     public Long getIdx() {
         return idx;
     }
@@ -78,6 +79,7 @@ public class Board {
         return hit;
     }
 
+
     protected Board() {
     }
 
@@ -95,6 +97,7 @@ public class Board {
         private final String title;
         private final String content;
         private final int category;
+        private Match match;
 
         // Optional Parameter
 
