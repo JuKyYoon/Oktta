@@ -19,23 +19,26 @@ public class Vote {
     @Column(name = "room_idx", nullable = false)
     private String roomIdx;
 
-    @Column(name = "garbage", columnDefinition = "integer default 0")
+    @Column(name = "garbage", columnDefinition = "BIGINT(20) default 0")
     private Long garbage;
 
-    @Column(name = "first", columnDefinition = "integer default 0")
+    @Column(name = "first", columnDefinition = "BIGINT(20) default 0")
     private Long first;
 
-    @Column(name = "second", columnDefinition = "integer default 0")
+    @Column(name = "second", columnDefinition = "BIGINT(20) default 0")
     private Long second;
 
-    @Column(name = "third", columnDefinition = "integer default 0")
+    @Column(name = "third", columnDefinition = "BIGINT(20) default 0")
     private Long third;
 
-    @Column(name = "fourth", columnDefinition = "integer default 0")
+    @Column(name = "fourth", columnDefinition = "BIGINT(20) default 0")
     private Long fourth;
 
-    @Column(name = "fifth", columnDefinition = "integer default 0")
+    @Column(name = "fifth", columnDefinition = "BIGINT(20) default 0")
     private Long fifth;
+
+    @Column(name = "total", columnDefinition = "BIGINT(20) default 0")
+    private Long total;
 
     @Column(name = "end_time")
     private LocalDateTime endTime;
@@ -64,6 +67,10 @@ public class Vote {
         return fifth;
     }
 
+    public Long getTotal() {
+        return total;
+    }
+
     public LocalDateTime getEndTime() {
         return endTime;
     }
@@ -90,21 +97,21 @@ public class Vote {
         }
     }
 
-    public static Vote pollVote(Vote v, String up, String down){
+    public static Vote pollVote(Vote v, int up, int down){
         switch(up){
-            case "1":
+            case 1:
                 ++v.first;
                 break;
-            case "2":
+            case 2:
                 ++v.second;
                 break;
-            case "3":
+            case 3:
                 ++v.third;
                 break;
-            case "4":
+            case 4:
                 ++v.fourth;
                 break;
-            case "5":
+            case 5:
                 ++v.fifth;
                 break;
             default:
@@ -113,19 +120,19 @@ public class Vote {
         }
 
         switch(down){
-            case "1":
+            case 1:
                 --v.first;
                 break;
-            case "2":
+            case 2:
                 --v.second;
                 break;
-            case "3":
+            case 3:
                 --v.third;
                 break;
-            case "4":
+            case 4:
                 --v.fourth;
                 break;
-            case "5":
+            case 5:
                 --v.fifth;
                 break;
             default:

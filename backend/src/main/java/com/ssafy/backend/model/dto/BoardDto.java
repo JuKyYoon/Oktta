@@ -7,7 +7,6 @@ import net.bytebuddy.asm.Advice;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Schema
 public class BoardDto {
     private Long idx;
     private String nickname;

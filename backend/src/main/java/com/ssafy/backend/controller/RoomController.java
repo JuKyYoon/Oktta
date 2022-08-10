@@ -60,6 +60,11 @@ public class RoomController {
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
         int temp = list.size() / limit;
         int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
+
+        if(voteService.checkEnd(Long.parseLong(idx), LocalDateTime.now())) {
+            roomDto.setVoteDto(voteService.getVoteDto(Long.parseLong(idx)));
+        }
+
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
@@ -78,6 +83,8 @@ public class RoomController {
         LOGGER.info("Delete Room");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = roomService.deleteRoom(Long.parseLong(idx), principal.getUsername());
+        voteService.deleteVote(Long.parseLong(idx));
+
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));
     }
 

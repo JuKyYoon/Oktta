@@ -1,6 +1,7 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.response.BaseResponseBody;
+import com.ssafy.backend.service.RoomService;
 import com.ssafy.backend.service.VoteService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class VoteController {
     private String failMsg;
     private final VoteService voteService;
 
-    public VoteController(VoteService voteService){
+    public VoteController(VoteService voteService, RoomService roomService){
         this.voteService = voteService;
     }
 

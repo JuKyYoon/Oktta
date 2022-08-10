@@ -1,6 +1,7 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.compositekey.VoteRecordId;
+import com.ssafy.backend.model.dto.VoteDto;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.Vote;
@@ -15,6 +16,7 @@ import com.ssafy.backend.model.repository.VoteRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class VoteServiceImpl implements VoteService{
@@ -58,19 +60,24 @@ public class VoteServiceImpl implements VoteService{
 
         /**
          * voteRecord
-         * 처음 투표하는 경우 null이므로 해당 number +1
+         * 처음 투표하는 경우 null이므로 해당 number +1, total +1
          * 이미 투표한 경우, 저장된 number -1, 새로운 number +1
          */
         Vote vote = voteRepository.findById(roomIdx.toString()).orElseThrow(
                 () -> new VoteNotFoundException("Vote Not Found")
         );
 
+        boolean flag = false;
         if(voteRecord == null){
-            vote = Vote.pollVote(vote, number + "", "garbage");
+            vote = Vote.pollVote(vote, number, 0);
+            flag = true;
         } else {
-            vote = Vote.pollVote(vote, number + "", voteRecord.getNumber() + "");
+            vote = Vote.pollVote(vote, number, voteRecord.getNumber());
         }
+
         voteRepository.save(vote);
+        if(flag)
+            voteRepository.updateTotal(roomIdx.toString(), 1L);
 
         // 투표 기록 저장
         voteRecordRepository.save(new VoteRecord.Builder(new VoteRecordId(roomIdx, user.getIdx()), number).build());
@@ -91,8 +98,9 @@ public class VoteServiceImpl implements VoteService{
             return false;
         } else {
             voteRecordRepository.delete(voteRecord);
-            vote = Vote.pollVote(vote, "garbage", voteRecord.getNumber() + "");
+            vote = Vote.pollVote(vote, 0, voteRecord.getNumber());
             voteRepository.save(vote);
+            voteRepository.updateTotal(roomIdx.toString(), (long) -1);
             return true;
         }
     }
@@ -112,5 +120,26 @@ public class VoteServiceImpl implements VoteService{
 
         voteRepository.endVote(roomIdx.toString(), LocalDateTime.now());
         return true;
+    }
+
+    @Override
+    public void deleteVote(Long roomIdx) {
+        Vote vote = voteRepository.findById(roomIdx.toString()).orElseThrow(
+                () -> new VoteNotFoundException("Vote Not Found")
+        );
+        List<VoteRecord> list = voteRecordRepository.findAllByRoomIdx(roomIdx);
+
+        voteRepository.delete(vote);
+        for(VoteRecord vr : list) {
+            voteRecordRepository.delete(vr);
+        }
+    }
+
+    @Override
+    public VoteDto getVoteDto(Long roomIdx) {
+        Vote vote = voteRepository.findById(roomIdx.toString()).orElseThrow(
+                () -> new VoteNotFoundException("Vote Not Found")
+        );
+        return new VoteDto(vote);
     }
 }
