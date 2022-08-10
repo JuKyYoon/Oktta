@@ -16,6 +16,7 @@ public class RoomDto {
     private boolean live;
     private int people;
     private int hit;
+    private VoteDto voteDto;
     private MatchDto matchDto;
 
     public RoomDto() {
@@ -114,6 +115,13 @@ public class RoomDto {
         this.hit = hit;
     }
 
+    public VoteDto getVoteDto() {
+        return voteDto;
+    }
+
+    public void setVoteDto(VoteDto voteDto) {
+        this.voteDto = voteDto;
+    }
     public MatchDto getMatch() {
         return matchDto;
     }
