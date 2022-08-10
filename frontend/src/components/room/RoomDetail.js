@@ -10,7 +10,7 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import '../../styles/room.scss';
 import { useSelector } from 'react-redux';
 import VoteChart from './VoteChart';
-import Comment from './Comment';
+import RoomComment from './RoomComment';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -150,14 +150,16 @@ const RoomDetail = () => {
                 size='small'
                 variant='outlined'
                 color='veryperi'
-                onClick={onVoteButtonClicked}>
+                onClick={onVoteButtonClicked}
+              >
                 투표하기
               </Button>
               <Button
                 size='small'
                 variant='outlined'
                 color='veryperi'
-                onClick={onVoteCancelButtonClicked}>
+                onClick={onVoteCancelButtonClicked}
+              >
                 투표취소
               </Button>
             </div>
@@ -178,25 +180,19 @@ const RoomDetail = () => {
             </Button>
           </Link>
         ) : null}
+
         {room.nickname === user.nickname ? (
           <Button
             variant='contained'
             color='veryperi'
-            onClick={onDeleteButtonClicked}>
-            방 삭제하기
-          </Button>
-        ) : null}
-        {room.nickname === user.nickname ? (
-          <Button
-            variant='contained'
-            color='veryperi'
-            onClick={onVoteQuitButtonClicked}>
+            onClick={onVoteQuitButtonClicked}
+          >
             방 삭제하기
           </Button>
         ) : null}
       </div>
       <hr className='hrLine'></hr>
-      <Comment />
+      <RoomComment idx={idx} />
     </div>
   );
 };
