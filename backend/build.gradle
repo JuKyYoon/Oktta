@@ -29,10 +29,10 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'mysql:mysql-connector-java'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//    testImplementation 'org.springframework.security:spring-security-test'
-//    testImplementation("junit:junit:4.13.2")
-//    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 
 //  swagger 설정
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
@@ -61,6 +61,9 @@ dependencies {
 
 // OAuth2 설정
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.6.2'
+
+// Jackson 설정
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
 
 }
 
