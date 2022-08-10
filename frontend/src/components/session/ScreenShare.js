@@ -20,6 +20,8 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
+import { BrowserWindow } from "electron"
+
 import "@/styles/session.scss";
 
 const ScreenShare = () => {
@@ -51,6 +53,7 @@ const ScreenShare = () => {
   const [owner, setOwner] = useState(false);
   const [publisher, setPublisher] = useState('');
   const [inputMessage, setInputMessage] = useState('');
+  const [title, setTitle] = useState("제목");
 
   let token = "";
   let myName = useSelector(state => state.user.nickname);
@@ -189,16 +192,23 @@ const ScreenShare = () => {
       console.warn(exception);
     });
 
-    // 메세지 받기
+    // 시그널 수신
     mySession.on('signal', (event) => {
       console.log(event)
-      const data = event.data;
-      let from = event.from.data.split("%/%")[1]
-      let msgNickname = JSON.parse(from).nickname;
-      let msgTime = new Date().toTimeString().substr(0,5);
-      let msg = { nickname: msgNickname, content: event.data, me: msgNickname == myName, time: msgTime }
-      // const from = JSON.parse(event.from.data).nickname;
-      setChat((chat) => [...chat, msg]);
+      if(event.type == "signal:hands") {
+        let from = event.data;
+        let msgTime = new Date().toTimeString().substr(0,5);
+        let msg = { nickname: myName, content: `${from}가 손을 들었습니다.`, me: true, time: msgTime }
+        setChat((chat) => [...chat, msg]);
+
+      } else if (event.type == "signal:chatting") {
+        const data = event.data;
+        let from = event.from.data.split("%/%")[1]
+        let msgNickname = JSON.parse(from).nickname;
+        let msgTime = new Date().toTimeString().substr(0,5);
+        let msg = { nickname: msgNickname, content: event.data, me: msgNickname == myName, time: msgTime }
+        setChat((chat) => [...chat, msg]);
+      }
     });
 
     // --- 4) Connect to the session with a valid user token ---
@@ -363,11 +373,13 @@ const ScreenShare = () => {
     const result= await createSessionRequest(params.id);
     if (result?.message == "owner") {
       // 세션에 접속한다.
-      token = result.result;
+      token = result.token;
+      setTitle(result.title);
       setOwner(true);
+    
       joinSession() 
     } else if (result?.message == "participant") {
-      token = result.result;
+      token = result.token;
       joinSession() 
     } else {
       console.log(result)
@@ -379,12 +391,28 @@ const ScreenShare = () => {
     setInputMessage(event.target.value);
   };
 
+  const handsUp = (e) => {
+    e.preventDefault();
+    if(session) {
+      session.signal({
+        data: myName,
+        type: "hands"
+      }).then(() => {
+        console.log("success")
+      }).catch((err) => {
+        console.log("hands up")
+        console.log(err)
+      })
+    }
+  }
+
   const sendMessage = (e) => {
     e.preventDefault();
     if(inputMessage.trim().length != 0 && session) {
       console.log(inputMessage)
       session.signal({
-        data: inputMessage.trim()
+        data: inputMessage.trim(),
+        type: "chatting"
       }).then(() => {
         setInputMessage(' ');
       }).catch((err) => {
@@ -394,6 +422,12 @@ const ScreenShare = () => {
     }
   }
 
+  const openChat = () => {
+    const win = new BrowserWindow({ width: 800, height: 600 })
+
+    win.loadURL('https://github.com')
+  }
+
   // 세션 상태 업데이트
   useEffect(() => {
     sessionRef.current = session;
@@ -401,16 +435,16 @@ const ScreenShare = () => {
 
 
   useEffect(() => {
-    window.addEventListener("beforeunload", closeWindow);
-    if (!session) {
-      console.log("세션 입장");
-      creaetSession();
-    }
+    // window.addEventListener("beforeunload", closeWindow);
+    // if (!session) {
+    //   console.log("세션 입장");
+    //   creaetSession();
+    // }
 
-    return () => {
-      window.removeEventListener("beforeunload", closeWindow);
-      leaveSession();
-    };
+    // return () => {
+    //   window.removeEventListener("beforeunload", closeWindow);
+    //   leaveSession();
+    // };
   }, []);
 
 
@@ -419,7 +453,7 @@ const ScreenShare = () => {
   return (
     <div id="main-session">
       <div id="video-div">
-        <div id="title-div">타이틀</div>
+        <div id="title-div">{title}</div>
 
         <div id="video-container">
           {/* <video autoPlay loop>
@@ -432,7 +466,7 @@ const ScreenShare = () => {
           <Button className="user-session-button" variant="contained" onClick={audioToggle}>
             {audioEnabled ? "음소거 하기" : "마이크 켜기"}
           </Button>
-          <Button className="user-session-button" variant="contained">
+          <Button className="user-session-button" variant="contained" onClick={handsUp}>
             손들기
           </Button>
           {owner ? 
@@ -466,6 +500,9 @@ const ScreenShare = () => {
             variant="standard"
           />
           <Button variant="contained" onClick={sendMessage}>보내기</Button>
+          <Button variant="contained" onClick={openChat}>
+            채팅창 띄우기
+          </Button>
         </div>
       </div>
       <Drawer
