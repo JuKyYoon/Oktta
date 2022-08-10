@@ -3,7 +3,6 @@ import {
   EMAIL_AUTH,
   LOGIN,
   LOGOUT,
-  DELETE_ACCOUNT,
   UPDATE_NICKNAME,
 } from "../modules/types.js";
 
@@ -35,7 +34,7 @@ export const emailAuth = async (dataToSubmit) => {
 // 닉네임 변경
 export const updateNicknameRequest = async (dataToSubmit) => {
   const res = await axiosAuth.put(USER_URL, dataToSubmit)
-  .catch((err) => console.log(err));
+    .catch((err) => console.log(err));
   const data = { ...res, nickname: dataToSubmit.nickname };
   return {
     type: UPDATE_NICKNAME,
@@ -134,7 +133,7 @@ export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
 export const delAccount = async (dataToSubmit) => {
   const data = await axiosAuth.delete(USER_URL, dataToSubmit);
   return {
-    type: DELETE_ACCOUNT,
+    type: LOGOUT,
     payload: data,
   };
 };

@@ -31,3 +31,9 @@ export const getRoomList = async (pageNum) => {
   const payload = await axiosAuth.get(`${ROOM_URL}?page=${pageNum}`);
   return payload;
 };
+
+// 내가 작성한 글 불러오기
+export const getMyRoom = async () => {
+  const payload = await axiosAuth.get(`${ROOM_URL}/mine`);
+  return payload;
+};

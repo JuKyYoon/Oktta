@@ -1,9 +1,14 @@
 @import './App.scss';
 
-// 마이페이지
 .mypage {
+  position: relative;
+  top: 100px;
+}
+
+// 마이페이지
+.mypage-top {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
   }
   
 .mypage-left {
@@ -14,66 +19,98 @@
   width: 30%;
 }
 
-.mypage-image-profile {
-  border: $veryperi 3px solid;
-  border-radius: 100%;
-  width: 80%;
-  aspect-ratio: 1;
-}
+// .mypage-image-profile {
+//   border: $veryperi 3px solid;
+//   border-radius: 100%;
+//   width: 80%;
+//   aspect-ratio: 1;
+// }
 
 .mypage-image-tier {
-  background-color: white;
-  border-radius: 100%;
-  height: 300px;
-  margin: 1%;
-  aspect-ratio: 1;
+  align-self: center;
+}
+
+.mypage-summoner {
+  align-self: center;
+}
+
+.mypage-lol-info {
+  display: flex;
+  flex-direction: column;
+  background-color: #d7d7fa;
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  padding: 1%;
+  height: 350px;
+  justify-content: center;
 }
 
 .mypage-right {
   margin: 2.5%;
-  width: 60%;
+  width: 30%;
 }
 
 .mypage-contents-box {
-  background-color: $veryperi;
-  border: $veryperi 1px solid;
+  display: flex;
+  flex-direction: column;
+  background-color: #d7d7fa;
   border-radius: 10px;
   border-top-left-radius: 0px;
   padding: 1%;
-  width: 97.7%;
-  height: 90%;
+  height: 350px;
+  justify-content: space-between;
 }
 
 .mypage-contents-item {
+  // white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background-color: white;
   border-radius: 10px;
-  padding: 5px;
-  margin: 1%;
-  width: 95%;
+  padding: 1%;
+  margin: 2%;
+  height: 25px;
 }
 
 .mypage-mode {
-  border: $veryperi 1px solid;
-  border-top: $veryperi 2px solid;
+  border: #d7d7fa 1px solid;
+  border-top: #d7d7fa 2px solid;
   padding: 5px;
   cursor: pointer;
 }
 
 .mypage-mode-start {
-  border-left: $veryperi 2px solid;
+  border-left: #d7d7fa 2px solid;
   border-top-left-radius: 10px;
 }
 
 .mypage-mode-end {
-  border-right: $veryperi 2px solid;
+  border-right: #d7d7fa 2px solid;
   border-top-right-radius: 10px;
 }
 
 .mypage-selected {
-  background-color: $veryperi;
-  color: white;
+  background-color: #d7d7fa;
+  color: black;
 }
 
+.mypage-bottom {
+  text-align: center;
+}
+
+ /* pagination*/
+.css-wjh20t-MuiPagination-ul {
+  justify-content: center;
+}
+
+ /* 회원 탈퇴 버튼 */
+.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+  color: #ff003e !important;
+}
+
+.cancel {
+  color: black !important;
+}
 
   /* 입력 폼 정렬 */
 .form {

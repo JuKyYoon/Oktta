@@ -1,9 +1,9 @@
 import {
   EMAIL_AUTH,
+  SET_TOKEN,
   LOGIN,
   SOCIAL_LOGIN,
   LOGOUT,
-  DELETE_ACCOUNT,
   UPDATE_NICKNAME
 } from "../modules/types.js";
 
@@ -25,6 +25,11 @@ export default function (state = initState, action) {
         }
       }
       return { ...state }
+    case SET_TOKEN:
+      return {
+        ...state,
+        token: action.payload.accessToken,
+      }
     case LOGIN:
       if (action.payload.data.message === "success") {
         return {
@@ -45,8 +50,6 @@ export default function (state = initState, action) {
         snsType: action.payload.snsType,
       }
     case LOGOUT:
-      return initState;
-    case DELETE_ACCOUNT:
       return initState;
     case UPDATE_NICKNAME:
       return {

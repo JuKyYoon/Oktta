@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "..";
-import { initState } from "../modules/user";
+import { LOGOUT, SET_TOKEN } from "../modules/types";
 import { getToken } from "./userService";
 
 export const request = axios.create({
@@ -30,10 +30,6 @@ axiosAuth.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    // 로그인이 되어있지 않을 때 로그인 페이지로 이동
-    else {
-      window.location.replace('/user/login');
-    }
     return config;
   },
   function (error) {
@@ -47,8 +43,9 @@ axiosAuth.interceptors.response.use(
   },
   async function (error) {
     const result = error.config;
+    console.log("ㄹㅣ설트다 이말이야", result);
     if (error.response.status === 401) {
-      if (result.retry != true) {
+      if (result.retry !== true) {
         result.retry = true;
         const accessToken = await getToken()
           .then((res) => {
@@ -57,18 +54,17 @@ axiosAuth.interceptors.response.use(
             };
           })
           .catch((err) => { return ""; });
-        store.getState().user.accessToken = accessToken;
+        store.dispatch({ type: SET_TOKEN, payload: { accessToken } });
         result.headers.Authorization = `Bearer ${accessToken}`;
         return await axiosAuth(result);
-      } else {
-        // 추가 작업 필요
-        // 로컬 스토리지에서 로그인 데이터 삭제
-        if (store.getState().user.isLogin === true) {
-          console.log("deleted user data from local storage");
-          store.getState().user = initState;
-          window.location.replace('/user/login');
-        };
       }
+    }
+    else if (error.response.status === 403) {
+      if (result.retry === true && store.getState().user.isLogin === true) {
+        alert("로그인 대기 유효 시간이 만료 되었습니다. 다시 로그인 후 시도해 주세요.");
+      }
+      store.dispatch({ type: LOGOUT });
+      window.location.replace('/user/login');
     }
     return Promise.reject(error);
   }

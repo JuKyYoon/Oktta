@@ -12,12 +12,11 @@ import {
   signupRequest,
 } from "../../services/userService";
 import { debounce } from "lodash";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
 const debounceFunc = debounce((value, request, setState) => {
   request(value)
-  .then((res) => setState(res.data.message))
+    .then((res) => setState(res.data.message))
 }, 500);
 
 const Signup = () => {
@@ -37,7 +36,6 @@ const Signup = () => {
   const [emailChecked, setEmailChecked] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const emailChange = (event) => {
@@ -78,6 +76,7 @@ const Signup = () => {
 
   const nicknameChange = (event) => {
     setNickname(event.target.value);
+    setNicknameChecked(false);
 
     if (event.target.value) {
       const regNickname = /[^\w\sㄱ-힣]|[\_]/g;
@@ -205,11 +204,12 @@ const Signup = () => {
         onClick={handleSubmit}
         disabled={
           !isEmailValid ||
-          emailChecked === "fail" ||
+          emailChecked !== "success" ||
           !isPasswordValid ||
           !isPasswordSame ||
           !isNicknameValid ||
-          nicknameChecked === "fail"
+          !nickname ||
+          nicknameChecked !== "success"
         }
       >
         가입하기
