@@ -20,7 +20,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("UPDATE Room room SET room.title = :title, room.content = :content, room.modifyDate = :date  WHERE room.idx = :idx and room.user = :user")
     int updateRoom(String title, String content, long idx, User user, LocalDateTime date);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM room LIMIT :limit OFFSET :page")
+    @Query(nativeQuery = true, value = "SELECT * FROM room ORDER BY idx DESC LIMIT :limit OFFSET :page")
     List<Room> findRooms(int limit, int page);
 
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM room")
