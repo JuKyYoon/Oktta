@@ -50,6 +50,17 @@ public class BaseControllerAdvice {
                 .body(MessageResponse.of(404, failMsg, "Room Not Found"));
     }
 
+    @ExceptionHandler(VoteNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> voteNotFoundException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Vote Not Found");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(MessageResponse.of(404, failMsg, "Vote Not Found"));
+    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<BaseResponseBody> dataIntegrityViolationException(Exception e, HttpServletRequest req) {

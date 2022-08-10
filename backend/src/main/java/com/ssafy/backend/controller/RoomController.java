@@ -16,7 +16,7 @@ import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
 import com.ssafy.backend.service.RoomCommentService;
 import com.ssafy.backend.service.RoomService;
-import net.bytebuddy.description.method.MethodDescription;
+import com.ssafy.backend.service.VoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +48,12 @@ public class RoomController {
 
     private final RoomService roomService;
     private final RoomCommentService roomCommentService;
+    private final VoteService voteService;
 
-    public RoomController(RoomService roomService, RoomCommentService roomCommentService) {
+    public RoomController(RoomService roomService, RoomCommentService roomCommentService, VoteService voteService) {
         this.roomService = roomService;
         this.roomCommentService = roomCommentService;
+        this.voteService = voteService;
     }
 
     @PostMapping("")
@@ -62,7 +65,7 @@ public class RoomController {
         MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
         roomDto.setMatch(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
-
+        voteService.createVote(roomIdx, LocalDateTime.now());
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, String.valueOf(roomIdx)));
     }
 
@@ -72,8 +75,13 @@ public class RoomController {
         roomService.updateHit(roomDto.getIdx());
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
-        int temp = list.size() / pagingLimit;
-        int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
+        int temp = list.size() / limit;
+        int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
+        
+        if(voteService.checkEnd(Long.parseLong(idx), LocalDateTime.now())) {
+            roomDto.setVoteDto(voteService.getVoteDto(Long.parseLong(idx)));
+        }
+
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
@@ -92,6 +100,8 @@ public class RoomController {
         LOGGER.info("Delete Room");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = roomService.deleteRoom(Long.parseLong(idx), principal.getUsername());
+        voteService.deleteVote(Long.parseLong(idx));
+
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));
     }
 
