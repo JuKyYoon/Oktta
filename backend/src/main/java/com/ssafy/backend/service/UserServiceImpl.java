@@ -12,6 +12,7 @@ import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.AwsService;
 import com.ssafy.backend.util.RedisService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
 
     private final RedisService redisService;
 
+    private final AwsService awsService;
+
     @Value("${email.expire-day}")
     private int expireDay;
 
@@ -48,11 +52,15 @@ public class UserServiceImpl implements UserService {
     @Value("${password.reset.expire-time}")
     private int resetTokenExpireTime;
 
-    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService) {
+    @Value("${default-profile-image-url}")
+    private String defaultProfileImageUrl;
+
+    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService, AwsService awsService) {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
         this.mailService = mailService;
         this.redisService = redisService;
+        this.awsService = awsService;
     }
 
     /**
@@ -295,5 +303,41 @@ public class UserServiceImpl implements UserService {
         String userId = splitStr[0];
         String encrypt = BCrypt.hashpw(password, BCrypt.gensalt());
         return userRepository.updatePassword(encrypt, userId) == 1;
+    }
+
+
+    /**
+     * 프로필 이미지 등록 및 수정
+     * @param user
+     * @param file
+     */
+    @Override
+    public void registProfileImage(User user, MultipartFile file) {
+        String path = awsService.fileUpload(file);
+        deleteOldFile(user);
+        userRepository.updateProfileImage(user.getIdx(), path);
+    }
+
+    /**
+     * 프로필 이미지 삭제
+     * @param user
+     */
+    @Override
+    public void deleteProfileImage(User user) {
+        deleteOldFile(user);
+        userRepository.updateProfileImage(user.getIdx(), defaultProfileImageUrl);
+    }
+
+    /**
+     * 예전 프로필 이미지 S3 서버에서 삭제
+     * @param user
+     */
+    private void deleteOldFile(User user){
+        String oldPath = user.getProfileImg();
+        if(!oldPath.equals(defaultProfileImageUrl)){
+            String[] tmp = oldPath.split("/");
+            String oldFileName = tmp[tmp.length-1];
+            awsService.fileDelete(oldFileName);
+        }
     }
 }

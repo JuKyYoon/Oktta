@@ -24,6 +24,6 @@ public class TestController {
     @PostMapping("")
     public String form(@RequestParam("testFile") MultipartFile file) {
         String id = "test@test.com";
-        return awsService.fileUpload(id, file);
+        return awsService.fileUpload(file);
     }
 }

@@ -171,6 +171,18 @@ public class BaseControllerAdvice {
                 .body(BaseResponseBody.of(200, failMsg));
     }
 
+    @ExceptionHandler(FileTypeException.class)
+    public ResponseEntity<BaseResponseBody> FileTypeException(Exception e, HttpServletRequest req){
+        LOGGER.debug("FILE TYPE ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(BaseResponseBody.of(403, failMsg));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponseBody> unknownException(Exception e, HttpServletRequest req) {
         LOGGER.debug("UNKNOWN ERROR");

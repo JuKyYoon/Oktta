@@ -3,6 +3,7 @@ package com.ssafy.backend.service;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 
@@ -19,4 +20,8 @@ public interface UserService {
     UserDto setUserInfo(User user);
     String validateResetToken(String resetToken);
     boolean resetPassword(String password, String token);
+
+    void registProfileImage(User user, MultipartFile multipartFile);
+
+    void deleteProfileImage(User user);
 }

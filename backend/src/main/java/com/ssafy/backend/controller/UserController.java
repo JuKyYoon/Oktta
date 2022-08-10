@@ -10,6 +10,7 @@ import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.UserInfoResponse;
 import com.ssafy.backend.service.UserService;
+import com.ssafy.backend.util.AwsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.mail.MessagingException;
 import java.util.Map;
 
@@ -34,6 +38,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     private final UserService userService;
+
 
     public UserController(UserRepository userRepository, UserService userService){
         this.userRepository = userRepository;
@@ -228,5 +233,31 @@ public class UserController {
         } else {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
         }
+    }
+
+    /**
+     * 프로필 이미지 등록
+     */
+    @PostMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> registProfileImage(@RequestParam("profileImg") MultipartFile file){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        userService.registProfileImage(user, file);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 프로필 이미지 삭제
+     */
+    @DeleteMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> deleteProfileImage(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        userService.deleteProfileImage(user);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }

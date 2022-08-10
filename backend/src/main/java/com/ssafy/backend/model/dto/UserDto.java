@@ -14,7 +14,7 @@ public class UserDto {
     private String createDate;
     private String modifyDate;
     private int snsType;
-    private int profileImg;
+    private String profileImg;
     private String role;
 
     public UserDto() {
@@ -26,7 +26,7 @@ public class UserDto {
         this.password = password;
     }
 
-    public UserDto(String nickname, String createDate, String modifyDate, int profileImg, int snsType, String role){
+    public UserDto(String nickname, String createDate, String modifyDate, String profileImg, int snsType, String role){
         this.nickname = nickname;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
@@ -83,11 +83,11 @@ public class UserDto {
         this.snsType = snsType;
     }
 
-    public int getProfileImg() {
+    public String getProfileImg() {
         return profileImg;
     }
 
-    public void setProfileImg(int profileImg) {
+    public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
 

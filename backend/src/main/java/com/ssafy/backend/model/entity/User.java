@@ -2,6 +2,7 @@ package com.ssafy.backend.model.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,8 +45,8 @@ public class User {
     @Column(name = "sns_type")
     private int snsType;
 
-    @Column(name = "profile_img")
-    private int profileImg;
+    @Column(name = "profile_img", columnDefinition = "varchar(255) default 'https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png'")
+    private String profileImg;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(255) default 'ROLE_GUEST'")
@@ -92,7 +93,7 @@ public class User {
         return snsType;
     }
 
-    public int getProfileImg() {
+    public String getProfileImg() {
         return profileImg;
     }
 
@@ -108,6 +109,9 @@ public class User {
         this.role = role;
     }
 
+    public void updateProfileImage(String profileImg) {
+        this.profileImg = profileImg;
+    }
     public static User.Builder builder() {
         return new User.Builder();
     }
@@ -120,10 +124,16 @@ public class User {
         private String password;
         private UserRole role;
         private int snsType;
+        private String profileImg;
 
         // Optional Parameter
         public Builder role(String role) {
             this.role = UserRole.valueOf(role);
+            return this;
+        }
+
+        public Builder profileImg(String profileImg){
+            this.profileImg = profileImg;
             return this;
         }
 
