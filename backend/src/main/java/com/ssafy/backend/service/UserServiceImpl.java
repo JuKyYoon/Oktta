@@ -335,8 +335,7 @@ public class UserServiceImpl implements UserService {
     private void deleteOldFile(User user){
         String oldPath = user.getProfileImg();
         if(!oldPath.equals(defaultProfileImageUrl)){
-            String[] tmp = oldPath.split("/");
-            String oldFileName = tmp[tmp.length-1];
+            String oldFileName = oldPath.substring(oldPath.lastIndexOf('/') + 1);
             awsService.fileDelete(oldFileName);
         }
     }
