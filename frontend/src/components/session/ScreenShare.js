@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { createSessionRequest, closeSessionRequest} from '@/services/sessionService';
-
+import {useSelector} from 'react-redux'
 import { OpenVidu } from "openvidu-browser";
 import Button from "@mui/material/Button";
 import MessageItem from "./MessageItem";
@@ -50,8 +50,10 @@ const ScreenShare = () => {
   const [open, setOpen] = useState(false);
   const [owner, setOwner] = useState(false);
   const [publisher, setPublisher] = useState('');
+  const [inputMessage, setInputMessage] = useState('');
 
   let token = "";
+  let myName = useSelector(state => state.user.nickname);
 
   const toggleDrawer = (isOpen) => (event) => {
     // 닫을려고 할 때
@@ -189,9 +191,14 @@ const ScreenShare = () => {
 
     // 메세지 받기
     mySession.on('signal', (event) => {
+      console.log(event)
       const data = event.data;
-      const from = JSON.parse(event.from.data).nickname;
-      setMessages((messages) => [...messages, { from, data }]);
+      let from = event.from.data.split("%/%")[1]
+      let msgNickname = JSON.parse(from).nickname;
+      let msgTime = new Date().toTimeString().substr(0,5);
+      let msg = { nickname: msgNickname, content: event.data, me: msgNickname == myName, time: msgTime }
+      // const from = JSON.parse(event.from.data).nickname;
+      setChat((chat) => [...chat, msg]);
     });
 
     // --- 4) Connect to the session with a valid user token ---
@@ -367,6 +374,25 @@ const ScreenShare = () => {
       alert("Err");
     }
   }
+  
+  const onChangeMessage = (event) => {
+    setInputMessage(event.target.value);
+  };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if(inputMessage.trim().length != 0 && session) {
+      console.log(inputMessage)
+      session.signal({
+        data: inputMessage.trim()
+      }).then(() => {
+        setInputMessage(' ');
+      }).catch((err) => {
+        console.log("send message fail")
+        console.log(err)
+      })
+    }
+  }
 
   // 세션 상태 업데이트
   useEffect(() => {
@@ -388,7 +414,7 @@ const ScreenShare = () => {
   }, []);
 
 
-  console.log("렌더링 했습니다.");
+  // console.log("렌더링 했습니다.");
 
   return (
     <div id="main-session">
@@ -410,7 +436,7 @@ const ScreenShare = () => {
             손들기
           </Button>
           {owner ? 
-            <Button variant='contained' onClick={screenToggle}>
+            <Button className="user-session-button" variant='contained' onClick={screenToggle}>
               {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
             </Button> : null}
           <Button className="show-session-user" onClick={toggleDrawer(true)}>
@@ -435,9 +461,11 @@ const ScreenShare = () => {
             margin="none"
             rows={2}
             placeholder="chatting"
+            value={inputMessage}
+            onChange={onChangeMessage}
             variant="standard"
           />
-          <Button variant="contained">보내기</Button>
+          <Button variant="contained" onClick={sendMessage}>보내기</Button>
         </div>
       </div>
       <Drawer
