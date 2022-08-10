@@ -75,8 +75,8 @@ public class RoomController {
         roomService.updateHit(roomDto.getIdx());
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
-        int temp = list.size() / limit;
-        int lastPage = (list.size() % limit == 0) ? temp : temp + 1;
+        int temp = list.size() / pagingLimit;
+        int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
         
         if(voteService.checkEnd(Long.parseLong(idx), LocalDateTime.now())) {
             roomDto.setVoteDto(voteService.getVoteDto(Long.parseLong(idx)));
