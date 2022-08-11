@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,28 +24,26 @@ const MyPage = () => {
     setPage(value);
   };
 
+  const getMyPage = async () => {
+    const result = await getMyRoom();
+    if(result?.data?.message === "success") {
+      setRoomList(result?.data?.list);
+
+      const res= await getProfileRequest();
+      if(res?.data?.message === "success") {
+        setProfile(res?.data?.result)
+      }  else {
+        console.log("프로파일 불러오기 실패");
+        // navigate('/')
+      }
+    } else {
+      console.log("불러오기 실패")
+      // navigate('/')
+    }
+  }
+
   useEffect(() => {
-    getMyRoom()
-      .then((res) => {
-        if (res.data.message === "success") {
-          setRoomList(res.data.list);
-        }
-        getProfileRequest()
-          .then((res) => {
-            if (res.data.message === "success") {
-              setProfile(res.data.result)
-            }
-            // getMyBoard()
-            // .then((res) => {
-            //   if (res.data.message === "success") {
-            //     setBoardList(res.data.list);
-            //   }
-            // })
-            // .catch((err) => console.log(err));
-          })
-          .catch((err) => navigate('/'));
-      })
-      .catch((err) => navigate('/'));
+    getMyPage();
   }, []);
 
   const handleClickOpenProfile = () => {

@@ -72,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
             userRepository.findById(userId).orElseThrow(
                     () ->  new UserNotFoundException("Not Found User")
             );
+            redisService.deleteKey(refreshToken);
             return createToken(userId);
         } else {
             String exception = (String) req.getAttribute("exception");
