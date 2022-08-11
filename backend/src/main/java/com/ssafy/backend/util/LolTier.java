@@ -5,7 +5,6 @@ public class LolTier {
     private LolTier(){}
     public static int getTier(String tier, String rank) {
         tier = tier.toUpperCase();
-        System.out.println("tier!!!!: " + tier + " rank!!!!!: " + rank);
         int result = 0;
         if(tier != null){
             switch (tier){
@@ -33,7 +32,7 @@ public class LolTier {
                 case "GRANDMASTER":
                     result = 80;
                     break;
-                case "CHANLLENGER":
+                case "CHALLENGER":
                     result = 90;
                     break;
                 default:
@@ -48,10 +47,10 @@ public class LolTier {
                     case "III":
                         result += 2;
                         break;
-                    case " II":
+                    case "II":
                         result += 3;
                         break;
-                    case " I":
+                    case "I":
                         result += 4;
                         break;
                 }

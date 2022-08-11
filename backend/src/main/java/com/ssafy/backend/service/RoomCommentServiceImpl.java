@@ -49,7 +49,7 @@ public class RoomCommentServiceImpl implements RoomCommentService {
                 () -> new UserNotFoundException("User Not Found")
         );
 
-        Room room = roomRepository.findByIdx(roomIdx).orElseThrow(
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found")
         );
 
