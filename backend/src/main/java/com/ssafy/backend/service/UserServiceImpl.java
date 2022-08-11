@@ -68,9 +68,13 @@ public class UserServiceImpl implements UserService {
      * @param user { id, password, nickName }
      */
     @Override
-    public void registUser(UserDto user) throws MessagingException {
+    public void registUser(UserDto user, MultipartFile profileImage) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
-        userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
+        if(profileImage.getSize() > 0){
+            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.fileUpload(profileImage)).build());
+        }else{
+            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
+        }
         String authKey = "";
         UserAuthToken tokenResult;
         // 중복 인증 키 아닐 때 까지 반복

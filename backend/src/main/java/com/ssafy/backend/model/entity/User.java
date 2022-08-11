@@ -63,6 +63,7 @@ public class User {
         this.password = builder.password;
         this.role = builder.role;
         this.snsType = builder.snsType;
+        this.profileImg = builder.profileImg;
     }
 
     public Long getIdx() {
@@ -153,7 +154,12 @@ public class User {
             this.role = role;
             this.snsType = snsType;
         }
-
+        public Builder(String id, String nickname, String password, String profileImg){
+            this.id = id;
+            this.nickname = nickname;
+            this.password = password;
+            this.profileImg = profileImg;
+        }
         public User build() {
             return new User(this);
         }

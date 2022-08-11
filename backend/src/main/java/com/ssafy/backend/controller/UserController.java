@@ -3,6 +3,7 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.exception.SocialUserException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
@@ -68,8 +69,8 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestBody UserDto user) throws MessagingException {
-        userService.registUser(user);
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart UserDto user, @RequestPart MultipartFile profileImage) throws MessagingException {
+        userService.registUser(user, profileImage);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
