@@ -19,15 +19,14 @@ const PwInquiryEmailSend = () => {
 
   const emailSend = () => {
     pwInquiryEmailSendRequest(email)
-      .then((data) => {
-        if (data.message === 'success') {
+      .then((res) => {
+        if (res.data.message === 'success') {
           alert('이메일이 발송되었습니다.');
         } else {
-          console.log(data)
           alert('유효하지 않은 이메일입니다.');
         }
       })
-      .catch()
+      .catch((err) => alert('올바르지 않은 접근입니다.'));
   };
 
   return (

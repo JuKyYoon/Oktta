@@ -10,7 +10,6 @@ main {
 }
 
 a {
-  margin: 5px;
   text-decoration: none;
   cursor: pointer;
   color: black;
@@ -22,6 +21,39 @@ a {
 
 ul {
   list-style:none;
+}
+
+/* Header 관련 CSS */
+/* 버튼 */
+.css-1q39md6-MuiButtonBase-root-MuiButton-root {
+  color: black !important;
+}
+
+.logo {
+  width: 200px;
+}
+
+@media (max-width: 991px) {
+  .logo {
+    width: 150px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px;
+}
+
+.header-right-btn {
+  display: flex;
+}
+
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 /* 에러 메시지 색상 */
