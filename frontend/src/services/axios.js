@@ -86,8 +86,11 @@ axiosAuth.interceptors.response.use(
         window.location.replace('/user/login');
       }
     } else if (error?.response?.data?.result === "access denied") {
-      // 권한 거부
-      alert('이메일 인증을 완료해주시길 바랍니다.');
+      if(result.url === "/api/v1/user/reauth") {
+        alert("권한이 없습니다.")
+      } else {
+        alert('이메일 인증을 완료해주시길 바랍니다.');
+      }
       window.location.replace('/');
     } else if (result.url === "/api/v1/auth/refresh" || error?.response?.data?.result === "no token" || error?.response?.data?.result === "forbidden"){
       // 리프레시 토큰 재요청에서 오류가 나면, 무조건 다시 로그인 시킨다. ( 리프레시 토큰 시간 만료 혹은 유효성 검사 실패 )

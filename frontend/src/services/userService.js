@@ -34,10 +34,7 @@ export const sendEmail = async () => {
 export const emailAuth = async (dataToSubmit) => {
   try {
     const payload = await request.get(`${USER_URL}/auth/${dataToSubmit}`);
-    return {
-      type: EMAIL_AUTH,
-      payload
-    };
+    return payload;
   } catch (err) {
     return err;
   }
