@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { axiosAuth, riotRequest } from './axios.js';
 
 const ROOM_URL = 'api/v1/room';
@@ -33,6 +32,17 @@ export const updateRoom = async (idx, dataToSubmit) => {
 export const getRoomList = async (pageNum) => {
   const payload = await axiosAuth.get(`${ROOM_URL}?page=${pageNum}`);
   return payload;
+};
+
+// 내가 작성한 글 불러오기
+export const getMyRoom = async () => {
+  try {
+    const payload = await axiosAuth.get(`${ROOM_URL}/mine`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
 };
 
 // 소환사명으로 최근 게임 가져오기

@@ -109,7 +109,7 @@ public class AuthController {
                 Map<String, String> result = authService.refresh(request, refreshToken);
                 if("timeover".equals(result.get(failMsg))) {
                     LOGGER.debug("Token Expired");
-                    return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "time expired"));
+                    return ResponseEntity.status(200).body(MessageResponse.of(401, failMsg, "time expired"));
                 } else if(failMsg.equals(result.get(failMsg))) {
                     LOGGER.debug("Token Validate Fail");
                     return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "token not validate"));
