@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         // 유저 db 저장
         if(!profileImage.isEmpty()){
-            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.fileUpload(profileImage)).build());
+            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.imageUpload(profileImage)).build());
         }else{
             userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
         }
@@ -324,7 +324,7 @@ public class UserServiceImpl implements UserService {
     public void registProfileImage(String userId, MultipartFile file) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("USER NOT FOUND"));
-        String path = awsService.fileUpload(file);
+        String path = awsService.imageUpload(file);
         deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), path);
     }
