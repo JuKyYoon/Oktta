@@ -1,7 +1,4 @@
 import React from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,8 +58,8 @@ const Header = () => {
           </div>
         )}
       </div>
-      {state.user.auth === "0" && <BeforeEmailAuth />}
       <Navbar />
+      {state.user.auth === "0" && <BeforeEmailAuth />}
     </div>
   );
 };

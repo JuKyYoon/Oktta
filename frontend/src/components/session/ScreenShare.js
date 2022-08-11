@@ -150,7 +150,7 @@ const ScreenShare = () => {
       }
     }
 
-    navigate(`/article/${params.id}/`);
+    navigate(`/board/${params.id}/`);
     setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);

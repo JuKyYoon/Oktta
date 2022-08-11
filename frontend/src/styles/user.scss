@@ -2,7 +2,7 @@
 
 .mypage {
   position: relative;
-  top: 100px;
+  margin-top: 5%;
 }
 
 // 마이페이지
@@ -26,6 +26,10 @@
 //   aspect-ratio: 1;
 // }
 
+.mypage-left-item {
+  margin: 15px;
+}
+
 .mypage-image-tier {
   align-self: center;
 }
@@ -47,7 +51,7 @@
 
 .mypage-right {
   margin: 2.5%;
-  width: 30%;
+  width: 40%;
 }
 
 .mypage-contents-box {
@@ -102,11 +106,12 @@
   border-bottom: 1px dashed;
 }
 
-.default-profile {
-  background-color: white;
-  border-radius: 100%;
-  border-color: gray;
-  margin: 3px;
+.default-profile-img {
+  text-align: center;
+}
+
+.no-pagination {
+  display: none;
 }
 
  /* pagination*/
@@ -116,7 +121,11 @@
 
  /* 회원 탈퇴 버튼 */
 .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-  color: #ff003e !important;
+  color: black !important;
+}
+
+#delete-btn {
+  color: rgb(219, 219, 219) !important;
 }
 
 .cancel {
@@ -130,7 +139,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 
 /* 로그인 폼 정렬 */
@@ -149,7 +158,6 @@
 // 회원가입 경고문
 .css-1wc848c-MuiFormHelperText-root.Mui-error {
   font-size: 13px;
-  line-height: 16px;
   letter-spacing: -.5px;
   color: #ff003e;
   vertical-align: middle;
@@ -192,4 +200,49 @@
   color: $veryperi;
   background-color: white;
   padding: 10px;
+}
+
+/* 이메일 인증 메시지 */
+.email-auth-notice {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 991px) {
+  .mypage-top {
+    flex-direction: column;
+    align-items: center;
+    // width: 300%;
+  }
+
+  .mypage-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2.5%;
+    width: 50%;
+  }
+
+  .mypage-right {
+    margin: 2.5%;
+    width: 85%;
+  }
+
+  .css-e53awj-MuiStack-root {
+    flex-direction: column !important;
+  }
+
+  #googleIdLogin {
+    width: 205px;
+    height: 60px;
+    margin-left: 15px;
+  }
+
+  .email-auth-notice {
+    flex-direction: column;
+  }
+
+  .css-1pxa9xg-MuiAlert-message {
+    font-size: 13px;
+  }  
 }

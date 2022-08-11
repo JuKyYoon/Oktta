@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import NotFound from '../components/error/NotFound';
 import Home from '../components/Home';
 
-const Article = () => {
+const Board = () => {
   return (
     <Routes>
       <Route path='notice' element={<Home />} />
@@ -13,4 +13,4 @@ const Article = () => {
   );
 };
 
-export default Article;
+export default Board;

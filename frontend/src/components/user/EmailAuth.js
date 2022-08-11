@@ -1,19 +1,17 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { emailAuth, logoutRequest } from "../../services/userService";
-import Home from "../Home";
 
 const EmailAuth = () => {
   const [msg, setMsg] = useState("");
   const [time, setTime] = useState(5);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const user = useSelector((state) => state.user);
+  const login = useSelector((state) => state.user.isLogin);
 
-  const token = location.pathname.split("/").pop();
+  const { token } = useParams();
 
   useEffect(() => {
     setTimeout(() => {
@@ -24,13 +22,16 @@ const EmailAuth = () => {
   useEffect(() => {
     emailAuth(token)
       .then((res) => {
-        setMsg(res.payload.data.message);
+        if (res.payload.data.message === "success") {
+          setMsg(res.payload.data.message);
+        }
       })
       .catch((err) => console.log(err));
-    if (user.isLogin) {
-      dispatch(logoutRequest())
-        .catch((err) => { console.log(err) })
+
+    if (login) {
+      dispatch(logoutRequest());
     }
+
     setTimeout(() => {
       navigate("/user/login");
     }, 5000);

@@ -14,7 +14,6 @@ request.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    // window.location.replace('/');
     return Promise.reject(error);
   }
 );
@@ -43,7 +42,6 @@ axiosAuth.interceptors.response.use(
   },
   async function (error) {
     const result = error.config;
-    console.log("ㄹㅣ설트다 이말이야", result);
     if (error.response.status === 401) {
       if (result.retry !== true) {
         result.retry = true;
@@ -60,11 +58,21 @@ axiosAuth.interceptors.response.use(
       }
     }
     else if (error.response.status === 403) {
+      // 리프레쉬 토큰 만료시
       if (result.retry === true && store.getState().user.isLogin === true) {
         alert("로그인 대기 유효 시간이 만료 되었습니다. 다시 로그인 후 시도해 주세요.");
+        store.dispatch({ type: LOGOUT });
+        window.location.replace('/user/login');
       }
-      store.dispatch({ type: LOGOUT });
-      window.location.replace('/user/login');
+      // 이메일 인증을 완료하지 않았을 때
+      else if (error.response.data.status === "access denied") {
+        alert('이메일 인증을 완료해주시길 바랍니다.');
+        window.location.replace('/');
+      }
+      // 로그인하지 않았을 때
+      else {
+        window.location.replace('/user/login');
+      }
     }
     return Promise.reject(error);
   }

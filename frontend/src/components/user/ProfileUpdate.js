@@ -6,21 +6,29 @@ import {
   InputLabel,
   Input,
   FormHelperText,
-  Container,
   Button,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   updateNicknameRequest,
   updatePasswordRequest,
   checkNicknameRequest,
+  delAccount,
 } from '../../services/userService';
 import { debounce } from 'lodash';
+import { LOGOUT } from '../../modules/types';
 
 const debounceFunc = debounce((value, request, setState) => {
   request(value)
-    .then((res) => setState(res.data.message))
+    .then((res) => {
+      setState(res.data.message)
+    })
+    .catch((err) => alert('올바르지 않은 접근입니다.'))
 }, 500);
 
 const ProfileUpdate = () => {
@@ -29,12 +37,15 @@ const ProfileUpdate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useSelector((state) => state.user)
+
   // 닉네임 관련
-  const currentNickname = useSelector((state) => state.user.nickname);
-  const snsType = useSelector((state) => state.user.snsType);
+  const currentNickname = user.nickname;
+  const snsType = user.snsType;
   const [nickname, setNickname] = useState(currentNickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [banned, setBanned] = useState(false);
 
   // 비밀번호 관련
   const [newPassword, setNewPassword] = useState('');
@@ -43,6 +54,8 @@ const ProfileUpdate = () => {
   const [isNewPasswordSame, setIsNewPasswordSame] = useState(false);
 
   const [password, setPassword] = useState('');
+
+  const [open_delbtn, setOpenDelBtn] = useState(false);
 
   const passwordChange = (event) => {
     setPassword(event.target.value);
@@ -56,7 +69,10 @@ const ProfileUpdate = () => {
       const isNicknameValid = !regNickname.test(event.target.value);
       setIsNicknameValid(isNicknameValid);
 
-      if (isNicknameValid) {
+      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음';
+      setBanned(banned);
+
+      if (isNicknameValid && !banned) {
         setNicknameChecked(false);
         debounceFunc(
           event.target.value,
@@ -103,6 +119,7 @@ const ProfileUpdate = () => {
                 navigate('/user/mypage');
               } else {
                 alert('비밀번호를 확인해주세요.');
+                setPassword('');
               }
             })
             .catch((err) => {
@@ -125,17 +142,42 @@ const ProfileUpdate = () => {
               navigate('/user/mypage');
             } else {
               alert('비밀번호를 확인해주세요.');
+              setPassword('');
+              setNewPassword('');
+              setNewPasswordCheck('');
             }
-          });
+          }).catch((err) => console.log(err));
         }
         break;
-      case 'profileImage':
-        navigate('/user/mypage');
-        break;
       default:
-        console.log('???');
+        alert('올바르지 않은 접근입니다.');
     }
   };
+
+  const handleClickOpenDelBtn = () => {
+    setPassword("");
+    setOpenDelBtn(true);
+  };
+
+  const handleClose = () => {
+    setOpenDelBtn(false);
+  };
+
+  const deleteUser = () => {
+    delAccount({ data: { password } })
+      .then((res) => {
+        if (res.payload.data.message === "success") {
+          navigate('/');
+          alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
+          dispatch({ type: LOGOUT });
+        }
+        else {
+          alert("비밀번호를 잘못 입력했습니다.");
+          handleClose();
+        }
+      })
+      .catch((err) => console.log(err))
+  }
 
   return (
     <div className='form'>
@@ -146,12 +188,6 @@ const ProfileUpdate = () => {
           onClick={() => setMode('nickname')}
           color='veryperi'>
           닉네임 변경
-        </Button>
-        <Button
-          variant={mode === 'profileImage' ? 'contained' : 'text'}
-          onClick={() => setMode('profileImage')}
-          color='veryperi'>
-          프로필 사진 변경
         </Button>
         {snsType ?
           null :
@@ -170,7 +206,7 @@ const ProfileUpdate = () => {
         <div>
           <FormControl>
             <InputLabel htmlFor='password' color='veryperi'>
-              비밀번호
+              기존 비밀번호
             </InputLabel>
             <Input
               id='password'
@@ -207,17 +243,19 @@ const ProfileUpdate = () => {
                 id='nickname-helper-text'
                 error={
                   !!nickname &&
-                  (!isNicknameValid || nicknameChecked === 'fail')
+                  (!isNicknameValid || nicknameChecked === 'fail' || banned)
                 }>
                 {nickname
                   ? nickname === currentNickname
                     ? '새로운 닉네임을 입력해주세요.'
                     : isNicknameValid
-                      ? nicknameChecked
-                        ? nicknameChecked == 'success'
-                          ? '사용 가능한 닉네임입니다.'
-                          : '이미 사용중인 닉네임입니다.'
-                        : '닉네임 중복 여부를 확인중입니다.'
+                      ? !banned
+                        ? nicknameChecked
+                          ? nicknameChecked == 'success'
+                            ? '사용 가능한 닉네임입니다.'
+                            : '이미 사용중인 닉네임입니다.'
+                          : '닉네임 중복 여부를 확인중입니다.'
+                        : '사용할 수 없는 닉네임입니다.'
                       : '닉네임에 특수문자를 사용할 수 없습니다.'
                   : '특수문자를 제외한 닉네임을 입력해주세요.'}
               </FormHelperText>
@@ -225,7 +263,7 @@ const ProfileUpdate = () => {
           </div>
           <br />
         </div>
-      ) : mode === 'password' ? (
+      ) : (
         <div>
           <div>
             <FormControl>
@@ -273,18 +311,6 @@ const ProfileUpdate = () => {
             </FormControl>
           </div>
         </div>
-      ) : (
-        <div>
-          <p>여기에 프로필 사진 미리보기 넣기</p>
-          <Button component='label'>
-            변경
-            <input
-              style={{ display: 'none' }}
-              type='file'
-              accept='image/*'
-            />
-          </Button>
-        </div>
       )}
       <br />
       <br />
@@ -295,10 +321,9 @@ const ProfileUpdate = () => {
           onClick={handleSubmit}
           disabled={
             (mode === 'nickname' &&
-              nicknameChecked !== 'success') ||
+              (nicknameChecked !== 'success' || banned || !nickname)) ||
             (mode === 'password' &&
-              (!password || !isNewPasswordSame || !isNewPasswordValid)) ||
-            (mode === 'profileImage' && true)
+              (!password || !isNewPasswordSame || !isNewPasswordValid))
           }>
           저장
         </Button>
@@ -307,6 +332,33 @@ const ProfileUpdate = () => {
             취소
           </Button>
         </Link>
+      </div>
+      <br /><br /><br /><br />
+      <div>
+        <Button onClick={handleClickOpenDelBtn} id='delete-btn'>
+          회원 탈퇴
+        </Button>
+        <Dialog open={open_delbtn} onClose={handleClose}>
+          <DialogTitle>정말로 탈퇴하시겠습니까? <br /> 탈퇴 이후 정보는 되돌릴 수 없습니다.</DialogTitle>
+          {user.snsType === "" ?
+            <DialogContent>
+              <TextField
+                label="비밀번호를 입력해주세요."
+                type="password"
+                fullWidth
+                variant="standard"
+                value={password}
+                onChange={passwordChange}
+                color='veryperi'
+              />
+            </DialogContent> :
+            <></>
+          }
+          <DialogActions>
+            <Button onClick={handleClose} className="cancel">취소</Button>
+            <Button onClick={deleteUser}>탈퇴</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   );

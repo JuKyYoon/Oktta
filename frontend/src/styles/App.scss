@@ -33,6 +33,12 @@ ul {
   width: 200px;
 }
 
+@media (max-width: 991px) {
+  .logo {
+    width: 150px;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
