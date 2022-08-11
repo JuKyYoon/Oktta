@@ -35,7 +35,7 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static" color="veryperi">
+    <AppBar position="static" color="veryperi" sx={{height: '10%', minHeight: '70px', maxHeight: '75px'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Link to="/">

@@ -173,7 +173,7 @@ public class SessionController {
                     if("OUTBOUND".equals(dto.getConnection())) {
                         System.out.printf("%s , 나 자신의 WebRTC 연결을 끊음\n", dto.getConnectionId());
                     } else {
-                        System.out.printf("%s로 부터 WebRTC 연결이 끊어짐\n", dto.getConnectionId());
+                        System.out.printf("%s는 ??? 로부터 받은 WebRTC 연결이 끊어짐\n", dto.getConnectionId());
                     }
                 } else {
                     if(dto.getConnectionId() != null) {
@@ -209,7 +209,7 @@ public class SessionController {
                     if("OUTBOUND".equals(dto.getConnection())) {
                         System.out.printf("%s , 나 자신의 WebRTC연결을 Publish 한다\n", dto.getConnectionId());
                     } else {
-                        System.out.printf("%s 부터 WebRTC 연결을 받는다.\n", dto.getConnectionId());
+                        System.out.printf("%s는 ???의 WebRTC 연결을 받는다.\n", dto.getConnectionId());
                     }
                 } else {
                     if(dto.getConnectionId() != null) {
