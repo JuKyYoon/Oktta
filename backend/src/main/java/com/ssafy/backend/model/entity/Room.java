@@ -29,6 +29,7 @@ public class Room {
     @Column(name="title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name="content", nullable = false)
     private String content;
 
@@ -48,6 +49,11 @@ public class Room {
 
     @Column(name = "people", columnDefinition = "integer default 0")
     private int people;
+
+    @ManyToOne(targetEntity = Match.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
+    private Match match;
+
 
     public Long getIdx() {
         return idx;
@@ -89,6 +95,10 @@ public class Room {
         this.live = state;
     }
 
+    public Match getMatch(){
+        return match;
+    }
+
     protected Room() {
     }
 
@@ -96,6 +106,7 @@ public class Room {
         this.user = builder.user;
         this.title = builder.title;
         this.content = builder.content;
+        this.match = builder.match;
     }
 
     public static Room.Builder builder() {
@@ -107,6 +118,7 @@ public class Room {
         private User user;
         private String title;
         private String content;
+        private Match match;
 
         public Room.Builder idx(long idx) {
             this.idx = idx;
@@ -115,10 +127,11 @@ public class Room {
 
         public Builder() {}
 
-        public Builder(User user, String title, String content) {
+        public Builder(User user, String title, String content, Match match) {
             this.user = user;
             this.title = title;
             this.content = content;
+            this.match = match;
         }
 
         public Room build() {

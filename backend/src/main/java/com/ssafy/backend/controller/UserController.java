@@ -3,6 +3,7 @@ package com.ssafy.backend.controller;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.exception.SocialUserException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
@@ -10,6 +11,7 @@ import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.UserInfoResponse;
 import com.ssafy.backend.service.UserService;
+import com.ssafy.backend.util.AwsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.mail.MessagingException;
 import java.util.Map;
 
@@ -34,6 +39,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     private final UserService userService;
+
 
     public UserController(UserRepository userRepository, UserService userService){
         this.userRepository = userRepository;
@@ -63,8 +69,8 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestBody UserDto user) throws MessagingException {
-        userService.registUser(user);
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart("profileImg") MultipartFile profileImage) throws MessagingException {
+        userService.registUser(user, profileImage);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -228,5 +234,25 @@ public class UserController {
         } else {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
         }
+    }
+
+    /**
+     * 프로필 이미지 등록
+     */
+    @PostMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> registProfileImage(@RequestParam("profileImg") MultipartFile file){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.registProfileImage(principal.getUsername(), file);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 프로필 이미지 삭제
+     */
+    @DeleteMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> deleteProfileImage(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.deleteProfileImage(principal.getUsername());
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }

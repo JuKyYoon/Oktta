@@ -28,7 +28,8 @@ public class Board {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "create_date", updatable = false)
@@ -45,6 +46,7 @@ public class Board {
     @Column(name = "hit")
     @ColumnDefault("0")
     private Long hit;
+
 
     public Long getIdx() {
         return idx;
@@ -78,6 +80,7 @@ public class Board {
         return hit;
     }
 
+
     protected Board() {
     }
 
@@ -95,6 +98,7 @@ public class Board {
         private final String title;
         private final String content;
         private final int category;
+        private Match match;
 
         // Optional Parameter
 

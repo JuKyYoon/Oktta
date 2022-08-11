@@ -77,3 +77,7 @@ axiosAuth.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const riotRequest = axios.create({
+  baseURL: process.env.REACT_APP_RIOT_API_URL
+});

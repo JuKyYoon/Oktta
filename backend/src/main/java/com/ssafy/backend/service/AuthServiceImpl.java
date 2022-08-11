@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signOut(HttpServletRequest req, String userId, String refreshToken) {
         // Redis에서 refreshToken 삭제
-        redisService.deleteValue(refreshToken);
+        redisService.deleteKey(refreshToken);
 
         String accessToken = jwtProvider.resolveToken(req);
         // accesstoken 블랙리스트로 redis 등록

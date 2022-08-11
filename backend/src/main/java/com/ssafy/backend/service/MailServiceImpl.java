@@ -49,7 +49,7 @@ public class MailServiceImpl implements MailService{
     public void sendPasswordResetMail(String email, String resetToken) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         String mailContent = "<h1>[옥따 비밀번호 찾기]</h1><br><p>아래 링크를 클릭하여 비밀번호 초기화.</p>"
-                + "<a href='" + clientUrl + "/" + resetToken + "' target='_blank'>이메일 인증하기 " + resetToken + "</a>";
+                + "<a href='" + clientUrl + "/password/" + resetToken + "' target='_blank'>비밀번호 설정하기</a>";
     
         message.setSubject("옥따 비밀번호 찾기 메일입니다.",charset);
         sendMail(email, message, mailContent);
