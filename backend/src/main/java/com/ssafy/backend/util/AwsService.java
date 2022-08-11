@@ -12,7 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AwsService {
@@ -30,9 +31,11 @@ public class AwsService {
      *
      * s3에 올라간 주소값 return
      */
-    public String fileUpload(MultipartFile multipartFile) {
+    public String imageUpload(MultipartFile multipartFile) {
         String originalName = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
         long fileSize = multipartFile.getSize();
+
+
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         String contentType = multipartFile.getContentType().split("/")[0].toLowerCase();
