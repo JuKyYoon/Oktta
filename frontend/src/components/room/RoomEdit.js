@@ -18,7 +18,6 @@ const RoomEdit = () => {
   useEffect(() => {
     detailRoom(idx)
       .then((res) => {
-        console.log(res);
         if (res.data.message === 'success') {
           setTitle(res.data.result.title);
           setContent(res.data.result.content);

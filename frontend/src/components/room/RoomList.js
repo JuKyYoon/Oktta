@@ -46,14 +46,18 @@ const RoomList = () => {
       {/* {rooms.length ? ( */}
       <div className='room'>
         <h1>현재 방 목록</h1>
-        <Link to={`../create`} style={{ textDecoration: 'none' }}>
+        <Link
+          className='create-button'
+          to={`../create`}
+          style={{ textDecoration: 'none' }}
+        >
           <Button variant='contained' color='veryperi'>
             방 만들기
           </Button>
         </Link>
-        <div>
+        <div className='table-container'>
           <TableContainer>
-            <Table sx={{ minWidth: 800, width: '100%' }}>
+            <Table>
               <TableHead sx={{ borderBottom: 'solid' }}>
                 <TableRow>
                   <TableCell align='center'>라이브 상태</TableCell>

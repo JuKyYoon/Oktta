@@ -102,130 +102,133 @@ const RoomDetail = () => {
 
   return (
     <div className='room'>
-      <h3>게시글 상세보기</h3>
-      <hr className='hrLine'></hr>
       <h1>{room.title}</h1>
-
+      <hr className='hrLine'></hr>
       <div className='detail-body'>
-        <CKEditor
-          editor={ClassicEditor}
-          config={{
-            language: 'ko',
-          }}
-          data={room.content}
-          onReady={(editor) => {
-            editor.enableReadOnlyMode('my-feature-id');
-            editor.ui.view.toolbar.element.style.display = 'none';
-          }}
-        />
-
+        <div className='editor'>
+          <CKEditor
+            editor={ClassicEditor}
+            config={{
+              language: 'ko',
+            }}
+            data={room.content}
+            onReady={(editor) => {
+              editor.enableReadOnlyMode('my-feature-id');
+              editor.ui.view.toolbar.element.style.display = 'none';
+            }}
+          />
+        </div>
         <div className='vote-body'>
-          <div className='vote-component'>
-            {voteDto ? (
-              <VoteChart
-                top={voteDto.first}
-                jungle={voteDto.second}
-                mid={voteDto.third}
-                adc={voteDto.fourth}
-                supporter={voteDto.fifth}
-              />
-            ) : (
-              <div>
-                <h3>투표가 진행중입니다!</h3>
-                <div className='vote-body'>
-                  <img
-                    src='../assets/donut_chart.png'
-                    className='donut-chart'
-                    id='donutChart'
-                    alt='도넛차트'
-                  />
-                  <div className='radio-button'>
-                    <h3>범인 고르기</h3>
-                    <label>
-                      <input
-                        type='radio'
-                        name='top'
-                        value='1'
-                        checked={vote === '1'}
-                        onChange={handleVoteChanged}
-                      />
-                      탑
-                    </label>
+          {voteDto ? (
+            <VoteChart
+              top={voteDto.first}
+              jungle={voteDto.second}
+              mid={voteDto.third}
+              adc={voteDto.fourth}
+              supporter={voteDto.fifth}
+            />
+          ) : (
+            <div>
+              <h3>투표가 진행중입니다!</h3>
+              <div className='vote-component'>
+                <img
+                  src='../assets/donut_chart.png'
+                  className='donut-chart'
+                  id='donutChart'
+                  alt='도넛차트'
+                />
+                <div className='radio-button'>
+                  <h3>범인 고르기</h3>
+                  <label>
+                    <input
+                      type='radio'
+                      name='top'
+                      value='1'
+                      checked={vote === '1'}
+                      onChange={handleVoteChanged}
+                    />
+                    탑
+                  </label>
 
-                    <label>
-                      <input
-                        type='radio'
-                        name='jungle'
-                        value='2'
-                        checked={vote === '2'}
-                        onChange={handleVoteChanged}
-                      />
-                      정글
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        name='mid'
-                        value='3'
-                        checked={vote === '3'}
-                        onChange={handleVoteChanged}
-                      />
-                      미드
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        name='adc'
-                        value='4'
-                        checked={vote === '4'}
-                        onChange={handleVoteChanged}
-                      />
-                      원딜
-                    </label>
-                    <label>
-                      <input
-                        type='radio'
-                        name='supporter'
-                        value='5'
-                        checked={vote === '5'}
-                        onChange={handleVoteChanged}
-                      />
-                      서포터
-                    </label>
-                    <Button
-                      size='small'
-                      variant='outlined'
-                      color='veryperi'
-                      onClick={onVoteButtonClicked}
-                      disabled={vote === '' ? true : false}
-                    >
-                      투표하기
-                    </Button>
-                    <Button
-                      size='small'
-                      variant='outlined'
-                      color='veryperi'
-                      onClick={onVoteCancelButtonClicked}
-                    >
-                      투표철회
-                    </Button>
-                  </div>
+                  <label>
+                    <input
+                      type='radio'
+                      name='jungle'
+                      value='2'
+                      checked={vote === '2'}
+                      onChange={handleVoteChanged}
+                    />
+                    정글
+                  </label>
+                  <label>
+                    <input
+                      type='radio'
+                      name='mid'
+                      value='3'
+                      checked={vote === '3'}
+                      onChange={handleVoteChanged}
+                    />
+                    미드
+                  </label>
+                  <label>
+                    <input
+                      type='radio'
+                      name='adc'
+                      value='4'
+                      checked={vote === '4'}
+                      onChange={handleVoteChanged}
+                    />
+                    원딜
+                  </label>
+                  <label>
+                    <input
+                      type='radio'
+                      name='supporter'
+                      value='5'
+                      checked={vote === '5'}
+                      onChange={handleVoteChanged}
+                    />
+                    서포터
+                  </label>
+                  <Button
+                    className='detail-button'
+                    size='small'
+                    variant='outlined'
+                    color='veryperi'
+                    onClick={onVoteButtonClicked}
+                    disabled={vote === '' ? true : false}
+                  >
+                    투표하기
+                  </Button>
+                  <Button
+                    className='detail-button'
+                    size='small'
+                    variant='outlined'
+                    color='veryperi'
+                    onClick={onVoteCancelButtonClicked}
+                  >
+                    투표철회
+                  </Button>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div>
         <Link to={`../list`} style={{ textDecoration: 'none' }}>
-          <Button variant='outlined' color='veryperi'>
+          <Button className='detail-button' variant='outlined' color='veryperi'>
             목록으로
           </Button>
         </Link>
         {room.nickname === user.nickname ? (
           <Link to={`../edit/${room.idx}`} style={{ textDecoration: 'none' }}>
-            <Button variant='outlined' color='veryperi'>
+            <Button
+              className='detail-button'
+              variant='outlined'
+              color='veryperi'
+            >
               수정하기
             </Button>
           </Link>
@@ -233,6 +236,7 @@ const RoomDetail = () => {
 
         {room.nickname === user.nickname ? (
           <Button
+            className='detail-button'
             variant='contained'
             color='veryperi'
             onClick={onDeleteButtonClicked}
@@ -242,6 +246,7 @@ const RoomDetail = () => {
         ) : null}
         {room.nickname === user.nickname && !voteDto ? (
           <Button
+            className='detail-button'
             variant='contained'
             color='veryperi'
             onClick={onVoteEndButtonClicked}

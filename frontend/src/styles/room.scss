@@ -7,10 +7,18 @@
   justify-content: center;
   padding: 10px;
 }
+.create-button {
+  align-self: end;
+  margin-right: 10%;
+}
+.table-container {
+  width: 80%;
+}
 
 .hrLine {
   width: 80%;
 }
+
 .create-room-label {
   font-size: 18px;
   margin-bottom: 10px;
@@ -30,11 +38,9 @@
   font-size: 28px;
 }
 
-.ck-editor__editable {
-  min-height: 400px;
-  min-width: 400px;
-  margin-bottom: 20px;
-}
+// .ck-editor__editable {
+//   width: 100%;
+// }
 
 .detail-component {
   margin-bottom: 20px;
@@ -42,34 +48,39 @@
 
 .detail-body {
   display: flex;
-  min-width: 800px;
-  width: 70%;
+  width: 80%;
   flex-direction: row;
-  margin-bottom: 30px;
 }
 
 .radio-button {
   display: flex;
   flex-direction: column;
-  min-width: 200px;
-  justify-content: space-evenly;
+}
+.editor {
+  width: 50%;
 }
 .vote-body {
-  width: 80%;
+  width: 50%;
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: center;
+
+  h3 {
+    text-align: center;
+  }
 }
 .vote-component {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .donut-chart {
-  width: 200px;
-  margin: 30px;
+  width: 40%;
+  height: 40%;
+  aspect-ratio: 1;
+  margin: 5%;
 }
 
 .comments-wrapper {
@@ -116,4 +127,8 @@
 .comments-edit-textarea {
   min-width: 400px;
   width: 500px;
+}
+
+.detail-button {
+  margin: 5px !important;
 }
