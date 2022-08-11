@@ -99,11 +99,11 @@
   cursor: pointer;
 }
 
-.modal-result-item-win {
+.win {
   background-color: #9fb7e4;
 }
 
-.modal-result-item-loss {
+.loss {
   background-color: #ff968d;
 }
 
@@ -147,4 +147,34 @@
 
 .result-pagenation {
   margin-top: 2%;
+}
+
+.create-room-selected-box {
+  display: flex;
+  justify-content: center;
+  width: 30%;
+  padding: 1%;
+
+  p {
+    width: 30%;
+    text-align: center;
+  }
+}
+
+.create-room-selected {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 40%;
+  padding: 1%;
+
+  p {
+    white-space: nowrap;
+    color: white;
+    margin: 0;
+  }
+}
+
+.create-room-champion-image {
+  height: 30px;
 }

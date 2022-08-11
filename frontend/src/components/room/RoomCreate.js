@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Modal, TextField, PaginationItem } from '@mui/material';
+import { Box, Button, Modal, TextField } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { createRoom, getMatchBySummoner, getMatchDetail } from '../../services/roomService';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -29,13 +29,13 @@ const RoomCreate = () => {
   const [matchListView, setMatchListView] = useState([]);
   const [searchState, setSearchState] = useState('before');
   const [matchSelected, setMatchSelected] = useState({});
+  const [matchSelectedDetail, setMatchSelectedDetail] = useState(false);
   const [matchForSubmit, setMatchForSubmit] = useState({});
 
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
     // 검색 내역 초기화
-    setSummonerName('');
     setMatchList([]);
     setMatchListView([]);
     setSearchState('before');
@@ -44,32 +44,63 @@ const RoomCreate = () => {
   };
 
   const handleSelect = () => {
-    const match = matchList.filter((match) => matchSelected === match.metadata.matchId)[0];
-    setMatchForSubmit(match[0])
+    setMatchSelectedDetail(matchListView.filter((match) => matchSelected === match.matchId)[0]);
+
+    const getMatch = matchList.filter((match) => matchSelected === match.metadata.matchId);
+    if (getMatch.length > 0) {
+      // 전송하기 위한 데이터 가공
+      const matchRawData = getMatch[0];
+      const participants = matchRawData.info.participants.map((participant) => ({
+        participantId: participant.participantId,
+        teamId: participant.teamId,
+        summonerId: participant.summonerId,
+        summonerName: participant.summonerName,
+        teamPosition: participant.teamPosition,
+        championId: participant.championId,
+        championName: participant.championName,
+        kills: participant.kills,
+        assists: participant.assists,
+        deaths: participant.deaths,
+        puuid: participant.puuid,
+        win: participant.win,
+      })
+      );
+
+      const matchForSubmit = {
+        matchId: matchRawData.metadata.matchId,
+        queueId: matchRawData.info.queueId,
+        mapId: matchRawData.info.mapId,
+        gameMode: matchRawData.info.gameMode,
+        gameStartTimestamp: matchRawData.info.gameStartTimestamp,
+        gameEndTimestamp: matchRawData.info.gameEndTimestamp,
+        participants,
+      };
+      setMatchForSubmit(matchForSubmit);
+    };
 
     // 검색 내역 초기화
-    setSummonerName('');
     setMatchList([]);
     setMatchListView([]);
     setSearchState('before');
-    setMatchSelected('');
-    setOpen(false)
+    setMatchSelected({});
+    setOpen(false);
   };
 
   const onSearchSubmit = (event) => {
     event.preventDefault();
     getMatches()
-    .then((result) => setSearchState(result));
+      .then((result) => setSearchState(result));
   };
 
   const getMatches = async () => {
     if (!summonerName) {
       return;
     };
+
     setSearchState('pending');
+
     const data = await getMatchBySummoner(summonerName, pageNum)
       .then((res) => {
-        setSearchState('finish')
         if (res.data.message === 'success') {
           return res.data.matchList;
         } else {
@@ -77,26 +108,35 @@ const RoomCreate = () => {
         };
       })
       .catch((err) => {
-        return (err.response.status === 404) ? setSearchState('fail') : alert('잘못된 접근입니다.')
+        if (err.response.status === 404) {
+          setSearchState('fail')
+        } else {
+          console.log(err)
+          alert('잘못된 접근입니다.')
+        }
+        return 'fail'
       });
 
-    console.log(data)
+    const matchList = [];
 
-    const matchList = []
-    for (let matchId of data) {
-      const res = await getMatchDetail(matchId)
-        .catch((err) => console.log(err));
-      matchList.push(res);
+    if (data === 'fail') {
+      return data
     };
-    if (matchList.length) {
+
+    for (let matchId of data) {
+      await getMatchDetail(matchId)
+        .then((res) => matchList.push(res))
+        .catch((err) => console.log(err));
+    };
+
+    if (matchList.length > 0) {
       setMatchList(matchList);
       const matchListView = matchList.map((match) => {
-        console.log(match)
         const matchId = match.metadata.matchId;
 
         const target = match.info.participants
           .filter((participant) => participant.summonerName.toLowerCase() === summonerName.toLowerCase())[0];
-        const matchResult = target.win ? '승' : '패';
+        const matchResult = target.win ? '승리' : '패배';
         const championTarget = target.championName;
         const kda = `${target.kills} / ${target.deaths} / ${target.assists}`;
         const position = target.teamPosition ? positionKr[target.teamPosition] : '칼바람';
@@ -122,7 +162,7 @@ const RoomCreate = () => {
           position,
           endTime,
         }
-      })
+      });
       setMatchListView(() => matchListView);
       return 'done';
     } else {
@@ -134,18 +174,16 @@ const RoomCreate = () => {
     setSummonerName(e.target.value)
   };
 
-  const onHandlePrev = () => {
-    setPageNum(pageNum-1);
-    getMatches()
-    .then((result) => setSearchState(result));
+  const onHandlePage = (event) => {
+    const newPageNum = pageNum + parseInt(event.target.value)
+    if (newPageNum >= 0) {
+      setPageNum(newPageNum);
+      setMatchSelected({});
+      getMatches()
+        .then((result) => setSearchState(result));
+    };
   };
-  
-  const onHandleNext = () => {
-    setPageNum(pageNum+1);
-    getMatches()
-    .then((result) => setSearchState(result));
-  };
-  // ---------------------
+  // 게임 정보 --------------
 
   const onTitleChanged = (e) => {
     setTitle(e.target.value);
@@ -156,8 +194,9 @@ const RoomCreate = () => {
     const body = {
       title,
       content,
-      matchDto: matchList[0],
+      matchDto: matchForSubmit,
     };
+    console.log(body)
 
     createRoom(body)
       .then((res) => {
@@ -188,8 +227,19 @@ const RoomCreate = () => {
         value={title}
         onChange={onTitleChanged}
       />
-      {/* ################## 게임 불러오기 부분 ################## */}
-      <Button onClick={handleOpen}>게임 불러오기</Button>
+      {/* 게임 불러오기 부분 */}
+      {matchSelectedDetail
+        ? <div className="create-room-selected-box">
+          <div className={`create-room-selected ${matchSelectedDetail.matchResult === '승리' ? "win" : "loss"}`}>
+            <img src={`/assets/champion/${matchSelectedDetail.championTarget}.png`} className="create-room-champion-image" />
+            <div>
+              <p>{summonerName}</p>
+              <p>{matchSelectedDetail.kda}</p>
+            </div>
+          </div>
+          <Button onClick={handleOpen}>다시 불러오기</Button>
+        </div>
+        : <Button onClick={handleOpen}>게임 불러오기</Button>}
       <Modal
         open={open}
         onClose={handleClose}
@@ -228,7 +278,7 @@ const RoomCreate = () => {
                           key={idx}
                           className={
                             `${match.matchId === matchSelected ? "modal-result-item-selected" : null}
-                            ${match.matchResult === '승' ? "modal-result-item-win" : "modal-result-item-loss"}
+                            ${match.matchResult === '승리' ? "win" : "loss"}
                             modal-result-item`
                           }
                           onClick={() => setMatchSelected(match.matchId)}
@@ -257,31 +307,40 @@ const RoomCreate = () => {
                         </div>
                       )}
                       <div className="result-pagenation">
-                        <PaginationItem
-                          type="previous"
-                          shape="rounded"
+                        <Button
+                          value="-1"
+                          color="veryperi"
                           variant="outlined"
-                          onClick={onHandlePrev}
+                          onClick={onHandlePage}
                           disabled={pageNum === 0}
-                        />
-                        <PaginationItem
-                          type="next"
-                          shape="rounded"
+                        >
+                          이전 10개
+                        </Button>
+                        <Button
+                          value="1"
+                          color="veryperi"
                           variant="outlined"
-                          onClick={onHandleNext}
+                          onClick={onHandlePage}
                           disabled={matchList.length < 10}
-                        />
+                        >
+                          다음 10개
+                        </Button>
                       </div>
                     </div>
             }
           </div>
           <div className="modal-button-div">
-            <Button onClick={handleSelect}>선택</Button>
+            <Button
+              onClick={handleSelect}
+              disabled={matchSelected.length === 0}
+            >
+              선택
+            </Button>
             <Button onClick={handleClose}>닫기</Button>
           </div>
         </Box>
       </Modal>
-      {/* ###################################################### */}
+      {/* 게임 정보 -------------- */}
 
       <label htmlFor='title' className='create-room-label'>
         내용
