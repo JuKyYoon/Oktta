@@ -21,7 +21,7 @@ public interface UserService {
     String validateResetToken(String resetToken);
     boolean resetPassword(String password, String token);
 
-    void registProfileImage(User user, MultipartFile multipartFile);
+    void registProfileImage(String userId, MultipartFile multipartFile);
 
-    void deleteProfileImage(User user);
+    void deleteProfileImage(String userId);
 }

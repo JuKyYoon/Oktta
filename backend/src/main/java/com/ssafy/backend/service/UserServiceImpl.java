@@ -70,14 +70,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registUser(UserDto user, MultipartFile profileImage) throws MessagingException {
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
-        if(profileImage.getSize() > 0){
+        // 유저 db 저장
+        if(!profileImage.isEmpty()){
             userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.fileUpload(profileImage)).build());
         }else{
             userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
         }
+        // 이메일 인증키 생성
         String authKey = "";
         UserAuthToken tokenResult;
-        // 중복 인증 키 아닐 때 까지 반복
         do {
             authKey = RandomStringUtils.randomAlphanumeric(authKeySize);
             tokenResult = userAuthTokenRepository.findByToken(authKey).orElse(null);
@@ -316,11 +317,13 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 프로필 이미지 등록 및 수정
-     * @param user
+     * @param userId
      * @param file
      */
     @Override
-    public void registProfileImage(User user, MultipartFile file) {
+    public void registProfileImage(String userId, MultipartFile file) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("USER NOT FOUND"));
         String path = awsService.fileUpload(file);
         deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), path);
@@ -328,10 +331,12 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 프로필 이미지 삭제
-     * @param user
+     * @param userId
      */
     @Override
-    public void deleteProfileImage(User user) {
+    public void deleteProfileImage(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("USER NOT FOUND"));
         deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), defaultProfileImageUrl);
     }

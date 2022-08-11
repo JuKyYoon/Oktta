@@ -110,9 +110,6 @@ public class User {
         this.role = role;
     }
 
-    public void updateProfileImage(String profileImg) {
-        this.profileImg = profileImg;
-    }
     public static User.Builder builder() {
         return new User.Builder();
     }

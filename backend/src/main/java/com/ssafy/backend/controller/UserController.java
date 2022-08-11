@@ -69,7 +69,7 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestPart UserDto user, @RequestPart MultipartFile profileImage) throws MessagingException {
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart("profileImg") MultipartFile profileImage) throws MessagingException {
         userService.registUser(user, profileImage);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
@@ -242,10 +242,7 @@ public class UserController {
     @PostMapping("/profile-img")
     public ResponseEntity<BaseResponseBody> registProfileImage(@RequestParam("profileImg") MultipartFile file){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.registProfileImage(user, file);
+        userService.registProfileImage(principal.getUsername(), file);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -255,10 +252,7 @@ public class UserController {
     @DeleteMapping("/profile-img")
     public ResponseEntity<BaseResponseBody> deleteProfileImage(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.deleteProfileImage(user);
+        userService.deleteProfileImage(principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }
