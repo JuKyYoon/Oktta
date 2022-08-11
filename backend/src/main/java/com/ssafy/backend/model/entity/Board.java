@@ -28,7 +28,8 @@ public class Board {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "create_date", updatable = false)
