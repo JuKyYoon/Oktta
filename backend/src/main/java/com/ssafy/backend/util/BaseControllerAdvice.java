@@ -207,6 +207,18 @@ public class BaseControllerAdvice {
                 .body(BaseResponseBody.of(200, failMsg));
     }
 
+    @ExceptionHandler(FileTypeException.class)
+    public ResponseEntity<BaseResponseBody> FileTypeException(Exception e, HttpServletRequest req){
+        LOGGER.debug("FILE TYPE ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(BaseResponseBody.of(403, failMsg));
+    }
+
     @ExceptionHandler(WebClientResponseException.NotFound.class)
     public ResponseEntity<BaseResponseBody> WebClientNotFoundException(Exception e, HttpServletRequest req){
         LOGGER.debug("WEB CLIENT NOT FOUND ERROR");

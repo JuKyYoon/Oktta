@@ -3,11 +3,12 @@ package com.ssafy.backend.service;
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 
 public interface UserService {
-    void registUser(UserDto user) throws MessagingException;
+    void registUser(UserDto user, MultipartFile profileImage) throws MessagingException;
     void modifyUser(User user, UserDto changeUser);
     boolean checkDuplicatedID(String userId);
     boolean checkDuplicatedNickName(String nickName);
@@ -19,4 +20,8 @@ public interface UserService {
     UserDto setUserInfo(User user);
     String validateResetToken(String resetToken);
     boolean resetPassword(String password, String token);
+
+    void registProfileImage(String userId, MultipartFile multipartFile);
+
+    void deleteProfileImage(String userId);
 }
