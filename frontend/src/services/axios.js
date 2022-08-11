@@ -14,7 +14,7 @@ request.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    window.location.replace('/');
+    // window.location.replace('/');
     return Promise.reject(error);
   }
 );

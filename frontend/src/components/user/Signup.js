@@ -95,24 +95,34 @@ const Signup = () => {
 
   // 회원가입 구현 부분
   const handleSubmit = (event) => {
-    const body = {
+    const user = {
       id: email,
       password: password,
       nickname: nickname,
     };
-    signupRequest(body)
+    formData.append('user', new Blob([JSON.stringify(user)], { type: "application/json" }));
+    if (formData.get('profileImg') === null) {
+      formData.append('profileImg', new Blob([], { type: "image/png" }));
+    }
+    signupRequest(formData)
       .then((res) => {
         if (res.data.message === "success") {
-          alert("회원가입을 축하드립니다!");
-          navigate("/");
+          alert("회원가입을 축하드립니다! 이메일을 확인하여 이메일 인증을 완료해주세요.");
+          navigate("/user/login");
         } else {
           alert("회원가입에 실패하였습니다!");
         }
       })
       .catch((err) => {
+        alert("회원가입에 오류가 생겼습니다. 다시 시도해주세요.");
         console.log(err);
       });
   };
+
+  const formData = new FormData();
+  const handleFileInput = (e) => {
+    formData.append('profileImg', new Blob([e.target.files[0]], { type: e.target.files[0].type }));
+  }
 
   return (
     <div className="form">
@@ -195,6 +205,18 @@ const Signup = () => {
               : '닉네임에 특수문자를 사용할 수 없습니다.'
             : '특수문자를 제외한 닉네임을 입력해주세요.'}
         </FormHelperText>
+      </FormControl>
+      <br />
+      <br />
+      <FormControl>
+        <div>
+          <p>프로필 이미지 업로드 (선택)</p>
+          <input
+            type='file'
+            accept='image/*'
+            onChange={e => handleFileInput(e)}
+          />
+        </div>
       </FormControl>
       <br />
       <br />

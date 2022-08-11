@@ -44,7 +44,7 @@ const EmailAuth = () => {
             <h1>
               {time}초 후 메인 페이지로 이동합니다. <br />
               인증이 완료되었습니다. <br />
-              <Button><a href='/'>홈으로</a></Button>
+              <Button><a href='/user/login'>로그인하기</a></Button>
             </h1> :
             <h1>잘못된 인증 요청입니다. <br />
               다시 이메일 인증을 요청하세요. <br />
