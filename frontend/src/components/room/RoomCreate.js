@@ -11,12 +11,12 @@ const RoomCreate = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
-  const onTitleChanged = (e) => {
-    setTitle(e.target.value);
+  const onTitleChanged = (event) => {
+    setTitle(event.target.value);
   };
 
-  const onSubmitClicked = (e) => {
-    e.preventDefault();
+  const onSubmitClicked = (event) => {
+    event.preventDefault();
     const body = {
       title,
       content,
@@ -26,6 +26,9 @@ const RoomCreate = () => {
       .then((res) => {
         if (res.data.message === 'success') {
           navigate(`/room/${res.data.result}`);
+        } else {
+          alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
+          navigate('/room/list');
         }
       })
       .catch((err) => console.log(err));
@@ -71,7 +74,8 @@ const RoomCreate = () => {
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}>
+        disabled={!isValid}
+      >
         등록하기
       </Button>
     </div>

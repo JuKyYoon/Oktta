@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { updateRoom, detailRoom } from '../../services/roomService';
 import '../../styles/room.scss';
@@ -19,18 +18,25 @@ const RoomEdit = () => {
   useEffect(() => {
     detailRoom(idx)
       .then((res) => {
-        setTitle(res.data.result.title);
-        setContent(res.data.result.content);
+        console.log(res);
+        if (res.data.message === 'success') {
+          setTitle(res.data.result.title);
+          setContent(res.data.result.content);
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.status === 404 || err.status === 400) {
+          navigate('../list');
+        }
+      });
   }, []);
 
-  const onTitleChanged = (e) => {
-    setTitle(e.target.value);
+  const onTitleChanged = (event) => {
+    setTitle(event.target.value);
   };
 
-  const onSubmitClicked = (e) => {
-    e.preventDefault();
+  const onSubmitClicked = (event) => {
+    event.preventDefault();
 
     const body = { title, content };
 
@@ -39,9 +45,12 @@ const RoomEdit = () => {
         .then((res) => {
           if (res.data.message === 'success') {
             navigate(`/room/${idx}`);
+          } else if (res.data.message === 'fail') {
+            alert('잘못된 요청입니다.');
+            navigate('../list');
           }
         })
-        .catch((err) => console.log(err));
+        .catch(() => navigate('/error'));
     }
   };
 
@@ -86,7 +95,8 @@ const RoomEdit = () => {
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}>
+        disabled={!isValid}
+      >
         수정하기
       </Button>
     </div>

@@ -57,7 +57,7 @@
 .vote-body {
   width: 80%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 }
@@ -68,7 +68,7 @@
 }
 
 .donut-chart {
-  width: 300px;
+  width: 200px;
   margin: 30px;
 }
 
@@ -86,7 +86,7 @@
 }
 .comments-header-textarea {
   min-width: 500px;
-  width: 700px;
+  width: 600px;
 }
 .comments-body {
   margin-top: 20px;
@@ -96,6 +96,8 @@
 }
 .comment-content {
   margin: 0.5rem auto;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .comment-username {
@@ -110,4 +112,8 @@
   justify-content: center;
   cursor: pointer;
   align-items: center;
+}
+.comments-edit-textarea {
+  min-width: 400px;
+  width: 500px;
 }
