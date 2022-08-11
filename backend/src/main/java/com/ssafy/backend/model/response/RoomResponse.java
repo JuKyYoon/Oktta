@@ -54,4 +54,12 @@ public class RoomResponse extends BaseResponseBody {
         return res;
     }
 
+    public static RoomResponse of(Integer statusCode, String message, List<RoomDto> list){
+        RoomResponse res = new RoomResponse();
+        res.setStatusCode(statusCode);
+        res.setMessage(message);
+        res.setList(list);
+        return res;
+    }
+
 }

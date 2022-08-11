@@ -32,4 +32,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     int updateHit(Long idx);
 
     List<Room> findAllByUser(User user);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM room WHERE room.live = 1 ORDER BY room.people DESC LIMIT :limit OFFSET :page")
+    List<Room> findLiveRoom(int limit, int page);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM room WHERE room.live = 1 ORDER BY room.people DESC LIMIT 3")
+    List<Room> findTopRoom();
 }

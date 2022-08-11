@@ -12,6 +12,7 @@ import com.ssafy.backend.model.mapper.RoomMapper;
 import com.ssafy.backend.model.repository.MatchRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -134,5 +135,35 @@ public class RoomServiceImpl implements RoomService {
     public int getLastPage(int limit) {
         int temp = roomRepository.findLastPage();
         return (temp % limit == 0) ? temp / limit : temp / limit + 1;
+    }
+
+    @Override
+    public List<RoomDto> getRecentHotRooms(int page, int limit){
+        List<Room> roomList = roomRepository.findLiveRoom(limit, (page - 1) * limit);
+        List<RoomDto> list = new ArrayList<>();
+        for(Room room : roomList){
+            RoomDto roomDto = RoomMapper.mapper.toDto(room);
+            String nickname = userRepository.findNicknameByIdx(room.getUser().getIdx());
+            MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
+            roomDto.setNickname(nickname);
+            roomDto.setMatch(matchDto);
+            list.add(roomDto);
+        }
+        return list;
+    }
+
+    @Override
+    public List<RoomDto> getTopRoomList() {
+        List<Room> roomList = roomRepository.findTopRoom();
+        List<RoomDto> list = new ArrayList<>();
+        for(Room room : roomList){
+            RoomDto roomDto = RoomMapper.mapper.toDto(room);
+            String nickname = userRepository.findNicknameByIdx(room.getUser().getIdx());
+            MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
+            roomDto.setNickname(nickname);
+            roomDto.setMatch(matchDto);
+            list.add(roomDto);
+        }
+        return list;
     }
 }
