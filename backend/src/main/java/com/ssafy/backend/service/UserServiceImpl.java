@@ -139,6 +139,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void deleteUser(User user, String reqPassword) {
+        if(user.getSnsType() != 0){
+            userRepository.delete(user);
+            return;
+        }
         boolean isValidate = BCrypt.checkpw(reqPassword, user.getPassword());
         if(isValidate) {
             userRepository.delete(user);
