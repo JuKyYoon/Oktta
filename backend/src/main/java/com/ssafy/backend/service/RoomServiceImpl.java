@@ -71,7 +71,7 @@ public class RoomServiceImpl implements RoomService {
         Match match = matchRepository.getReferenceById(room.getMatch().getMatchId());
         roomDto.setMatch(matchMapper.entityToDto(match));
         User user = room.getUser();
-        String nickName = deleteUserService.checkNickName(user.getNickname();
+        String nickName = deleteUserService.checkNickName(user.getNickname());
         roomDto.setNickname(nickName);
         if(!nickName.equals("알수없음")){
             roomDto.setProfileImage(user.getProfileImg());
