@@ -24,7 +24,7 @@ const Header = () => {
   };
 
   return (
-    <div>
+    <div className="header-main-div">
       <div className="header">
         <Link to="/">
           <img src="/../assets/logo.png" className="logo" />
