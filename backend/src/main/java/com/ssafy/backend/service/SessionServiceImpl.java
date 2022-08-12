@@ -38,6 +38,8 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<Long, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
+    private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
+
     public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
@@ -64,7 +66,6 @@ public class SessionServiceImpl implements SessionService {
         }
 
     }
-
 
     @Override
     public void createSession(String userId, long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
@@ -201,6 +202,46 @@ public class SessionServiceImpl implements SessionService {
         this.mapSessionNamesTokens.clear();
     }
 
+    @Override
+    public Recording recordingStart(String userId, Long sessionIdx, Map<String, Object> params) {
+
+        if(!check(userId, sessionIdx)){
+            return null;
+        }
+
+        Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) params.get("outputMode"));
+        RecordingProperties properties = new RecordingProperties.Builder().outputMode(outputMode)
+                .hasAudio(true).hasVideo(true).build();
+
+        try {
+            Recording recording = this.openVidu.startRecording(sessionIdx.toString(), properties);
+            this.sessionRecordings.put(sessionIdx.toString(), true);
+            return recording;
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Recording recordingStop(String userId, Long sessionIdx, Map<String, Object> params) {
+
+        // 403 -> throw
+        if(!check(userId, sessionIdx)) {
+            return null;
+        }
+
+        String recordingId = (String) params.get("recording");
+        try {
+            Recording recording = this.openVidu.stopRecording(recordingId);
+            this.sessionRecordings.remove(recording.getSessionId());
+            return recording;
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+
+            // 400 -> throw
+            return null;
+        }
+    }
+
     /**
      * Openvidu의 세션 리스트 불러오기
      * @return
@@ -253,6 +294,30 @@ public class SessionServiceImpl implements SessionService {
             this.mapSessionNamesTokens.remove(sessionIdx);
             redisService.deleteKey(sessionId);
         }
+    }
 
+    private boolean check(String userId, Long sessionIdx){
+
+        // 유저 없음
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        // 글 없음
+        Room room = roomRepository.findById(sessionIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found")
+        );
+
+        // 세션 없음
+        if(searchSession(sessionIdx) == null) {
+            throw new SessionNotFoundException("Session Not Found");
+        }
+
+        // 글 작성자 아님. -> 권한 없음. -> 403 처리 해야하는데...
+        if(user.getIdx() != room.getUser().getIdx()) {
+            return false;
+        }
+
+        return true;
     }
 }

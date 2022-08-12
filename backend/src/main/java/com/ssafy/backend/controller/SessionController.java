@@ -7,11 +7,13 @@ import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
+import com.ssafy.backend.model.response.RecordingResponse;
 import com.ssafy.backend.model.response.SessionEnterResponse;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.Recording;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/session")
@@ -212,5 +215,23 @@ public class SessionController {
         }
 
         return new ResponseEntity<>("200", HttpStatus.OK);
+    }
+
+    @PostMapping("/recording/start/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> startRecording(@PathVariable("idx") Long sessionIdx, @RequestBody Map<String, Object> params) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("<------------ 녹화 시작 ------------>");
+
+        Recording result = sessionService.recordingStart(principal.getUsername(), sessionIdx, params);
+        return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+    }
+
+    @PostMapping("/recording/stop/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> stopRecording(@PathVariable("idx") Long sessionIdx, @RequestBody Map<String, Object> params){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("<------------ 녹화 중단 ------------>");
+        
+        Recording result = sessionService.recordingStop(principal.getUsername(), sessionIdx, params);
+        return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
     }
 }
