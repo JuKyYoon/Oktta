@@ -1,12 +1,17 @@
 $veryperi: #6667ab;
 
 /* App css */
+html, body, #root, #root>div {
+  // height: 100%
+}
+
 body {
-  margin: 0;
+  margin : 0;
 }
 
 main {
-  padding: 10px;
+  // padding: 0px;
+  // height: 90%;
 }
 
 a {
