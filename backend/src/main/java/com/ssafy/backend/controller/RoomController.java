@@ -1,16 +1,9 @@
 package com.ssafy.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.ssafy.backend.model.dto.BoardCommentDto;
-import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
-import com.ssafy.backend.model.entity.Match;
-import com.ssafy.backend.model.repository.RoomRepository;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
@@ -126,4 +119,18 @@ public class RoomController {
         int lastPage = (list.size() % myLimit == 0) ? temp : temp + 1;
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
     }
+
+    @GetMapping("/live")
+    public ResponseEntity<? extends BaseResponseBody> getOnAirRoomList(@RequestParam(defaultValue = "1") int page) {
+        List<RoomDto> list = roomService.getOnAirRoomList(page, pagingLimit);
+        int lastPage = roomService.getLastPage(pagingLimit);
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<? extends BaseResponseBody> getTopRoomList(){
+        List<RoomDto> list = roomService.getTopRoomList();
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
+    }
+
 }

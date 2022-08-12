@@ -10,6 +10,7 @@ public class RoomDto {
     private Long idx;
     private String title;
     private String nickname;
+    private String profileImage;
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
@@ -89,6 +90,14 @@ public class RoomDto {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public boolean isLive() {

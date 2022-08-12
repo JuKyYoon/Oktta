@@ -5,6 +5,7 @@ import com.ssafy.backend.model.dto.lol.MatchDto;
 import com.ssafy.backend.model.entity.Match;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.MatchNullException;
 import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.mapper.MatchMapper;
@@ -49,6 +50,9 @@ public class RoomServiceImpl implements RoomService {
         );
         // MatchDto to Match
         MatchDto matchDto = roomDto.getMatch();
+        if(matchDto == null){
+            throw new MatchNullException("Match Is Null");
+        }
         Match match = matchMapper.dtoToEntity(matchDto);
         matchRepository.save(match);
         Room room = roomRepository.save(
@@ -103,9 +107,13 @@ public class RoomServiceImpl implements RoomService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        LOGGER.info(user.getNickname());
+        MatchDto matchDto = roomDto.getMatch();
+        if(matchDto == null){
+            throw new MatchNullException("Match Is Null");
+        }
         int result = roomRepository.updateRoom(roomDto.getTitle(), roomDto.getContent(), roomDto.getIdx(),
-                user, LocalDateTime.now());
+                user, LocalDateTime.now(), matchMapper.dtoToEntity(matchDto));
+
         return result == 1;
     }
 
@@ -143,5 +151,35 @@ public class RoomServiceImpl implements RoomService {
     public int getLastPage(int limit) {
         int temp = roomRepository.findLastPage();
         return (temp % limit == 0) ? temp / limit : temp / limit + 1;
+    }
+
+    @Override
+    public List<RoomDto> getOnAirRoomList(int page, int limit){
+        List<Room> roomList = roomRepository.findLiveRoomList(limit, (page - 1) * limit);
+        List<RoomDto> list = new ArrayList<>();
+        for(Room room : roomList){
+            RoomDto roomDto = RoomMapper.mapper.toDto(room);
+            String nickname = userRepository.findNicknameByIdx(room.getUser().getIdx());
+            MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
+            roomDto.setNickname(nickname);
+            roomDto.setMatch(matchDto);
+            list.add(roomDto);
+        }
+        return list;
+    }
+
+    @Override
+    public List<RoomDto> getTopRoomList() {
+        List<Room> roomList = roomRepository.findTopRoomList();
+        List<RoomDto> list = new ArrayList<>();
+        for(Room room : roomList){
+            RoomDto roomDto = RoomMapper.mapper.toDto(room);
+            String nickname = userRepository.findNicknameByIdx(room.getUser().getIdx());
+            MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
+            roomDto.setNickname(nickname);
+            roomDto.setMatch(matchDto);
+            list.add(roomDto);
+        }
+        return list;
     }
 }
