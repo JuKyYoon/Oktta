@@ -124,7 +124,7 @@ public class RoomController {
 
     @GetMapping("/top")
     public ResponseEntity<? extends BaseResponseBody> getTopRoomList(){
-        List<RoomDto> list = roomService.getTopRoomList();
+        List<RoomDto> list = roomService.getTopOnAirRoomList();
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
     }
 

@@ -15,5 +15,5 @@ public interface RoomService {
     int updateHit(Long idx);
     List<RoomDto> myRooms(String id);
     List<RoomDto> getOnAirRoomList(int page, int limit);
-    List<RoomDto> getTopRoomList();
+    List<RoomDto> getTopOnAirRoomList();
 }

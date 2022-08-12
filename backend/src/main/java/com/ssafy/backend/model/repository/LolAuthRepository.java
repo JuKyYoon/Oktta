@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface LolAuthRepository extends JpaRepository<LolAuth, String> {
     Optional<LolAuth> findById(String id);
+    Optional<LolAuth> findByUserId(String userId);
 }

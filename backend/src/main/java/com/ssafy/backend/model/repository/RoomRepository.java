@@ -37,8 +37,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAllByUser(User user);
 
     @Query(nativeQuery = true, value = "SELECT * FROM room WHERE room.live = 1 ORDER BY room.people DESC LIMIT :limit OFFSET :page")
-    List<Room> findLiveRoomList(int limit, int page);
+    List<Room> findOnAirRoomList(int limit, int page);
 
     @Query(nativeQuery = true, value = "SELECT * FROM room WHERE room.live = 1 ORDER BY room.people DESC LIMIT 3")
-    List<Room> findTopRoomList();
+    List<Room> findTopOnAirRoomList();
 }

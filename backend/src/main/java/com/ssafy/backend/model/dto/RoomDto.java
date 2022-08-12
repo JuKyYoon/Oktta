@@ -11,6 +11,7 @@ public class RoomDto {
     private String title;
     private String nickname;
     private String profileImage;
+    private int tier;
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
@@ -137,5 +138,21 @@ public class RoomDto {
 
     public void setMatch(MatchDto match) {
         this.matchDto = match;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public MatchDto getMatchDto() {
+        return matchDto;
+    }
+
+    public void setMatchDto(MatchDto matchDto) {
+        this.matchDto = matchDto;
     }
 }
