@@ -7,6 +7,14 @@
   justify-content: center;
   padding: 10px;
 }
+
+
+.hrLine {
+  width: 80%;
+}
+
+
+// RoomList 관련
 .create-button {
   align-self: end;
   margin-right: 10%;
@@ -15,49 +23,47 @@
   width: 80%;
 }
 
-.hrLine {
-  width: 80%;
-}
 
-.create-room-label {
-  font-size: 18px;
+// RoomCreate, RoomEdit관련
+.room-title-form{
+  margin-bottom: 10px;
+  margin-top: 5px;
+  width: 40%;
+}
+.room-button{
+  margin: 10px;
+}
+.room-editor{
   margin-bottom: 10px;
 }
-
-.create-room-input {
-  width: 400px;
-  border: none;
-  border-bottom: solid;
-  border-color: $veryperi;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  font-size: 20px;
+.ck-editor__editable{
+  min-height: 400px;
 }
+
 
 .myBtn {
   font-size: 28px;
 }
 
-// .ck-editor__editable {
-//   width: 100%;
-// }
 
+// RoomDetail 관련
 .detail-component {
   margin-bottom: 20px;
 }
-
 .detail-body {
   display: flex;
   width: 80%;
   flex-direction: row;
 }
-
 .radio-button {
   display: flex;
   flex-direction: column;
 }
-.editor {
+.detail-editor {
   width: 50%;
+}
+.detail-button {
+  margin: 5px !important;
 }
 .vote-body {
   width: 50%;
@@ -75,7 +81,6 @@
   flex-direction: row;
   justify-content: center;
 }
-
 .donut-chart {
   width: 40%;
   height: 40%;
@@ -83,22 +88,24 @@
   margin: 5%;
 }
 
+
+// RoomComment 관련
 .comments-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-width: 500px;
   width: 80%;
 }
+.comment-title{
+  margin-right: auto;
+}
 .comments-header {
-  min-width: 500px;
-  width: 70%;
+  width: 100%;
 }
 .comments-header-textarea {
-  min-width: 500px;
-  width: 600px;
+  width: 70%;
 }
+
 .comments-body {
   margin-top: 20px;
 }
@@ -106,9 +113,12 @@
   color: gray;
 }
 .comment-content {
-  margin: 0.5rem auto;
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: 10px;
   white-space: pre-wrap;
   word-break: break-all;
+  font-size: 18px;
 }
 
 .comment-username {
@@ -117,18 +127,15 @@
   align-items: baseline;
   font-weight: 600;
 }
-
+.comments-edit-textarea {
+  width: 70%;
+}
 .comments-footer {
   display: flex;
   justify-content: center;
   cursor: pointer;
   align-items: center;
 }
-.comments-edit-textarea {
-  min-width: 400px;
-  width: 500px;
-}
 
-.detail-button {
-  margin: 5px !important;
-}
+
+

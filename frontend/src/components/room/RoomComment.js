@@ -105,7 +105,7 @@ const RoomComment = ({ idx }) => {
 
   return (
     <div className='comments-wrapper'>
-      <h3>{`댓글목록 (${totalComments})`}</h3>
+      <h2 className='comment-title'>{`댓글 (${totalComments})`}</h2>
       <div className='comments-header'>
         <div>
           <TextField
@@ -119,15 +119,23 @@ const RoomComment = ({ idx }) => {
             placeholder='댓글을 입력해주세요✏️'
           />
           {content !== '' ? (
-            <Button variant='outlined' onClick={submit} color='veryperi'>
+            <Button
+              sx={{ ml: 2 }}
+              variant='outlined'
+              onClick={submit}
+              color='veryperi'>
               등록하기
             </Button>
           ) : (
-            <Button variant='outlined' disabled={true} color='veryperi'>
+            <Button
+              sx={{ ml: 2 }}
+              variant='outlined'
+              disabled={true}
+              size='large'
+              color='veryperi'>
               등록하기
             </Button>
           )}
-          <hr></hr>
         </div>
 
         <div className='comments-body'>
@@ -136,9 +144,9 @@ const RoomComment = ({ idx }) => {
               <div className='comment-date'>
                 {comment.createTime.substr(0, 10)}
               </div>
+
               {currentIdx === comment.idx ? (
                 <div>
-                  <h4>댓글 수정</h4>
                   <TextField
                     className='comments-edit-textarea'
                     maxRows={3}
@@ -150,15 +158,27 @@ const RoomComment = ({ idx }) => {
                     placeholder='댓글을 입력해주세요✏️'
                   />
                   {editInput !== '' ? (
-                    <Button variant='outlined' onClick={edit} color='veryperi'>
+                    <Button
+                      sx={{ ml: 1, mr: 1 }}
+                      variant='outlined'
+                      onClick={edit}
+                      color='veryperi'>
                       수정하기
                     </Button>
                   ) : (
-                    <Button variant='outlined' disabled={true} color='veryperi'>
+                    <Button
+                      sx={{ ml: 1, mr: 1 }}
+                      variant='outlined'
+                      disabled={true}
+                      color='veryperi'>
                       수정하기
                     </Button>
                   )}
-                  <Button variant='outlined' onClick={cancel} color='veryperi'>
+                  <Button
+                    sx={{ ml: 1, mr: 1 }}
+                    variant='outlined'
+                    onClick={cancel}
+                    color='veryperi'>
                     취소
                   </Button>
                   <hr></hr>
@@ -169,21 +189,21 @@ const RoomComment = ({ idx }) => {
                   <div className='comment-username'>
                     {comment.nickname === user.nickname ? (
                       <Button
+                        sx={{ m: 1 }}
                         variant='outlined'
                         onClick={() => handleDeleteButton(comment.idx)}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         삭제
                       </Button>
                     ) : null}
                     {comment.nickname === user.nickname ? (
                       <Button
+                        sx={{ m: 1 }}
                         variant='outlined'
                         onClick={() =>
                           handleToggleEdit(comment.idx, comment.content)
                         }
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         수정
                       </Button>
                     ) : null}
@@ -201,8 +221,7 @@ const RoomComment = ({ idx }) => {
             className='comments-footer'
             onClick={() => {
               setCurrentPage(currentPage + 1);
-            }}
-          >
+            }}>
             <Button variant='outlined' color='veryperi'>
               댓글 더보기
             </Button>

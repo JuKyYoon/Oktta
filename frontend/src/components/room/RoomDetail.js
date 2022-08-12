@@ -25,6 +25,7 @@ const RoomDetail = () => {
   useEffect(() => {
     detailRoom(idx)
       .then((res) => {
+        console.log(res);
         // 투표가 종료된 방이면 voteDto값 설정해주기
         if (res.data.message === 'success' && res.data.result.voteDto) {
           setVoteDto(res.data.result.voteDto);
@@ -105,7 +106,7 @@ const RoomDetail = () => {
       <h1>{room.title}</h1>
       <hr className='hrLine'></hr>
       <div className='detail-body'>
-        <div className='editor'>
+        <div className='detail-editor'>
           <CKEditor
             editor={ClassicEditor}
             config={{
@@ -196,8 +197,7 @@ const RoomDetail = () => {
                     variant='outlined'
                     color='veryperi'
                     onClick={onVoteButtonClicked}
-                    disabled={vote === '' ? true : false}
-                  >
+                    disabled={vote === '' ? true : false}>
                     투표하기
                   </Button>
                   <Button
@@ -205,8 +205,7 @@ const RoomDetail = () => {
                     size='small'
                     variant='outlined'
                     color='veryperi'
-                    onClick={onVoteCancelButtonClicked}
-                  >
+                    onClick={onVoteCancelButtonClicked}>
                     투표철회
                   </Button>
                 </div>
@@ -227,8 +226,7 @@ const RoomDetail = () => {
             <Button
               className='detail-button'
               variant='outlined'
-              color='veryperi'
-            >
+              color='veryperi'>
               수정하기
             </Button>
           </Link>
@@ -239,8 +237,7 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onDeleteButtonClicked}
-          >
+            onClick={onDeleteButtonClicked}>
             방 삭제하기
           </Button>
         ) : null}
@@ -249,8 +246,7 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onVoteEndButtonClicked}
-          >
+            onClick={onVoteEndButtonClicked}>
             투표 종료하기
           </Button>
         ) : null}

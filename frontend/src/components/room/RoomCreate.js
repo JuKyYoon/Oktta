@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Button } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  Input,
+  FormHelperText,
+  Button,
+} from '@mui/material';
 import { useNavigate } from 'react-router';
 import { createRoom } from '../../services/roomService';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -210,22 +216,25 @@ const RoomCreate = () => {
       <span>갈등상황을 해결해봅시다!</span>
       <span>갈등상황에 대해 제목과 간략한 설명을 적어주세요!</span>
       <hr className='hrLine'></hr>
-
-      <label htmlFor='title' className='create-room-label'>
-        제목
-      </label>
-      <input
-        className='create-room-input'
-        placeholder='제목을 입력해주세요.'
-        type='text'
-        name='title'
-        value={title}
-        onChange={onTitleChanged}
-      />
-      <label htmlFor='title' className='create-room-label'>
-        내용
-      </label>
-      <div>
+      <div className='room-title-form'>
+        <FormControl>
+          <InputLabel htmlFor='title' color='veryperi'>
+            제목
+          </InputLabel>
+          <Input
+            id='title'
+            type='text'
+            aria-describedby='title-helper-text'
+            color='veryperi'
+            value={title}
+            onChange={onTitleChanged}
+          />
+          <FormHelperText id='title-helper-text'>
+            제목을 입력해주세요.
+          </FormHelperText>
+        </FormControl>
+      </div>
+      <div className='room-editor'>
         <CKEditor
           editor={ClassicEditor}
           config={{
@@ -239,11 +248,11 @@ const RoomCreate = () => {
       </div>
 
       <Button
+        className='room-button'
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}
-      >
+        disabled={!isValid}>
         등록하기
       </Button>
     </div>
