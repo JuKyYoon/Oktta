@@ -269,7 +269,7 @@ const RoomCreate = () => {
           <div className='create-room-selected-box'>
             <div
               className={`create-room-selected ${
-                matchSelectedDetail.matchResult === '승리' ? 'win' : 'loss'
+                matchSelectedDetail.matchResult === '승리' ? 'win' : 'lose'
               }`}>
               <img
                 src={`/assets/champion/${matchSelectedDetail.championTarget}.png`}
@@ -325,7 +325,7 @@ const RoomCreate = () => {
                           ? 'modal-result-item-selected'
                           : null
                       }
-                            ${match.matchResult === '승리' ? 'win' : 'loss'}
+                            ${match.matchResult === '승리' ? 'win' : 'lose'}
                             modal-result-item`}
                       onClick={() => setMatchSelected(match.matchId)}>
                       <span>{match.matchResult}</span>
