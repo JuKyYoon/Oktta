@@ -64,12 +64,14 @@ public class RoomController {
 
     @GetMapping("/{idx}")
     public ResponseEntity<RoomResponse> getRoom(@PathVariable("idx") Long roomIdx) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RoomDto roomDto = roomService.getRoom(roomIdx);
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
         int temp = list.size() / pagingLimit;
         int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
-        
+
+        roomDto.setMyVote(voteService.getMyVote(roomIdx, principal.getUsername()));
         if(voteService.checkEnd(roomIdx, LocalDateTime.now())) {
             roomDto.setVoteDto(voteService.getVoteDto(roomIdx));
         }
@@ -105,9 +107,13 @@ public class RoomController {
         LOGGER.info("Delete Room");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = roomService.deleteRoom(Long.parseLong(idx), principal.getUsername());
-        voteService.deleteVote(Long.parseLong(idx));
 
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));
+        if(result){
+            voteService.deleteVote(Long.parseLong(idx));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        } else {
+            return ResponseEntity.status(200).body(BaseResponseBody.of(403, failMsg));
+        }
     }
 
     @GetMapping("")
