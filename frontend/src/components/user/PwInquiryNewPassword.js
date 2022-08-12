@@ -35,7 +35,7 @@ const PwInquiryNewPassword = () => {
     setIsPasswordSame(password === event.target.value);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const dataToSubmit = {
       param: token,
       body: {
@@ -43,30 +43,35 @@ const PwInquiryNewPassword = () => {
       }
     };
 
-    const data = await pwInquiryNewPasswordRequest(dataToSubmit);
-    if (data.message === 'success') {
-      alert('비밀번호가 변경되었습니다.')
-      navigate('../login')
-    } else {
-      alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
-      navigate('../pwInquiry')
-    }
+    pwInquiryNewPasswordRequest(dataToSubmit)
+      .then((res) => {
+        if (res.data.message === 'success') {
+          alert('비밀번호가 변경되었습니다.')
+          navigate('../login')
+        } else {
+          alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
+          navigate('../pwInquiry')
+        }
+      })
+      .catch((err) => {
+        alert('올바르지 않은 접근입니다. 다시 시도해주세요.');
+      })
   };
 
   useEffect(() => {
-    const tokenCheck = async (token) => {
-      const data = await pwInquiryTokenCheckRequest(token);
-      if (data.message === 'success') {
-        const timeLimit = Date.parse(data.result);
-        setTimeLimit(timeLimit);
-      } else {
-        alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
-        navigate('../pwInquiry')
-      };
-    };
-
-    tokenCheck(token)
-      .catch((err) => console.log(err));
+    pwInquiryTokenCheckRequest(token)
+      .then((res) => {
+        if (res.data.message === 'success') {
+          const timeLimit = Date.parse(data.result);
+          setTimeLimit(timeLimit);
+        } else {
+          alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')
+          navigate('../pwInquiry')
+        };
+      })
+      .catch((err) => {
+        alert('올바르지 않은 접근입니다. 다시 시도해주세요.');
+      })
   }, []);
 
   return (

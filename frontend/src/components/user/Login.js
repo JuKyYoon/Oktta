@@ -30,9 +30,10 @@ const Login = () => {
       id: email,
       password: password,
     };
-    dispatch(loginRequest(body))
+    loginRequest(body)
       .then((res) => {
         if (res.payload.data.message === "success") {
+          dispatch(res);
           navigate("/");
         } else {
           // 에러 메시지 보이기
@@ -40,7 +41,7 @@ const Login = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        navigate("/error");
       });
   };
 

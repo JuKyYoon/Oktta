@@ -15,6 +15,7 @@ import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.MatchRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.DeleteUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,15 @@ public class RoomServiceImpl implements RoomService {
     private final MatchRepository matchRepository;
     private final MatchMapper matchMapper;
     private final LolAuthRepository lolAuthRepository;
+    private final DeleteUserService deleteUserService;
 
-    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper, LolAuthRepository lolAuthRepository) {
+    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper, LolAuthRepository lolAuthRepository, DeleteUserService deleteUserService) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.matchRepository = matchRepository;
         this.matchMapper = matchMapper;
         this.lolAuthRepository = lolAuthRepository;
+        this.deleteUserService = deleteUserService;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto getRoom(long roomIdx) {
+    public RoomDto getRoom(Long roomIdx) {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found in Get Room")
         );
@@ -68,18 +71,25 @@ public class RoomServiceImpl implements RoomService {
         Match match = matchRepository.getReferenceById(room.getMatch().getMatchId());
         roomDto.setMatch(matchMapper.entityToDto(match));
         User user = room.getUser();
-        roomDto.setNickname(user.getNickname());
-        roomDto.setProfileImage(user.getProfileImg());
-        LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
-        if(lolAuth != null){
-            roomDto.setTier(lolAuth.getTier());
+        String nickName = deleteUserService.checkNickName(user.getNickname();
+        roomDto.setNickname(nickName);
+        if(!nickName.equals("알수없음")){
+            roomDto.setProfileImage(user.getProfileImg());
+            LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+            if(lolAuth != null){
+                roomDto.setTier(lolAuth.getTier());
+            }
         }
         return roomDto;
     }
 
     @Override
-    public int updateHit(Long idx) {
-        return roomRepository.updateHit(idx);
+    public int updateHit(Long roomIdx) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found in Get Room")
+        );
+
+        return roomRepository.updateHit(roomIdx);
     }
 
     @Override
@@ -90,7 +100,7 @@ public class RoomServiceImpl implements RoomService {
         List<Room> roomList = roomRepository.findAllByUser(user);
         List<RoomDto> list = new ArrayList<>();
 
-        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        String nickname = deleteUserService.checkNickName(userRepository.findNicknameByIdx(user.getIdx()));
         for(Room r : roomList){
             list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchMapper.entityToDto(r.getMatch())));
         }
@@ -137,10 +147,10 @@ public class RoomServiceImpl implements RoomService {
 
         for(Room r : roomList){
             User user = r.getUser();
-            String nickname = user.getNickname();
+            String nickName = deleteUserService.checkNickName(user.getNickname());
             //Match to MatchDto
             MatchDto matchDto = matchMapper.entityToDto(r.getMatch());
-            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto));
+            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto));
         }
         return list;
     }

@@ -5,10 +5,7 @@ import com.ssafy.backend.model.dto.UserDto;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.UserAuthToken;
 import com.ssafy.backend.model.entity.UserRole;
-import com.ssafy.backend.model.exception.DuplicatedTokenException;
-import com.ssafy.backend.model.exception.ExpiredEmailAuthKeyException;
-import com.ssafy.backend.model.exception.PasswordNotMatchException;
-import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.mapper.UserMapper;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
@@ -55,6 +52,11 @@ public class UserServiceImpl implements UserService {
     @Value("${default-profile-image-url}")
     private String defaultProfileImageUrl;
 
+    private final int USER_ID_MIN_LENGTH = 5;
+    private final int USER_ID_MAX_LENGTH = 40;
+    private final int PASSWORD_MIN_LENGTH = 8;
+    private final int PASSWORD_MAX_LENGTH = 16;
+
     public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService, AwsService awsService) {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
@@ -68,11 +70,21 @@ public class UserServiceImpl implements UserService {
      * @param user { id, password, nickName }
      */
     @Override
-    public void registUser(UserDto user, MultipartFile profileImage) throws MessagingException {
+    public boolean registUser(UserDto user, MultipartFile profileImage) throws MessagingException {
+        // 유효성 검사
+        if((user.getId().length() < USER_ID_MIN_LENGTH
+                || user.getId().length() > USER_ID_MAX_LENGTH
+                || user.getPassword().length() < PASSWORD_MIN_LENGTH
+                || user.getPassword().length() > PASSWORD_MAX_LENGTH
+                || user.getId().contains("=")
+                || user.getNickname().contains("deleteuser")
+        )){
+            return false;
+        }
         String encrypt = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()); // 10라운드
         // 유저 db 저장
         if(!profileImage.isEmpty()){
-            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.fileUpload(profileImage)).build());
+            userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt, awsService.imageUpload(profileImage)).build());
         }else{
             userRepository.save(new User.Builder(user.getId(), user.getNickname(), encrypt).build());
         }
@@ -94,14 +106,24 @@ public class UserServiceImpl implements UserService {
         // 인증 메일 전송
         LOGGER.info("send mail start");
         mailService.sendAuthMail(user.getId(), authKey);
+        return true;
     }
 
     @Override
-    public void modifyUser(User user, UserDto changeUser) {
+    public boolean modifyUser(String userId, UserDto changeUser) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        // 닉네임 deleteUser 포함여부 검사
+        if(changeUser.getNickname().contains("deleteUser")){
+            return false;
+        }
+        // 소셜 로그인 유저
         if(user.getSnsType() != 0){
             user.updateInfo(changeUser.getNickname());
             userRepository.save(user);
-            return;
+            return true;
         }
         // 비밀번호 체크
         boolean isValidate = BCrypt.checkpw(changeUser.getPassword(), user.getPassword());
@@ -111,6 +133,7 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new PasswordNotMatchException("Password is Not Match");
         }
+        return true;
     }
 
     /**
@@ -135,18 +158,25 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원 탈퇴
-     * @param user 로그인한 유저
+     * user 로그인한 유저
      * @param reqPassword 확인 비밀번호
      */
     @Override
-    public void deleteUser(User user, String reqPassword) {
-        if(user.getSnsType() != 0){
-            userRepository.delete(user);
+    public void deleteUser(String userId, String reqPassword) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        String password = user.getPassword();
+        int snsType = user.getSnsType();
+        user.deleteUser();
+        if(snsType != 0){
+            userRepository.save(user);
             return;
         }
-        boolean isValidate = BCrypt.checkpw(reqPassword, user.getPassword());
+        boolean isValidate = BCrypt.checkpw(reqPassword, password);
         if(isValidate) {
-            userRepository.delete(user);
+            userRepository.save(user);
         } else {
             throw new PasswordNotMatchException("Password is Not Match");
         }
@@ -160,12 +190,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void findPassword(String id) throws MessagingException {
         LOGGER.info("Find Password By Sending a Email");
+
         // 존재하는 유저인지 검사한다,
-        userRepository.findById(id).orElseThrow(
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found By Id")
         );
+
+        // 소셜 로그인 유저인지 검사.
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Find Password!");
+        }
+
         String tokenResult = "";
         String resetToken = "";
+
         // 비밀번호 초기화 토큰을 발행한다. (Redis에 저장한다.)
         do {
             resetToken = RandomStringUtils.randomAlphanumeric(authKeySize);
@@ -212,6 +250,14 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resendAuthMail(String userId) throws MessagingException {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Send ReAuth Mail");
+        }
+
         String authKey = "";
         UserAuthToken tokenResult;
         // 중복 인증 키 아닐 때 까지 반복
@@ -241,6 +287,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
+
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Modify Password");
+        }
+
         String oldPassword = passwords.getOldPassword();
         String newPassword = passwords.getNewPassword();
 
@@ -257,10 +308,13 @@ public class UserServiceImpl implements UserService {
     /**
      * User entity의 내용을 UserDto로 매핑 후, 비밀번호 제외
      * 소셜 로그인 유저의 경우 아이디, 비밀번호 제외하여 UserDto 반환
-     * @param user
      */
     @Override
-    public UserDto setUserInfo(User user) {
+    public UserDto setUserInfo(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         if(user.getSnsType() != 0){
             return new UserDto(user.getNickname(), user.getCreateDate().toString(),
                     user.getModifyDate().toString(), user.getProfileImg(),
@@ -324,7 +378,7 @@ public class UserServiceImpl implements UserService {
     public void registProfileImage(String userId, MultipartFile file) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("USER NOT FOUND"));
-        String path = awsService.fileUpload(file);
+        String path = awsService.imageUpload(file);
         deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), path);
     }

@@ -8,20 +8,18 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 
 public interface UserService {
-    void registUser(UserDto user, MultipartFile profileImage) throws MessagingException;
-    void modifyUser(User user, UserDto changeUser);
+    boolean registUser(UserDto user, MultipartFile profileImage) throws MessagingException;
+    boolean modifyUser(String userId, UserDto changeUser);
     boolean checkDuplicatedID(String userId);
     boolean checkDuplicatedNickName(String nickName);
-    void deleteUser(User user, String password);
+    void deleteUser(String userId, String password);
     void findPassword(String email) throws MessagingException;
     void authUser(String authKey);
     void resendAuthMail(String userId) throws MessagingException;
     int modifyPassword(String id, PasswordDto passwords);
-    UserDto setUserInfo(User user);
+    UserDto setUserInfo(String userId);
     String validateResetToken(String resetToken);
     boolean resetPassword(String password, String token);
-
     void registProfileImage(String userId, MultipartFile multipartFile);
-
     void deleteProfileImage(String userId);
 }

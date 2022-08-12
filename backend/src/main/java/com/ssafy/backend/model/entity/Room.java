@@ -23,12 +23,13 @@ public class Room {
     private Long idx;
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
+    @JoinColumn(name = "user_idx")
     private User user;
 
     @Column(name="title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name="content", nullable = false)
     private String content;
 
@@ -50,7 +51,7 @@ public class Room {
     private int people;
 
     @ManyToOne(targetEntity = Match.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_id", nullable = false)
+    @JoinColumn(name = "match_id")
     private Match match;
 
 

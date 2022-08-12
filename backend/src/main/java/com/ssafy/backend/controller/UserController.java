@@ -36,32 +36,10 @@ public class UserController {
     @Value("${response.fail}")
     private String failMsg;
 
-    private final UserRepository userRepository;
-
     private final UserService userService;
 
-
-    public UserController(UserRepository userRepository, UserService userService){
-        this.userRepository = userRepository;
+    public UserController(UserService userService){
         this.userService = userService;
-    }
-
-    /**
-     * ROLE_USER
-     * 테스트용 코드. 추후 삭제 예정
-     * @return
-     */
-    @GetMapping("/test")
-    public ResponseEntity<BaseResponseBody> test() {
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElse(null);
-
-        if(user != null) {
-            LOGGER.debug(user.getRole().getValue());
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "null"));
-        } else {
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
-        }
     }
 
     /**
@@ -69,9 +47,13 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart("profileImg") MultipartFile profileImage) throws MessagingException {
-        userService.registUser(user, profileImage);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart(name = "profileImg", required = false) MultipartFile profileImage) throws MessagingException {
+        boolean result = userService.registUser(user, profileImage);
+        if(result){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        }else{
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, failMsg));
+        }
     }
 
     /**
@@ -83,13 +65,7 @@ public class UserController {
     public ResponseEntity<BaseResponseBody> modifyPW(@RequestBody PasswordDto passwords) {
         // access token 에서 id 부분
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        if(user.getSnsType() != 0){
-            throw new SocialUserException("Social User Can't Modify Password");
-        }
-        int result = userService.modifyPassword(user.getId(), passwords);
+        int result = userService.modifyPassword(principal.getUsername(), passwords);
         if(result == 1) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else if (result == -1 ) {
@@ -117,13 +93,7 @@ public class UserController {
     @GetMapping("/reauth")
     public ResponseEntity<BaseResponseBody> resendAuthMail() throws MessagingException {
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        if(user.getSnsType() != 0){
-            throw new SocialUserException("Social User Can't Send ReAuth Mail");
-        }
-        userService.resendAuthMail(user.getId());
+        userService.resendAuthMail(principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -160,10 +130,7 @@ public class UserController {
     @DeleteMapping("")
     public ResponseEntity<BaseResponseBody> deleteUser(@RequestBody Map<String, String> password){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.deleteUser(user, password.get("password").trim());
+        userService.deleteUser(principal.getUsername(), password.get("password").trim());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -173,10 +140,7 @@ public class UserController {
     @PutMapping("")
     public ResponseEntity<BaseResponseBody> modifyUser(@RequestBody UserDto userDto){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.modifyUser(user, userDto);
+        userService.modifyUser(principal.getUsername(), userDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -186,12 +150,7 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserInfoResponse> getMyInfo(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-
-        UserDto userDto = userService.setUserInfo(user);
-
+        UserDto userDto = userService.setUserInfo(principal.getUsername());
         return ResponseEntity.status(200).body(UserInfoResponse.of(200, successMsg, userDto));
     }
 
@@ -200,12 +159,6 @@ public class UserController {
      */
     @GetMapping("/password/{id}")
     public ResponseEntity<BaseResponseBody> findPassword(@PathVariable("id")String id) throws MessagingException {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        if(user.getSnsType() != 0){
-            throw new SocialUserException("Social User Can't Find Password!");
-        }
         userService.findPassword(id);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }

@@ -63,26 +63,31 @@ public class RoomController {
     }
 
     @GetMapping("/{idx}")
-    public ResponseEntity<RoomResponse> getRoom(@PathVariable("idx") String idx) {
-        RoomDto roomDto = roomService.getRoom(Long.parseLong(idx));
-        roomService.updateHit(roomDto.getIdx());
+    public ResponseEntity<RoomResponse> getRoom(@PathVariable("idx") Long roomIdx) {
+        RoomDto roomDto = roomService.getRoom(roomIdx);
 
-        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(Long.parseLong(idx));
+        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
         int temp = list.size() / pagingLimit;
         int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
         
-        if(voteService.checkEnd(Long.parseLong(idx), LocalDateTime.now())) {
-            roomDto.setVoteDto(voteService.getVoteDto(Long.parseLong(idx)));
+        if(voteService.checkEnd(roomIdx, LocalDateTime.now())) {
+            roomDto.setVoteDto(voteService.getVoteDto(roomIdx));
         }
 
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
+    @PutMapping("/hit/{idx}")
+    public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long roomIdx) {
+        roomService.updateHit(roomIdx);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
     @PutMapping("/{idx}")
-    public ResponseEntity<BaseResponseBody> updateRoom(@PathVariable("idx") String idx, @RequestBody RoomDto roomDto) {
+    public ResponseEntity<BaseResponseBody> updateRoom(@PathVariable("idx") Long roomIdx, @RequestBody RoomDto roomDto) {
 
         LOGGER.info("Update Room Title or Content");
-        roomDto.setIdx(Long.parseLong(idx));
+        roomDto.setIdx(roomIdx);
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = roomService.updateRoom(roomDto, principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));

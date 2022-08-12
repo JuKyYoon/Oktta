@@ -4,6 +4,7 @@ import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.repository.RoomRepository;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.util.RedisService;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
@@ -28,6 +29,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final RedisService redisService;
 
+    private final UserRepository userRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -35,25 +38,26 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<Long, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
         this.redisService = redisService;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
+        this.userRepository = userRepository;
     }
 
-    public boolean checkSessionOwner(String userId, long sessionIdx) {
-        // DB에서 room 엔티티 가져온다.
+    @Override
+    public Room getSessionRoom(long sessionIdx) {
         Room room = roomRepository.findById(sessionIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found in Session Create")
         );
+        return room;
+    }
 
-        // 글 작성자가 아닌 사람이 시도
+    public boolean checkSessionOwner(String userId, Room room) {
         if(userId.equals(room.getUser().getId())) {
             // 이 경우는 무조건 만든다.
-            room.updateRoomState(true);
-            roomRepository.save(room);
             return true;
         } else {
             return false;
@@ -63,12 +67,12 @@ public class SessionServiceImpl implements SessionService {
 
 
     @Override
-    public void createSession(String userId, long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public void createSession(String userId, long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
         // 검증 과정을 먼저 해줘야, 강제로 세션을 만들고, 입장하려는 시도를 막을 수 있다.
-
+        room.updateRoomState(true);
+        roomRepository.save(room);
         // 만약 세션이 없다면 세션을 만든다.
         if(searchSession(sessionIdx) == null) {
-
             // 세션 만든다.
             Session session = this.openVidu.createSession();
 
@@ -85,7 +89,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public String enterSession(User user, long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException {
+    public String enterSession(String userId, long sessionIdx, OpenViduRole role) throws OpenViduJavaClientException, OpenViduHttpException {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         try {
             // 연결 정보를 설정한다.
             String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"0\", \"idx\":\"%d\"}", user.getNickname(), sessionIdx);
@@ -153,6 +161,11 @@ public class SessionServiceImpl implements SessionService {
                 this.mapSessions.remove(sessionIdx);
                 this.mapSessionNamesTokens.remove(sessionIdx);
                 redisService.deleteKey(session.getSessionId());
+
+                Room room = roomRepository.findById(sessionIdx).orElseThrow(
+                        () -> new RoomNotFoundException("Room Not Found in Session Create")
+                );
+                room.updateRoomState(false);
             } else {
 
 
