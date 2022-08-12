@@ -23,6 +23,8 @@ const debounceFunc = debounce(async (value, request, setState) => {
   };
 }, 500);
 
+const formData = new FormData();
+
 const Signup = () => {
   // input값들 useState
   const [email, setEmail] = useState("");
@@ -111,11 +113,12 @@ const Signup = () => {
       nickname: nickname,
     };
 
+    formData.delete('user');
     formData.append('user', new Blob([JSON.stringify(user)], { type: "application/json" }));
+
     if (formData.get('profileImg') === null) {
       formData.append('profileImg', new Blob([], { type: "image/png" }));
     };
-    console.log(formData.get('profileImg'));
 
     const result = await signupRequest(formData);
     if (result?.data?.message === "success") {
@@ -135,25 +138,22 @@ const Signup = () => {
     profileSelect.current.click();
   }
 
-  const formData = new FormData();
   const handleFileInput = (event) => {
     if (!uploadOpen) {
       setUploadOpen(true);
     }
     else {
-      if (event.target.files[0]) {
+      const file = event?.target?.files[0];
+      if (file) {
         profileShow.current.style.display = '';
-        const file = event.target.files[0];
         profileShow.current.src = URL.createObjectURL(file);
-        console.log(new Blob([file], { type: file.type }));
-        const a = file.toBlob(file.type);
-        console.log(a);
-        formData.append('profileImg', new Blob([file], { type: file.type }));
-        console.log(formData.get('profileImg'));
+        console.log(file);
+        formData.append('profileImg', new Blob([file], { type: file.type }), file.name);
       }
       else {
-        if (formData.get('profileImg')) {
-          formData.append('profileImg', formData.get('profileImg'));
+        const getFile = formData?.get('profileImg');
+        if (getFile) {
+          formData.append('profileImg', getFile, getFile.name);
         }
       };
       setUploadOpen(false);

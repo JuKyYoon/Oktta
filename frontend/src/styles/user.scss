@@ -19,15 +19,12 @@
   width: 30%;
 }
 
-// .mypage-image-profile {
-//   border: $veryperi 3px solid;
-//   border-radius: 100%;
-//   width: 80%;
-//   aspect-ratio: 1;
-// }
-
 .mypage-left-item {
   margin: 15px;
+}
+
+.profile-modal {
+  background-color: rgb(0, 0, 0, 0.6) !important;
 }
 
 .mypage-image-tier {
@@ -102,10 +99,6 @@
   text-align: center;
 }
 
-.new-profile-img {
-  border-bottom: 1px dashed;
-}
-
 .default-profile-img {
   text-align: center;
 }
@@ -117,6 +110,21 @@
  /* pagination*/
 .css-wjh20t-MuiPagination-ul {
   justify-content: center;
+}
+
+/* 회원정보 수정 */
+.update-menu {
+  display: flex;
+}
+
+.update-menu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-selected {
+  color: $veryperi;
+  border-bottom: 2px $veryperi solid;
 }
 
  /* 회원 탈퇴 버튼 */

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
@@ -6,6 +6,7 @@ import '../../styles/user.scss';
 import { getProfileRequest, setDefaultImg, setProfileImg } from '../../services/userService';
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
 import { getMyRoom } from '../../services/roomService';
+import Loading from '../layout/Loading';
 // import { getMyBoard } from '../../services/boardService';
 
 const MyPage = () => {
@@ -18,6 +19,7 @@ const MyPage = () => {
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const pageChange = (event, value) => {
     setPage(value);
@@ -58,10 +60,6 @@ const MyPage = () => {
     setOpenProfile(false);
   };
 
-  const handleFileInput = (event) => {
-    setSelectedFile(event.target.files[0]);
-  }
-
   const reload = async () => {
     // 이미지 저장 후 리로드
     const result = await getProfileRequest();
@@ -81,25 +79,62 @@ const MyPage = () => {
       navigate('/error');
     };
   }
-
+  const [pending, setPending] = useState(false);
   const handleSetProfile = async () => {
-    const formData = new FormData();
-    if (!selectedFile) {
-      alert('업로드 된 사진이 없습니다.');
+    if (!selectedFile || selectedFile === 'default') {
+      setOpenProfile(false);
+      handleDefaultImg();
+    }
+    else if (selectedFile === 'now') {
       setOpenProfile(false);
     }
     else {
+      const formData = new FormData();
       formData.append('profileImg', selectedFile);
+      setPending(true);
       const result = await setProfileImg(formData);
       if (result?.data?.message === 'success') {
-        setOpenProfile(false);
         reload();
+        setOpenProfile(false);
+        setPending(false);
       } else if (result?.response?.data?.message === 'fail') {
         alert('잘못된 파일 형식입니다.')
       } else {
         navigate('/error');
       };
     };
+  }
+
+  const profileSelect = useRef();
+  const profileShow = useRef();
+
+  const fileUpload = () => {
+    profileSelect.current.onClick = handleFileInput();
+    profileSelect.current.click();
+  }
+
+  const handleFileInput = (event) => {
+    if (!uploadOpen) {
+      setUploadOpen(true);
+    }
+    else {
+      const file = event?.target?.files[0];
+      if (file) {
+        profileShow.current.src = URL.createObjectURL(file);
+        setSelectedFile(file);
+      }
+      setUploadOpen(false);
+    }
+  };
+
+  const defaultProfile = () => {
+    profileShow.current.src = 'https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png';
+    setSelectedFile('default');
+  }
+
+  const ProfileNow = () => {
+    profileShow.current.src = profile.profileImg;
+    setSelectedFile('now');
   }
 
   return (
@@ -115,33 +150,39 @@ const MyPage = () => {
                 <FlipCameraIosIcon fontSize='large' />
               </Button>
               <Dialog open={open_profile} onClose={handleClose} className='mypage-left-item'>
-                <DialogTitle>프로필 이미지 업로드</DialogTitle>
-                <DialogContent>
-                  <div className='new-profile-img'>
-                    1MB 미만의 파일만 등록할 수 있습니다. <br /> (jpg, jpeg, gif, png)
+                <div className={`${pending ? 'profile-modal' : null}`}>
+                  <DialogTitle>프로필 이미지 업로드</DialogTitle>
+                  <DialogContent>
+                    1MB 미만의 파일만 등록할 수 있습니다. (jpg, jpeg, gif, png)
                     <br /><br />
-                    <input
-                      type='file'
-                      accept='image/*'
-                      onChange={event => handleFileInput(event)}
-                    />
-                    <br /><br />
-                    ⚠️미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
-                    경고없이 삭제될 수 있습니다.
-                    <br /><br />
-                  </div>
-                  <div className='default-profile-img'>
-                    <br />
-                    기본 이미지
-                    <br /><br />
-                    <img src="https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png" width={100} />
-                  </div>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} className="cancel">취소</Button>
-                  <Button onClick={handleDefaultImg}>기본 이미지 변경</Button>
-                  <Button onClick={handleSetProfile}>새로운 이미지 등록</Button>
-                </DialogActions>
+                    <p>프로필 이미지 업로드 (선택)</p>
+                    <div className="signup-profile">
+                      <div className="profile-left">
+                        <Button onClick={ProfileNow}>현재 이미지</Button>
+                        <Button onClick={fileUpload}>이미지 업로드</Button>
+                        <Button onClick={defaultProfile}>기본 이미지</Button>
+                      </div>
+                      {pending ? <Loading /> : null}
+                      <input
+                        type='file'
+                        accept='image/*'
+                        onChange={event => handleFileInput(event)}
+                        style={{ display: 'none' }}
+                        id='profileUploadBtn'
+                        ref={profileSelect}
+                      />
+                      <br />
+                      <img src={profile.profileImg} alt="profile-image" ref={profileShow} style={{ width: 100, alignSelf: 'center' }} />
+                      <br /><br />
+                      ※미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
+                      경고없이 삭제될 수 있습니다.
+                    </div>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose} className="cancel">취소</Button>
+                    <Button onClick={handleSetProfile}>등록</Button>
+                  </DialogActions>
+                </div>
               </Dialog>
               <Link to='/user/updateProfile' className='mypage-left-item'>회원 정보 수정하기</Link>
             </div>
