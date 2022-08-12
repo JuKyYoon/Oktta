@@ -43,6 +43,7 @@ const RoomCreate = () => {
   const [open, setOpen] = useState(false);
   const [pageNum, setPageNum] = useState(0);
   const [summonerName, setSummonerName] = useState('');
+  const [summonerNameSearch, setSummonerNameSearch] = useState('');
   const [matchList, setMatchList] = useState([]);
   const [matchListView, setMatchListView] = useState([]);
   const [searchState, setSearchState] = useState('before');
@@ -59,6 +60,7 @@ const RoomCreate = () => {
     setSearchState('before');
     setMatchSelected('');
     setOpen(false);
+    setSummonerNameSearch('');
   };
 
   const handleSelect = () => {
@@ -107,20 +109,22 @@ const RoomCreate = () => {
     setSearchState('before');
     setMatchSelected({});
     setOpen(false);
+    setSummonerNameSearch('');
   };
 
   const onSearchSubmit = (event) => {
     event.preventDefault();
-    getMatches().then((result) => setSearchState(result));
+    setSummonerNameSearch(summonerName);
+    getMatches(summonerName)
+      .then((result) => setSearchState(result));
   };
 
-  const getMatches = async () => {
+  const getMatches = async (summonerName) => {
     if (!summonerName) {
       return;
     }
 
     setSearchState('pending');
-
     const data = await getMatchBySummoner(summonerName, pageNum)
       .then((res) => {
         if (res.data.message === 'success') {
@@ -138,7 +142,6 @@ const RoomCreate = () => {
         }
         return 'fail';
       });
-
     const matchList = [];
 
     if (data === 'fail') {
@@ -149,18 +152,14 @@ const RoomCreate = () => {
       await getMatchDetail(matchId)
         .then((res) => matchList.push(res))
         .catch((err) => console.log(err));
-    }
-
+    };
+    
     if (matchList.length > 0) {
       setMatchList(matchList);
       const matchListView = matchList.map((match) => {
         const matchId = match.metadata.matchId;
-
-        const target = match.info.participants.filter(
-          (participant) =>
-            participant.summonerName.toLowerCase() ===
-            summonerName.toLowerCase()
-        )[0];
+        const target = match.info.participants
+          .filter((participant) => participant.summonerName.toLowerCase().replace(/ /g,"") === summonerName.toLowerCase().replace(/ /g,""))[0];
         const matchResult = target.win ? '승리' : '패배';
         const championTarget = target.championName;
         const kda = `${target.kills} / ${target.deaths} / ${target.assists}`;
@@ -202,8 +201,8 @@ const RoomCreate = () => {
     }
   };
 
-  const onSummonerNameChanged = (e) => {
-    setSummonerName(e.target.value);
+  const onSummonerNameChanged = (event) => {
+    setSummonerName(event.target.value)
   };
 
   const onHandlePage = (event) => {
@@ -211,8 +210,9 @@ const RoomCreate = () => {
     if (newPageNum >= 0) {
       setPageNum(newPageNum);
       setMatchSelected({});
-      getMatches().then((result) => setSearchState(result));
-    }
+      getMatches(summonerNameSearch)
+        .then((result) => setSearchState(result));
+    };
   };
   // 게임 정보 --------------
 
