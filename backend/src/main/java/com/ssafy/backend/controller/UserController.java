@@ -149,8 +149,10 @@ public class UserController {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDto userDto = userService.setUserInfo(principal.getUsername());
         LolAuth lolAuth = lolService.getUserLolAuth(principal.getUsername());
-        userDto.setTier(lolAuth.getTier());
-        userDto.setSummonerName(lolAuth.getSummonerName());
+        if(lolAuth != null){
+            userDto.setTier(lolAuth.getTier());
+            userDto.setSummonerName(lolAuth.getSummonerName());
+        }
         return ResponseEntity.status(200).body(UserInfoResponse.of(200, successMsg, userDto));
     }
 
