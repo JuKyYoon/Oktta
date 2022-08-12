@@ -26,7 +26,7 @@ const RoomDetail = () => {
     // 투표가 종료된 방이면 voteDto값 설정해주기
     if (result?.data?.message === 'success' && result?.data?.result?.voteDto) {
       setVoteDto(result.data.result.voteDto);
-    } else if (result?.response?.status === 404 || result?.response?.status === 400) {
+      } else {
       alert('잘못된 접근입니다.')
       navigate('../list');
     };
