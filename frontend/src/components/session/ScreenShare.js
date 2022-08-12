@@ -13,7 +13,7 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import { Container } from "@mui/system";
-import { Grid } from "@mui/material";
+import { Grid, Fade, Tooltip } from "@mui/material";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -21,10 +21,12 @@ import MailIcon from "@mui/icons-material/Mail";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import TextField from "@mui/material/TextField";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { styled } from '@mui/material/styles';
+import { styled, makeStyles } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
+import Slide from '@mui/material/Slide';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
+import Typography from '@mui/material/Typography';
 import "@/styles/session.scss";
 
 const ScreenShare = () => {
@@ -33,41 +35,41 @@ const ScreenShare = () => {
   const sessionRef = useRef();
 
   const [participants, setParticipants] = useState([
-    // { nickname: "samsung", rank: 1, connectionId: "conid1", audioActive: false },
-    // { nickname: "apple", rank: 1, connectionId: "conid2", audioActive: false },
-    // { nickname: "blackberry", rank: 1, connectionId: "conid3", audioActive: true },
-    // { nickname: "sony", rank: 1, connectionId: "conid4", audioActive: false },
+    { nickname: "samsung", rank: 24, connectionId: "conid1", audioActive: false },
+    { nickname: "apple", rank: 54, connectionId: "conid2", audioActive: false },
+    { nickname: "일이삼사일이삼사삼사", rank: 0, connectionId: "conid3", audioActive: true },
+    { nickname: "sony", rank: 94, connectionId: "conid4", audioActive: false },
   ]);
 
   const [chat, setChat] = useState([
-    // { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
-    // { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
-    // { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
-    // { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
-    // { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
-    // { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
-    // { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
-    // { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
-    // { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
-    // { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
-    // { nickname: "apple", content: "hi1", me: true, time: "15:14" },
-    // { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
-    // { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "samsung", content: "hi0dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
+    { nickname: "samsung", content: "hi0", me: false, time: "15:12" },
+    { nickname: "samsung", content: "hi1", me: false, time: "15:14" },
+    { nickname: "apple", content: "hi1", me: true, time: "15:14" },
+    { nickname: "samsung", content: "hi2", me: false, time: "15:14" },
+    { nickname: "samsung", content: "hi3", me: false, time: "15:15" },
   ]);
 
   const [audioEnabled, setAudioEnabled] = useState(false);
@@ -448,7 +450,13 @@ const ScreenShare = () => {
 
   const toggleUserList = () => {
     console.log("toggle User List")
-    // setLeftDrawerOpen(!leftDrawerOpen)
+    setLeftDrawerOpen(!leftDrawerOpen)
+  }
+
+  const showUserList = () => {
+    participants.map(e => 
+      console.log(e)
+    )
   }
 
   const toggleChatList = () => {
@@ -488,36 +496,60 @@ const ScreenShare = () => {
     };
   }, []);
 
+
+
   console.log("렌더링 했습니다.");
   return (
-    <Box sx={{ width: 1, height: '100%' }} style={{"backgroundColor" : "blue"}}>
-      <Grid container direction='row' sx={{ width: 1, height: 1 }} spacing={0}>
-        <Grid item xs={1.5} className={"user-div"} sx={{
-          // visibility: leftDrawerOpen ? 'visible' : 'hidden',
+    <Box sx={{ width: 1, height: '100%' }} style={{"backgroundColor" : "none"}}>
+      <Grid container direction='row' sx={{ width: 1, height: 1, flexGrow: 1}} spacing={0}>
+      <Slide direction="right" in={leftDrawerOpen} mountOnEnter unmountOnExit>
+        <Grid item xs={2} zeroMinWidth className={"user-div"} sx={{
           display: leftDrawerOpen ? 'block' : 'none'
         }}>
-          <Box sx={{ height: '100%' }} style={{"backgroundColor" : "grey"}}>
-            <List>
-              {participants.map((user, index) => (
-                <ListItem key={user.connectionId} disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      {user.audioActive ? 
-                      <MicIcon color="success"/> : <MicOffIcon color="error"/>}
-                      
-                    </ListItemIcon>
-                    <ListItemText primary={user.nickname} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
+          <Box sx={{ height: '100%' }} style={{"backgroundColor" : "none"}}>
+          <List>
+          {participants.map((user, index) => (
+          <ListItem key={user.connectionId} disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              {user.audioActive ? 
+              <MicIcon color="success"/> : <MicOffIcon color="error"/>}
+            </ListItemIcon>
+              <Tooltip title={<Typography fontSize={15}>{user.nickname}</Typography>} leaveTouchDelay={500} placement='right-end' sx={{
+                fontSize: "1rem"
+              }}>
+              <ListItemText
+            primary={user.nickname}
+            primaryTypographyProps={{ 
+              variant: 'subtitle2', 
+              style: {
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+              }
+            }}/>
+              </Tooltip>
+            <Tooltip title={"티어 정보 보여주기"} leaveTouchDelay="500" placement='right-start' sx={{
+              fontSize: "1rem"
+            }}>
+            <img style={{"marginLeft" : "5px", "marginRight" : "5px"}} src={process.env.REACT_APP_CLIENT_URL + "/assets/lol_tiers_ico/" + parseInt(user.rank/10) +".ico"}></img>
+
+            </Tooltip>
+
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
           </Box>
-          {/* <Item>xs=2</Item> */}
         </Grid>
-        <Grid item xs={leftDrawerOpen && rightDrawerOpen ? 8.5 : 10} className={"video-div"} sx={{
+        </Slide>
+
+
+        
+        <Grid item xs={leftDrawerOpen ? 8 : 10} className={"video-div"} sx={{
           height: '100%'
         }}> 
-          <Box sx={{ height: '100%' }} style={{"backgroundColor" : "skyblue"}}>
+          <Box sx={{ height: '100%' }} style={{"backgroundColor" : "none"}}>
           <div id="video-container">
             {/* <video autoPlay loop>
               <source src="/flower.webm" type="video/webm" />
@@ -529,13 +561,20 @@ const ScreenShare = () => {
           <div id="session-button-div">
             <div className="button-div">
               {/* <span id="title-div">{title}</span> */}
-              {/* <Button
+              <Button
                 className="user-session-button"
                 variant="contained"
                 onClick={toggleUserList}
               >
                 유저 목록 보기
-              </Button> */}
+              </Button>
+              <Button
+                className="user-session-button"
+                variant="contained"
+                onClick={showUserList}
+              >
+                유저 목록 보기 (Debug)
+              </Button>
               <Button
                 className="user-session-button"
                 variant="contained"
@@ -574,7 +613,7 @@ const ScreenShare = () => {
         <Grid item xs={2} className={"chat-div"} sx={{
           display: rightDrawerOpen ? 'block' : 'none'
         }}>
-          <Box sx={{ height: '100%'}} style={{"backgroundColor" : "red"}}>
+          <Box sx={{ height: '100%'}} style={{"backgroundColor" : "none"}}>
             <div id="chatting-list"  ref={scrollRef}>
               {chat.map((item, index) => (
                 <div className={item.me ? "my-chat" : "other-chat"} key={index}>

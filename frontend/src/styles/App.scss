@@ -2,7 +2,7 @@ $veryperi: #6667ab;
 
 /* App css */
 html, body, #root, #root>div {
-  // height: 100%
+  height: 100%
 }
 
 body {
@@ -10,8 +10,9 @@ body {
 }
 
 main {
-  // padding: 0px;
-  // height: 90%;
+  padding: 0px;
+  height: 85vh;
+  // background-color: red;
 }
 
 a {
@@ -26,6 +27,10 @@ a {
 
 ul {
   list-style:none;
+}
+
+h2 {
+  margin: 0;
 }
 
 /* Header 관련 CSS */
@@ -44,11 +49,17 @@ ul {
   }
 }
 
+.header-main-div {
+  height: 15vh;
+  min-height: 110px;
+  // background-color:blue;
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 10px;
+  // margin: 10px;
 }
 
 .header-right-btn {
