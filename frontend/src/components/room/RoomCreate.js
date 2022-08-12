@@ -49,6 +49,7 @@ const RoomCreate = () => {
   const [matchSelected, setMatchSelected] = useState({});
   const [matchSelectedDetail, setMatchSelectedDetail] = useState(false);
   const [matchForSubmit, setMatchForSubmit] = useState({});
+  const [emphasize, setEmphasize] = useState(false);
   
   const handleOpen = () => setOpen(true);
 
@@ -71,6 +72,7 @@ const RoomCreate = () => {
     const getMatch = matchList.filter(
       (match) => matchSelected === match.metadata.matchId
     );
+
     if (getMatch.length > 0) {
       // 전송하기 위한 데이터 가공
       const matchRawData = getMatch[0];
@@ -209,6 +211,11 @@ const RoomCreate = () => {
 
   const onSubmitClicked = async (event) => {
     event.preventDefault();
+    if (Object.keys(matchForSubmit).length === 0) {
+      setEmphasize(true);
+      return;
+    };
+
     const body = {
       title,
       content,
@@ -273,10 +280,13 @@ const RoomCreate = () => {
                 <p>{matchSelectedDetail.kda}</p>
               </div>
             </div>
-            <Button onClick={handleOpen}>다시 불러오기</Button>
+            <Button variant='contained' color='veryperi' onClick={handleOpen}>다시 불러오기</Button>
           </div>
         ) : (
-          <Button onClick={handleOpen}>게임 불러오기</Button>
+          <div>
+            <Button variant='contained' color='veryperi' onClick={handleOpen}>게임 불러오기</Button>
+            <span className='create-room-notice'>{emphasize ? '필수 항목입니다.' : null}</span>
+          </div>
         )}
         <Modal open={open} onClose={handleClose}>
           <Box className='modal-box'>
