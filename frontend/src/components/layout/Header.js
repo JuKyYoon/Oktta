@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutRequest } from "../../services/userService";
 import BeforeEmailAuth from "../user/BeforeEmailAuth";
-import { initState } from "../../modules/user";
 import Navbar from "./Navbar";
 
 const Header = () => {

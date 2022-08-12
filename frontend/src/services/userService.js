@@ -1,6 +1,5 @@
 import { request, axiosAuth } from "./axios";
 import {
-  EMAIL_AUTH,
   LOGIN,
   LOGOUT,
   UPDATE_NICKNAME,
