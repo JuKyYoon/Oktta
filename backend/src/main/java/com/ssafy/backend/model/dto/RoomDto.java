@@ -10,6 +10,8 @@ public class RoomDto {
     private Long idx;
     private String title;
     private String nickname;
+    private String profileImage;
+    private int tier;
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
@@ -91,6 +93,14 @@ public class RoomDto {
         this.nickname = nickname;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public boolean isLive() {
         return live;
     }
@@ -128,5 +138,21 @@ public class RoomDto {
 
     public void setMatch(MatchDto match) {
         this.matchDto = match;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public MatchDto getMatchDto() {
+        return matchDto;
+    }
+
+    public void setMatchDto(MatchDto matchDto) {
+        this.matchDto = matchDto;
     }
 }

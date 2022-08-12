@@ -244,6 +244,18 @@ public class BaseControllerAdvice {
 
     }
 
+    @ExceptionHandler(MatchNullException.class)
+    public ResponseEntity<BaseResponseBody> MatchNullException(Exception e, HttpServletRequest req){
+        LOGGER.debug("MATCH NULL ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(BaseResponseBody.of(400, failMsg));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponseBody> unknownException(Exception e, HttpServletRequest req) {
         LOGGER.debug("UNKNOWN ERROR");
