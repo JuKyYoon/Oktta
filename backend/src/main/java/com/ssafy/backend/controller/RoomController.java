@@ -56,7 +56,7 @@ public class RoomController {
         roomDto.setTitle(map.get("title").toString());
         roomDto.setContent(map.get("content").toString());
         MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
-        roomDto.setMatch(matchDto);
+        roomDto.setMatchDto(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
         voteService.createVote(roomIdx, LocalDateTime.now());
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, String.valueOf(roomIdx)));
@@ -76,6 +76,13 @@ public class RoomController {
 
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
+
+    @GetMapping("/comment/{idx}")
+    public ResponseEntity<BaseResponseBody> getCommentList(@PathVariable("idx") Long roomIdx) {
+        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
+    }
+
 
     @PutMapping("/hit/{idx}")
     public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long roomIdx) {
