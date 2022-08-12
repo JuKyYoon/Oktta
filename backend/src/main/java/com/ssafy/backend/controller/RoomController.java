@@ -118,7 +118,7 @@ public class RoomController {
     @GetMapping("/live")
     public ResponseEntity<? extends BaseResponseBody> getOnAirRoomList(@RequestParam(defaultValue = "1") int page) {
         List<RoomDto> list = roomService.getOnAirRoomList(page, pagingLimit);
-        int lastPage = roomService.getLastPage(pagingLimit);
+        int lastPage = roomService.getOnAirLastPage(pagingLimit);
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
     }
 

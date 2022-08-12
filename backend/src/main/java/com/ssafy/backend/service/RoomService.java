@@ -11,6 +11,7 @@ public interface RoomService {
     boolean deleteRoom(long roomIdx, String userId);
     public List<RoomDto> getRoomList(int page, int limit);
     public int getLastPage(int limit);
+    int getOnAirLastPage(int limit);
     int updateHit(Long idx);
     List<RoomDto> myRooms(String id);
     List<RoomDto> getOnAirRoomList(int page, int limit);

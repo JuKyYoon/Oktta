@@ -145,6 +145,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public int getOnAirLastPage(int limit) {
+        int temp = roomRepository.findOnAirLastPage();
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
+    }
+
+    @Override
     public List<RoomDto> getOnAirRoomList(int page, int limit){
         List<Room> roomList = roomRepository.findLiveRoomList(limit, (page - 1) * limit);
         List<RoomDto> list = new ArrayList<>();

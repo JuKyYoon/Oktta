@@ -26,6 +26,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM room")
     int findLastPage();
 
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM room WHERE live = 1")
+    int findOnAirLastPage();
+
     @Transactional
     @Modifying
     @Query("UPDATE Room room SET room.hit = room.hit+1 WHERE room.idx = :idx")
