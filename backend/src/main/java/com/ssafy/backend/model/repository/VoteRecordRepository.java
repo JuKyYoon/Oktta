@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface VoteRecordRepository extends JpaRepository<VoteRecord, VoteRecordId> {
 
-    VoteRecord findByRoomIdxAndAndUserIdx(Long roomIdx, Long userIdx);
+    VoteRecord findByRoomIdxAndUserIdx(Long roomIdx, Long userIdx);
     List<VoteRecord> findAllByRoomIdx(Long roomIdx);
 }
