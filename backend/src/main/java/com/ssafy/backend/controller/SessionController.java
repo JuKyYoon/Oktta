@@ -1,11 +1,13 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.SessionEventDto;
+import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
+import com.ssafy.backend.model.response.SessionEnterResponse;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
@@ -42,21 +44,23 @@ public class SessionController {
      * 방 만들고 입장하기.
      */
     @PostMapping("/{idx}")
-    public ResponseEntity<MessageResponse> createAndEnterSession(@PathVariable("idx") Long sessionIdx)
+    public ResponseEntity<SessionEnterResponse> createAndEnterSession(@PathVariable("idx") Long sessionIdx)
             throws OpenViduJavaClientException, OpenViduHttpException {
         // 방을 만든다. API보낸다. 방 없으면 만들고, 토큰 리턴받는다.
         System.out.println("enter and create session");
 
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), sessionIdx);
+        Room room = sessionService.getSessionRoom(sessionIdx);
+        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
+
         synchronized (SessionController.class) {
             if(isOwner) {
-                sessionService.createSession(principal.getUsername(), sessionIdx);
+                sessionService.createSession(principal.getUsername(), sessionIdx, room);
                 String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.MODERATOR);
-                return ResponseEntity.status(200).body(MessageResponse.of(200, "owner", token));
+                return ResponseEntity.status(200).body(SessionEnterResponse.of(200, "owner", token, room.getTitle()));
             } else {
                 String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.PUBLISHER);
-                return ResponseEntity.status(200).body(MessageResponse.of(200, "participant", token));
+                return ResponseEntity.status(200).body(SessionEnterResponse.of(200, "participant", token, room.getTitle()));
             }
         }
     }
@@ -98,7 +102,9 @@ public class SessionController {
     public ResponseEntity<BaseResponseBody> closeSession(@PathVariable("idx") Long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("session close!!!!!!!!!!!!!");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), sessionIdx);
+
+        Room room = sessionService.getSessionRoom(Long.parseLong(boardIdx));
+        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         if(isOwner) {
             sessionService.closeSession(sessionIdx);
@@ -152,7 +158,7 @@ public class SessionController {
                     if("OUTBOUND".equals(dto.getConnection())) {
                         System.out.printf("%s , 나 자신의 WebRTC 연결을 끊음\n", dto.getConnectionId());
                     } else {
-                        System.out.printf("%s로 부터 WebRTC 연결이 끊어짐\n", dto.getConnectionId());
+                        System.out.printf("%s는 ??? 로부터 받은 WebRTC 연결이 끊어짐\n", dto.getConnectionId());
                     }
                 } else {
                     if(dto.getConnectionId() != null) {
@@ -188,7 +194,7 @@ public class SessionController {
                     if("OUTBOUND".equals(dto.getConnection())) {
                         System.out.printf("%s , 나 자신의 WebRTC연결을 Publish 한다\n", dto.getConnectionId());
                     } else {
-                        System.out.printf("%s 부터 WebRTC 연결을 받는다.\n", dto.getConnectionId());
+                        System.out.printf("%s는 ???의 WebRTC 연결을 받는다.\n", dto.getConnectionId());
                     }
                 } else {
                     if(dto.getConnectionId() != null) {
