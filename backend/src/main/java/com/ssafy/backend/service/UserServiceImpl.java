@@ -110,7 +110,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean modifyUser(User user, UserDto changeUser) {
+    public boolean modifyUser(String userId, UserDto changeUser) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         // 닉네임 deleteUser 포함여부 검사
         if(changeUser.getNickname().contains("deleteUser")){
             return false;
@@ -154,11 +158,15 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원 탈퇴
-     * @param user 로그인한 유저
+     * user 로그인한 유저
      * @param reqPassword 확인 비밀번호
      */
     @Override
-    public void deleteUser(User user, String reqPassword) {
+    public void deleteUser(String userId, String reqPassword) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         String password = user.getPassword();
         int snsType = user.getSnsType();
         user.deleteUser();
@@ -182,12 +190,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void findPassword(String id) throws MessagingException {
         LOGGER.info("Find Password By Sending a Email");
+
         // 존재하는 유저인지 검사한다,
-        userRepository.findById(id).orElseThrow(
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found By Id")
         );
+
+        // 소셜 로그인 유저인지 검사.
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Find Password!");
+        }
+
         String tokenResult = "";
         String resetToken = "";
+
         // 비밀번호 초기화 토큰을 발행한다. (Redis에 저장한다.)
         do {
             resetToken = RandomStringUtils.randomAlphanumeric(authKeySize);
@@ -234,6 +250,14 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void resendAuthMail(String userId) throws MessagingException {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Send ReAuth Mail");
+        }
+
         String authKey = "";
         UserAuthToken tokenResult;
         // 중복 인증 키 아닐 때 까지 반복
@@ -263,6 +287,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
+
+        if(user.getSnsType() != 0){
+            throw new SocialUserException("Social User Can't Modify Password");
+        }
+
         String oldPassword = passwords.getOldPassword();
         String newPassword = passwords.getNewPassword();
 
@@ -279,10 +308,13 @@ public class UserServiceImpl implements UserService {
     /**
      * User entity의 내용을 UserDto로 매핑 후, 비밀번호 제외
      * 소셜 로그인 유저의 경우 아이디, 비밀번호 제외하여 UserDto 반환
-     * @param user
      */
     @Override
-    public UserDto setUserInfo(User user) {
+    public UserDto setUserInfo(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         if(user.getSnsType() != 0){
             return new UserDto(user.getNickname(), user.getCreateDate().toString(),
                     user.getModifyDate().toString(), user.getProfileImg(),

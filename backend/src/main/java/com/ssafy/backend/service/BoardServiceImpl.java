@@ -28,25 +28,31 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardDto detailBoard(Long idx) {
-        BoardDto boardDto = new BoardDto();
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public BoardDto detailBoard(Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
         String nickname = userRepository.findNicknameByIdx(board.getUser().getIdx());
-        boardDto = new BoardDto(nickname, board);
+        BoardDto boardDto = new BoardDto(nickname, board);
 
         return boardDto;
     }
 
     @Override
-    public void createBoard(User user, BoardDto boardDto) {
+    public void createBoard(String id, BoardDto boardDto) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
         boardRepository.save(new Board.Builder(user, boardDto.getTitle(), boardDto.getContent(), boardDto.getCategory()).build());
     }
 
     @Override
-    public int updateHit(Long idx) {
-        return boardRepository.updateHit(idx);
+    public int updateHit(Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
+                () -> new BoardNotFoundException("Board Not Found")
+        );
+
+        return boardRepository.updateHit(boardIdx);
     }
 
     @Override
@@ -68,8 +74,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean deleteBoard(String id, Long idx) {
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public boolean deleteBoard(String id, Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
@@ -83,8 +89,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean updateBoard(String id, Long idx, BoardDto boardDto) {
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public boolean updateBoard(String id, Long boardIdx, BoardDto boardDto) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
@@ -92,7 +98,7 @@ public class BoardServiceImpl implements BoardService {
             return false;
         } else {
             System.out.println(LocalDateTime.now());
-            boardRepository.updateBoard(idx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
+            boardRepository.updateBoard(boardIdx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
             return true;
         }
     }
