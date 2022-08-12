@@ -7,6 +7,7 @@ import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCooki
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
 import com.ssafy.backend.service.CustomOAuth2UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,13 +76,19 @@ public class SecurityConfig {
             "/user/reset-token/**"
     };
 
-    public SecurityConfig(AppProperties appProperties, CustomOAuth2UserService oAuth2UserService, UserRepository userRepository, JwtProvider jwtProvider, AuthenticationEntryPoint authenticationEntryPointHandler, AccessDeniedHandler webAccessDeniedHandler) {
+    private final String frontUrl;
+
+    public SecurityConfig(AppProperties appProperties, CustomOAuth2UserService oAuth2UserService,
+                          UserRepository userRepository, JwtProvider jwtProvider,
+                          AuthenticationEntryPoint authenticationEntryPointHandler,
+                          AccessDeniedHandler webAccessDeniedHandler, @Value("${frontend}") String frontUrl) {
         this.appProperties = appProperties;
         this.oAuth2UserService = oAuth2UserService;
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.webAccessDeniedHandler = webAccessDeniedHandler;
+        this.frontUrl = frontUrl;
     }
 
     /**
@@ -107,6 +114,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/user/reauth").hasRole("GUEST")
                 .antMatchers(HttpMethod.DELETE, "/auth").hasAnyRole("GUEST", "USER", "ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/user").hasAnyRole("GUEST", "USER", "ADMIN")
                 .anyRequest().hasAnyRole("USER", "ADMIN");
 
         http
@@ -185,7 +193,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(frontUrl);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

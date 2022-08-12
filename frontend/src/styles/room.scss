@@ -8,37 +8,139 @@
   padding: 10px;
 }
 
+
 .hrLine {
-  width: 800px;
-}
-.create-room-label {
-  font-size: 18px;
-  margin-bottom: 10px;
+  width: 80%;
 }
 
-.create-room-input {
-  width: 400px;
-  border: none;
-  border-bottom: solid;
-  border-color: $veryperi;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  font-size: 20px;
+
+// RoomList 관련
+.create-button {
+  align-self: end;
+  margin-right: 10%;
 }
+.table-container {
+  width: 80%;
+}
+
+
+// RoomCreate, RoomEdit관련
+.room-title-form{
+  margin-bottom: 10px;
+  margin-top: 5px;
+  width: 40%;
+}
+.room-button{
+  margin: 10px;
+}
+.room-editor{
+  margin-bottom: 10px;
+}
+.ck-editor__editable{
+  min-height: 400px;
+}
+
 
 .myBtn {
   font-size: 28px;
 }
 
-.ck-editor__editable {
-  min-height: 400px;
-  min-width: 400px;
+
+// RoomDetail 관련
+.detail-component {
   margin-bottom: 20px;
+}
+.detail-body {
+  display: flex;
+  width: 80%;
+  flex-direction: row;
+}
+.radio-button {
+  display: flex;
+  flex-direction: column;
+}
+.detail-editor {
+  width: 50%;
+}
+.detail-button {
+  margin: 5px !important;
+}
+.vote-body {
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  h3 {
+    text-align: center;
+  }
+}
+.vote-component {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.donut-chart {
+  width: 40%;
+  height: 40%;
+  aspect-ratio: 1;
+  margin: 5%;
 }
 
-.detail-component{
-  margin-bottom: 20px;
+
+// RoomComment 관련
+.comments-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
 }
+.comment-title{
+  margin-right: auto;
+}
+.comments-header {
+  width: 100%;
+}
+.comments-header-textarea {
+  width: 70%;
+}
+
+.comments-body {
+  margin-top: 20px;
+}
+.comment-date {
+  color: gray;
+}
+
+.comment-content {
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: 10px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 18px;
+}
+
+.comment-username {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: baseline;
+  font-weight: 600;
+}
+.comments-edit-textarea {
+  width: 70%;
+}
+.comments-footer {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+}
+
+
+
+
 
 // 게임 불러오기 모달
 .modal-box {

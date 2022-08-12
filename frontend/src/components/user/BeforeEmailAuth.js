@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Button, Stack } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { sendEmail } from "../../services/userService";
 
@@ -10,13 +10,20 @@ const BeforeEmailAuth = () => {
   const sendEmailHandler = () => {
     setClicked(true);
     sendEmail()
-      .then((res) => {})
-      .catch((err) => console.log(err));
-    alert("인증 이메일을 발송하였습니다.");
+      .then((res) => {
+        if (res.data.message === "success") {
+          alert("인증 이메일을 다시 발송하였습니다.");
+        }
+        else {
+          alert("인증 이메일 전송에 실패하였습니다.");
+          setClicked(false);
+        }
+      })
+      .catch((err) => alert("인증 이메일 전송에 실패하였습니다."));
   };
 
   return (
-    <Stack direction="row" spacing={2}>
+    <div className="email-auth-notice">
       <Alert severity="warning">
         이메일을 인증해서 OKTTA의 모든 서비스를 이용해보세요!
       </Alert>
@@ -29,7 +36,7 @@ const BeforeEmailAuth = () => {
       >
         인증 메일 보내기
       </Button>
-    </Stack>
+    </div>
   );
 };
 
