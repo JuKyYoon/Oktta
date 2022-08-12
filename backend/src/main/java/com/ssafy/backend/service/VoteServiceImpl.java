@@ -142,4 +142,14 @@ public class VoteServiceImpl implements VoteService{
         );
         return new VoteDto(vote);
     }
+
+    @Override
+    public int getMyVote(Long roomIdx, String id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndAndUserIdx(roomIdx, user.getIdx());
+        return (voteRecord == null) ? 0 : voteRecord.getNumber();
+    }
 }

@@ -12,4 +12,5 @@ public interface VoteService {
     boolean endVote(Long roomIdx, String id);
     void deleteVote(Long roomIdx);
     VoteDto getVoteDto(Long roomIdx);
+    int getMyVote(Long roomIdx, String id);
 }
