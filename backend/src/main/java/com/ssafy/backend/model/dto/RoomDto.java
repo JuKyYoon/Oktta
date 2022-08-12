@@ -132,13 +132,6 @@ public class RoomDto {
     public void setVoteDto(VoteDto voteDto) {
         this.voteDto = voteDto;
     }
-    public MatchDto getMatch() {
-        return matchDto;
-    }
-
-    public void setMatch(MatchDto match) {
-        this.matchDto = match;
-    }
 
     public int getTier() {
         return tier;

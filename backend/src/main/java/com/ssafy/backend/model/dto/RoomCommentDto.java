@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 public class RoomCommentDto {
     private Long idx;
     private String nickname;
+    private String profileImage;
+    private String tier;
     private String content;
     private LocalDateTime createTime;
 
@@ -51,5 +53,21 @@ public class RoomCommentDto {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
     }
 }
