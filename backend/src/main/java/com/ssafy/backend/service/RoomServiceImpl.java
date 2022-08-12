@@ -50,7 +50,7 @@ public class RoomServiceImpl implements RoomService {
                 () -> new UserNotFoundException("User Not Found")
         );
         // MatchDto to Match
-        MatchDto matchDto = roomDto.getMatch();
+        MatchDto matchDto = roomDto.getMatchDto();
         if(matchDto == null){
             throw new MatchNullException("Match Is Null");
         }
@@ -69,7 +69,7 @@ public class RoomServiceImpl implements RoomService {
         );
         RoomDto roomDto = RoomMapper.mapper.toDto(room);
         Match match = matchRepository.getReferenceById(room.getMatch().getMatchId());
-        roomDto.setMatch(matchMapper.entityToDto(match));
+        roomDto.setMatchDto(matchMapper.entityToDto(match));
         User user = room.getUser();
         String nickName = deleteUserService.checkNickName(user.getNickname());
         roomDto.setNickname(nickName);
@@ -114,7 +114,7 @@ public class RoomServiceImpl implements RoomService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        MatchDto matchDto = roomDto.getMatch();
+        MatchDto matchDto = roomDto.getMatchDto();
         if(matchDto == null){
             throw new MatchNullException("Match Is Null");
         }
@@ -181,7 +181,7 @@ public class RoomServiceImpl implements RoomService {
                 roomDto.setTier(lolAuth.getTier());
             }
             MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
-            roomDto.setMatch(matchDto);
+            roomDto.setMatchDto(matchDto);
             list.add(roomDto);
         }
         return list;
@@ -201,7 +201,7 @@ public class RoomServiceImpl implements RoomService {
                 roomDto.setTier(lolAuth.getTier());
             }
             MatchDto matchDto = matchMapper.entityToDto(room.getMatch());
-            roomDto.setMatch(matchDto);
+            roomDto.setMatchDto(matchDto);
             list.add(roomDto);
         }
         return list;
