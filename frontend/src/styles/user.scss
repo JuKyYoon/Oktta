@@ -202,6 +202,16 @@
   padding: 10px;
 }
 
+.signup-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-left {
+  display: flex;
+  justify-content: center;
+}
+
 /* 이메일 인증 메시지 */
 .email-auth-notice {
   display: flex;

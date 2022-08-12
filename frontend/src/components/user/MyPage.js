@@ -25,14 +25,14 @@ const MyPage = () => {
 
   const getMyPage = async () => {
     const result = await getMyRoom();
-    if(result?.data?.message === "success") {
+    if (result?.data?.message === "success") {
       setRoomList(result?.data?.list);
     } else {
       console.log("불러오기 실패")
     };
 
     const result2 = await getProfileRequest();
-    if(result2?.data?.message === "success") {
+    if (result2?.data?.message === "success") {
       setProfile(result2?.data?.result)
     } else {
       console.log("프로파일 불러오기 실패");

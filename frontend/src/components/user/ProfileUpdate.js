@@ -168,14 +168,15 @@ const ProfileUpdate = () => {
   };
 
   const deleteUser = async () => {
-    const result = await delAccount({ data: { delPassword } });
-    if (result?.payload?.data?.message === "success") {
+    const result = await delAccount({ data: { 'password': delPassword } });
+    if (result?.data?.message === "success") {
       navigate('/');
       alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
       dispatch({ type: LOGOUT });
     }
     else {
       alert("비밀번호를 잘못 입력했습니다.");
+      setDelPassword('');
       handleClose();
     };
   };

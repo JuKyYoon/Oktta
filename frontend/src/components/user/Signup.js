@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FormControl,
   InputLabel,
@@ -41,6 +41,7 @@ const Signup = () => {
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [banned, setBanned] = useState(false);
 
+  const [uploadOpen, setUploadOpen] = useState(false);
   const navigate = useNavigate();
 
   const emailChange = (event) => {
@@ -111,9 +112,10 @@ const Signup = () => {
     };
 
     formData.append('user', new Blob([JSON.stringify(user)], { type: "application/json" }));
-    if (!formData.get('profileImg')) {
+    if (formData.get('profileImg') === null) {
       formData.append('profileImg', new Blob([], { type: "image/png" }));
     };
+    console.log(formData.get('profileImg'));
 
     const result = await signupRequest(formData);
     if (result?.data?.message === "success") {
@@ -126,12 +128,44 @@ const Signup = () => {
     };
   };
 
+  const profileSelect = useRef();
+  const profileShow = useRef();
+  const fileUpload = () => {
+    profileSelect.current.onClick = handleFileInput();
+    profileSelect.current.click();
+  }
+
   const formData = new FormData();
   const handleFileInput = (event) => {
-    if (event.target.files[0]) {
-      formData.append('profileImg', new Blob([event.target.files[0]], { type: event.target.files[0].type }));
-    };
+    if (!uploadOpen) {
+      setUploadOpen(true);
+    }
+    else {
+      if (event.target.files[0]) {
+        profileShow.current.style.display = '';
+        const file = event.target.files[0];
+        profileShow.current.src = URL.createObjectURL(file);
+        console.log(new Blob([file], { type: file.type }));
+        const a = file.toBlob(file.type);
+        console.log(a);
+        formData.append('profileImg', new Blob([file], { type: file.type }));
+        console.log(formData.get('profileImg'));
+      }
+      else {
+        if (formData.get('profileImg')) {
+          formData.append('profileImg', formData.get('profileImg'));
+        }
+      };
+      setUploadOpen(false);
+    }
   };
+
+  const delProfile = () => {
+    if (formData.get('profileImg')) {
+      formData.delete('profileImg');
+    }
+    profileShow.current.style.display = 'none';
+  }
 
   return (
     <div className="form">
@@ -219,13 +253,21 @@ const Signup = () => {
       </FormControl>
       <br />
       <FormControl>
-        <div>
-          <p>프로필 이미지 업로드 (선택)</p>
+        <p>프로필 이미지 업로드 (선택)</p>
+        <div className="signup-profile">
+          <div className="profile-left">
+            <Button onClick={fileUpload}>업로드</Button>
+            <Button onClick={delProfile}>삭제</Button>
+          </div>
           <input
             type='file'
             accept='image/*'
-            onChange={e => handleFileInput(e)}
+            onChange={event => handleFileInput(event)}
+            style={{ display: 'none' }}
+            id='profileUploadBtn'
+            ref={profileSelect}
           />
+          <img src="#" alt="profile-image" ref={profileShow} style={{ display: 'none', width: 200, alignSelf: 'center' }} />
         </div>
       </FormControl>
       <br />
