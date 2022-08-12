@@ -35,11 +35,8 @@ public class SessionController {
 
     private final SessionService sessionService;
 
-    private final UserRepository userRepository;
-
-    public SessionController(SessionService sessionService, UserRepository userRepository) {
+    public SessionController(SessionService sessionService) {
         this.sessionService = sessionService;
-        this.userRepository = userRepository;
     }
 
 
@@ -47,27 +44,22 @@ public class SessionController {
      * 방 만들고 입장하기.
      */
     @PostMapping("/{idx}")
-    public ResponseEntity<SessionEnterResponse> createAndEnterSession(@PathVariable("idx") String boardIdx)
+    public ResponseEntity<SessionEnterResponse> createAndEnterSession(@PathVariable("idx") Long sessionIdx)
             throws OpenViduJavaClientException, OpenViduHttpException {
         // 방을 만든다. API보낸다. 방 없으면 만들고, 토큰 리턴받는다.
         System.out.println("enter and create session");
 
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-
-        long sessionIdx = Long.parseLong(boardIdx);
         Room room = sessionService.getSessionRoom(sessionIdx);
-        boolean isOwner = sessionService.checkSessionOwner(user.getId(), room);
+        boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         synchronized (SessionController.class) {
             if(isOwner) {
-                sessionService.createSession(user.getId(), sessionIdx, room);
-                String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.MODERATOR);
+                sessionService.createSession(principal.getUsername(), sessionIdx, room);
+                String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.MODERATOR);
                 return ResponseEntity.status(200).body(SessionEnterResponse.of(200, "owner", token, room.getTitle()));
             } else {
-                String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
+                String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.PUBLISHER);
                 return ResponseEntity.status(200).body(SessionEnterResponse.of(200, "participant", token, room.getTitle()));
             }
         }
@@ -92,37 +84,30 @@ public class SessionController {
 
     /**
      * 세션 입장
-     * @param boardIdx
+     * @param sessionIdx
      */
     @GetMapping("/{idx}")
-    public ResponseEntity<MessageResponse> enterSession(@PathVariable("idx") String boardIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<MessageResponse> enterSession(@PathVariable("idx") Long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-
 
         System.out.println("enter session");
-        long sessionIdx = Long.parseLong(boardIdx);
-
-
-        String token = sessionService.enterSession(user, sessionIdx, OpenViduRole.PUBLISHER);
+        String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.PUBLISHER);
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
-
     }
 
     /**
      * 세션 닫기
      */
     @DeleteMapping("/{idx}")
-    public ResponseEntity<BaseResponseBody> closeSession(@PathVariable("idx") String boardIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<BaseResponseBody> closeSession(@PathVariable("idx") Long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("session close!!!!!!!!!!!!!");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Room room = sessionService.getSessionRoom(Long.parseLong(boardIdx));
         boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         if(isOwner) {
-            sessionService.closeSession(Long.parseLong(boardIdx));
+            sessionService.closeSession(sessionIdx);
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));

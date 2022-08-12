@@ -22,7 +22,7 @@ public class VoteController {
     private String failMsg;
     private final VoteService voteService;
 
-    public VoteController(VoteService voteService, RoomService roomService){
+    public VoteController(VoteService voteService){
         this.voteService = voteService;
     }
 

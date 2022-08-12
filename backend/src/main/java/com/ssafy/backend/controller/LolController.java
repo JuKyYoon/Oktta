@@ -30,12 +30,10 @@ public class LolController {
     @Value("${response.fail}")
     private String failMsg;
 
-    private final UserRepository userRepository;
     private final LOLService lolService;
 
 
-    public LolController(UserRepository userRepository, LOLService lolService) {
-        this.userRepository = userRepository;
+    public LolController(LOLService lolService) {
         this.lolService = lolService;
     }
 
@@ -47,10 +45,8 @@ public class LolController {
     @PostMapping("")
     public ResponseEntity<BaseResponseBody> tier(@RequestBody Map<String, String> summonerMap) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        boolean result = lolService.createLolAuth(user.getId(), summonerMap.get("summonerName"));
+
+        boolean result = lolService.createLolAuth(principal.getUsername(), summonerMap.get("summonerName"));
         if(result){
             return ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
         }else{

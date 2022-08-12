@@ -58,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto getRoom(long roomIdx) {
+    public RoomDto getRoom(Long roomIdx) {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found in Get Room")
         );
@@ -73,8 +73,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public int updateHit(Long idx) {
-        return roomRepository.updateHit(idx);
+    public int updateHit(Long roomIdx) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found in Get Room")
+        );
+
+        return roomRepository.updateHit(roomIdx);
     }
 
     @Override

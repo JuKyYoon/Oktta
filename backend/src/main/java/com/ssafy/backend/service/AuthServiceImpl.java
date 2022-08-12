@@ -95,6 +95,10 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void signOut(HttpServletRequest req, String userId, String refreshToken) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         // Redis에서 refreshToken 삭제
         redisService.deleteKey(refreshToken);
 
