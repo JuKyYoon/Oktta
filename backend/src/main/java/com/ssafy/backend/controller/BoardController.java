@@ -55,12 +55,21 @@ public class BoardController {
     @GetMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") Long boardIdx){
         BoardDto board = boardService.detailBoard(boardIdx);
-        boardService.updateHit(board.getIdx());
 
         List<BoardCommentDto> list = boardCommentService.getBoardCommentList(boardIdx);
         int temp = list.size() / pagingLimit;
         int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
+
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
+    }
+
+    /**
+     * 게시글 조회수 +1
+     */
+    @PutMapping("/hit/{idx}")
+    public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long boardIdx) {
+        boardService.updateHit(boardIdx);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
     /**
@@ -69,10 +78,7 @@ public class BoardController {
     @PostMapping("")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto boardDto){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        boardService.createBoard(user, boardDto);
+        boardService.createBoard(principal.getUsername(), boardDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 

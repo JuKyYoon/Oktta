@@ -6,8 +6,8 @@ import com.ssafy.backend.model.entity.User;
 import java.util.List;
 
 public interface BoardService {
-    public BoardDto detailBoard(Long idx);
-    public void createBoard(User user, BoardDto boardDto);
+    public BoardDto detailBoard(Long boardIdx);
+    public void createBoard(String id, BoardDto boardDto);
     public int updateHit(Long idx);
     public List<BoardDto> getBoardList(int category, int limit, int page);
     public int getLastPage(int category, int limit);
