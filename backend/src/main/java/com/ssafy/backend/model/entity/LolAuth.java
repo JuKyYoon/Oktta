@@ -35,6 +35,31 @@ public class LolAuth {
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
 
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getPuuid() {
+        return puuid;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public String getSummonerName() {
+        return summonerName;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
     protected LolAuth(){}
 
     private LolAuth(Builder builder){
