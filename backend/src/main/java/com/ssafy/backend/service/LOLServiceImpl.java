@@ -4,7 +4,10 @@ import com.ssafy.backend.model.dto.LolInfoDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
 import com.ssafy.backend.model.dto.lol.ParticipantDto;
 import com.ssafy.backend.model.entity.LolAuth;
+import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.LolAuthRepository;
+import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.util.LolTier;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -27,7 +30,7 @@ public class LOLServiceImpl implements LOLService {
     private final WebClient webClient;
     private final WebClient asiaWebClinet;
     private final LolAuthRepository lolAuthRepository;
-
+    private final UserRepository userRepository;
     @Value("${riot.api-key}")
     private String apiKey;
 
@@ -35,10 +38,11 @@ public class LOLServiceImpl implements LOLService {
     private int gameCount;
 
     public LOLServiceImpl(WebClient webClient, @Value("${riot.url}") String riotUrl,
-                          @Value("${riot.asia-url}") String riotAsiaUrl, WebClient asiaWebClinet, LolAuthRepository lolAuthRepository) {
+                          @Value("${riot.asia-url}") String riotAsiaUrl, WebClient asiaWebClinet, LolAuthRepository lolAuthRepository, UserRepository userRepository) {
         this.lolAuthRepository = lolAuthRepository;
         this.webClient = webClient.mutate().baseUrl(riotUrl).build();
         this.asiaWebClinet = asiaWebClinet.mutate().baseUrl(riotAsiaUrl).build();
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -61,6 +65,10 @@ public class LOLServiceImpl implements LOLService {
 
     @Override
     public boolean createLolAuth(String userId, String summonerName) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
         LOGGER.info("getUserInfo start");
         try{
             LolInfoDto userInfo = getUserInfo(summonerName).block();

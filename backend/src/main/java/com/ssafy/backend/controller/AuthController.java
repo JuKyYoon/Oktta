@@ -35,15 +35,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final UserRepository userRepository;
-
-
-
     private static final String REFRESHTOKEN_KEY = "refreshToken";
 
-    public AuthController(AuthService authService, UserRepository userRepository) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -67,9 +62,7 @@ public class AuthController {
     @DeleteMapping("")
     public ResponseEntity<BaseResponseBody> signOut(HttpServletRequest request, HttpServletResponse response){
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
+
         Cookie[] cookies = request.getCookies();
         String refreshToken = "";
         if(cookies != null) {
@@ -80,7 +73,7 @@ public class AuthController {
                 }
             }
         }
-        authService.signOut(request, user.getId(), refreshToken);
+        authService.signOut(request, principal.getUsername(), refreshToken);
         SetCookie.deleteRefreshTokenCookie(response);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }

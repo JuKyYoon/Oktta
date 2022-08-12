@@ -35,7 +35,7 @@ public class BoardCommentController {
      */
     @PostMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> createComment(@PathVariable("idx") Long idx, @RequestBody BoardCommentDto boardCommentDto){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boardCommentService.createBoardComment(principal.getUsername(), idx, boardCommentDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
@@ -45,7 +45,7 @@ public class BoardCommentController {
      */
     @PutMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> updateComment(@PathVariable("idx") Long idx, @RequestBody BoardCommentDto boardCommentDto){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = boardCommentService.updateBoardComment(principal.getUsername(), idx, boardCommentDto);
         if(result){
             return ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
@@ -59,7 +59,7 @@ public class BoardCommentController {
      */
     @DeleteMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> deleteComment(@PathVariable("idx") Long idx){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = boardCommentService.deleteBoardComment(principal.getUsername(), idx);
         if(result){
             return ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
