@@ -21,6 +21,6 @@ public interface SessionService {
     JSONObject getSessionsFromJava() throws OpenViduJavaClientException, OpenViduHttpException;
     JSONObject connectionPrint() throws OpenViduJavaClientException, OpenViduHttpException;
     void clearSession();
-    Map<Boolean, Recording> recordingStart(String userId, Long sessionIdx, Map<String, Object> params);
-    Map<Boolean, Recording> recordingStop(String userId, Long sessionIdx, Map<String, Object> params);
+    Map<Boolean, Recording> recordingStart(String userId, Long roomIdx, Map<String, Object> params);
+    Map<Boolean, Recording> recordingStop(String userId, Long roomIdx, Map<String, Object> params);
 }

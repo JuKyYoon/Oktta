@@ -204,22 +204,21 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Map<Boolean, Recording> recordingStart(String userId, Long sessionIdx, Map<String, Object> params) {
+    public Map<Boolean, Recording> recordingStart(String userId, Long roomIdx, Map<String, Object> params) {
         Map<Boolean, Recording> result = new HashMap<>();
 
         // 403 -> throw
-        if(!check(userId, sessionIdx)) {
+        if(!check(userId, roomIdx)) {
             result.put(false, null);
             return result;
         }
 
-        Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) params.get("outputMode"));
-        RecordingProperties properties = new RecordingProperties.Builder().outputMode(outputMode)
-                .hasAudio(true).hasVideo(true).build();
+        RecordingProperties properties = new RecordingProperties.Builder().build();
 
+        String sessionId = (String) params.get("sessionId");
         try {
-            Recording recording = this.openVidu.startRecording(sessionIdx.toString(), properties);
-            this.sessionRecordings.put(sessionIdx.toString(), true);
+            Recording recording = this.openVidu.startRecording(sessionId, properties);
+            this.sessionRecordings.put(sessionId, true);
             result.put(true, recording);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             result.put(true, null);
@@ -229,11 +228,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Map<Boolean, Recording> recordingStop(String userId, Long sessionIdx, Map<String, Object> params) {
+    public Map<Boolean, Recording> recordingStop(String userId, Long roomIdx, Map<String, Object> params) {
         Map<Boolean, Recording> result = new HashMap<>();
 
         // 403 -> throw
-        if(!check(userId, sessionIdx)) {
+        if(!check(userId, roomIdx)) {
             result.put(false, null);
             return result;
         }
@@ -304,7 +303,7 @@ public class SessionServiceImpl implements SessionService {
         }
     }
 
-    private boolean check(String userId, Long sessionIdx){
+    private boolean check(String userId, Long roomIdx){
 
         // 유저 없음
         User user = userRepository.findById(userId).orElseThrow(
@@ -312,12 +311,12 @@ public class SessionServiceImpl implements SessionService {
         );
 
         // 글 없음
-        Room room = roomRepository.findById(sessionIdx).orElseThrow(
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found")
         );
 
         // 세션 없음
-        if(searchSession(sessionIdx) == null) {
+        if(searchSession(roomIdx) == null) {
             throw new SessionNotFoundException("Session Not Found");
         }
 

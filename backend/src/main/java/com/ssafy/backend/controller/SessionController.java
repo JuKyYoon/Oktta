@@ -217,39 +217,50 @@ public class SessionController {
         return new ResponseEntity<>("200", HttpStatus.OK);
     }
 
+    /**
+     * @param roomIdx
+     * JSON 형식: "sessionId" : sessionId
+     * @return
+     */
     @PostMapping("/recording/start/{idx}")
-    public ResponseEntity<? extends BaseResponseBody> startRecording(@PathVariable("idx") Long sessionIdx, @RequestBody Map<String, Object> params) {
+    public ResponseEntity<? extends BaseResponseBody> startRecording(@PathVariable("idx") Long roomIdx, @RequestBody Map<String, Object> params) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println("<------------ 녹화 시작 ------------>");
 
-        Map<Boolean, Recording> map = sessionService.recordingStart(principal.getUsername(), sessionIdx, params);
+        Map<Boolean, Recording> map = sessionService.recordingStart(principal.getUsername(), roomIdx, params);
         if(map.containsKey(false)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponseBody(403, failMsg));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
 
         Recording result = map.get(true);
         if(result != null) {
             return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponseBody(400, failMsg));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
         }
     }
 
+    /**
+     * @param roomIdx
+     * JSON 형식: "recording" : recordingId
+     * recordingId는 start에서 return받은 JSON 중 recordingProperties의 name 값.
+     * @return
+     */
     @PostMapping("/recording/stop/{idx}")
-    public ResponseEntity<? extends BaseResponseBody> stopRecording(@PathVariable("idx") Long sessionIdx, @RequestBody Map<String, Object> params){
+    public ResponseEntity<? extends BaseResponseBody> stopRecording(@PathVariable("idx") Long roomIdx, @RequestBody Map<String, Object> params){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println("<------------ 녹화 중단 ------------>");
         
-        Map<Boolean, Recording> map = sessionService.recordingStop(principal.getUsername(), sessionIdx, params);
+        Map<Boolean, Recording> map = sessionService.recordingStop(principal.getUsername(), roomIdx, params);
         if(map.containsKey(false)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponseBody(403, failMsg));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
 
         Recording result = map.get(true);
         if(result != null) {
             return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponseBody(400, failMsg));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
         }
     }
 }
