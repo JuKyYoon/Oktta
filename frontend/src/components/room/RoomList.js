@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
+import Loading from '../layout/Loading';
 import { getRoomList } from '../../services/roomService';
 import '../../styles/room.scss';
 import {
@@ -18,32 +19,29 @@ const RoomList = () => {
   const [lastPage, setLastPage] = useState(10);
   const [rooms, setRooms] = useState(false);
 
+  const createRoomList = async (currentPage) => {
+    const result = await getRoomList(currentPage);
+    if (result?.data?.message === 'success') {
+      setRooms(result.data.list);
+      setLastPage(result.data.lastPage);
+    } else {
+      alert('게시물 불러오기 실패');
+      navigate('/');
+    };
+  };
+
   useEffect(() => {
-    getRoomList(currentPage)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setRooms(res.data.list);
-          setLastPage(res.data.lastPage);
-        } else {
-          alert('게시물 불러오기 실패');
-        }
-      })
-      .catch(() => navigate('/'));
+    createRoomList(currentPage);
   }, []);
 
-  const onChangeHandler = (e, page) => {
+  const onChangeHandler = (event, page) => {
     setCurrentPage(page);
-
-    getRoomList(page)
-      .then((res) => {
-        setRooms(res.data.list);
-      })
-      .catch((err) => console.log(err));
+    createRoomList(page);
   };
 
   return (
     <div>
-      {/* {rooms.length ? ( */}
+      {rooms ? (
       <div className='room'>
         <h1>현재 방 목록</h1>
         <Link
@@ -67,35 +65,6 @@ const RoomList = () => {
                   <TableCell align='center'>조회수</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {rooms.map((room) => (
-                  <TableRow key={room.idx}>
-                    <TableCell align='center'>
-                      {room.live ? '🔊' : '🔈'}
-                    </TableCell>
-                    <TableCell align='center'>
-                      <Link
-                        to={`../${room.idx}`}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        {room.title}
-                      </Link>
-                    </TableCell>
-                    <TableCell align='center'>
-                      {room.createDate.substr(0, 10)}
-                    </TableCell>
-                    <TableCell align='center'>{room.nickname}</TableCell>
-                    <TableCell align='center'>{room.hit}</TableCell>
-                    <TableCell align='center'>
-                      <Link
-                        to={`../${room.idx}`}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        입장하기🔥
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
                 <TableBody>
                   {rooms.map((room) => (
                     <TableRow key={room.idx}>
@@ -135,17 +104,9 @@ const RoomList = () => {
             onChange={onChangeHandler}
           />
         </div>
-        <Pagination
-          count={lastPage}
-          page={currentPage}
-          showFirstButton
-          showLastButton
-          onChange={onChangeHandler}
-        />
-      </div>
-      {/* ) : (
+      ) : (
         <Loading />
-      )} */}
+      )}
     </div>
   );
 };

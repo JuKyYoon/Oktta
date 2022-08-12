@@ -17,7 +17,7 @@ const PwInquiryNewPassword = () => {
   const [isPasswordSame, setIsPasswordSame] = useState(false);
 
   const passwordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
     const isPasswordValid = regPassword.test(event.target.value);
 
     setPassword(event.target.value);
@@ -92,7 +92,7 @@ const PwInquiryNewPassword = () => {
           <FormHelperText error={!!password && !isPasswordValid}>
             {isPasswordValid
               ? '안전한 비밀번호입니다.'
-              : '영문 + 숫자 조합으로 8자 이상으로 설정해주세요.'}
+              : '영문 + 숫자 조합으로 8~16자로 설정해주세요.'}
           </FormHelperText>
         </FormControl>
         <br />

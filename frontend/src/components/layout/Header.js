@@ -12,15 +12,10 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onLogoutHandler = () => {
-    dispatch(logoutRequest())
-      .then((res) => navigate('/'))
-      .catch((err) => {
-        state.user = initState;
-        localStorage.removeItem('persist:root');
-        navigate('/');
-        // console.log(err);
-      });
+  const onLogoutHandler = async () => {
+    const result = await logoutRequest();
+    dispatch(result);
+    navigate('/');
   };
 
   return (

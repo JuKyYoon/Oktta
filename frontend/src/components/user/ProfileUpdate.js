@@ -84,7 +84,7 @@ const ProfileUpdate = () => {
   };
 
   const newPasswordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
     const isNewPasswordValid = regPassword.test(event.target.value);
 
     setNewPassword(event.target.value);
@@ -283,7 +283,7 @@ const ProfileUpdate = () => {
                 error={!!newPassword && !isNewPasswordValid}>
                 {isNewPasswordValid
                   ? '안전한 비밀번호입니다.'
-                  : '영문 + 숫자 조합으로 8자 이상으로 설정해주세요.'}
+                  : '영문 + 숫자 조합으로 8~16자로 설정해주세요.'}
               </FormHelperText>
             </FormControl>
           </div>

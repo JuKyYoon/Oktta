@@ -19,86 +19,74 @@ const RoomDetail = () => {
   const { idx } = useParams();
   const [room, setRoom] = useState({});
   const [vote, setVote] = useState('');
-
   const [voteDto, setVoteDto] = useState(null);
 
+  const getDetailRoom = async (idx) => {
+    const result = await detailRoom(idx)
+    // 투표가 종료된 방이면 voteDto값 설정해주기
+    if (result?.data?.message === 'success' && result?.data?.result?.voteDto) {
+      setVoteDto(result.data.result.voteDto);
+    } else if (result?.response?.status === 404 || result?.response?.status === 400) {
+      alert('잘못된 접근입니다.')
+      navigate('../list');
+    };
+    setRoom(result?.data?.result);
+  };
+
   useEffect(() => {
-    detailRoom(idx)
-      .then((res) => {
-        console.log(res);
-        // 투표가 종료된 방이면 voteDto값 설정해주기
-        if (res.data.message === 'success' && res.data.result.voteDto) {
-          setVoteDto(res.data.result.voteDto);
-        }
-        setRoom(res.data.result);
-      })
-      .catch((err) => {
-        if (err.status === 404 || err.status === 400) {
-          navigate('../list');
-        }
-      });
+    getDetailRoom(idx);
   }, [vote]);
 
-  const onDeleteButtonClicked = () => {
-    deleteRoom(idx)
-      .then((res) => {
-        // 200 성공이면 삭제
-        if (res.data.message === 'success') {
-          navigate('../list');
-        }
-        // 200 실패이면 남의 글 삭제
-        else if (res.data.message === 'fail') {
-          alert('잘못된 요청입니다.');
-        }
-      })
-      .catch(() => {
-        navigate('../list');
-      });
+  const onDeleteButtonClicked = async () => {
+    const result = await deleteRoom(idx);
+    // 200 성공이면 삭제
+    if (result?.data?.message === 'success') {
+      navigate('../list');
+    } else if (result?.data?.message === 'fail') {
+      console.log(result)
+      // 200 실패이면 남의 글 삭제
+      alert('잘못된 요청입니다.');
+    } else {
+      alert('잘못된 요청입니다.')
+      console.log(result?.response?.status)
+      navigate('../list');
+    };
   };
 
-  const onVoteEndButtonClicked = () => {
-    quitVote(idx)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setVote('-1');
-        } else if (res.data.message === 'fail') {
-          alert('접근 권한이 없습니다.');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        navigate('/error');
-      });
+  const onVoteEndButtonClicked = async () => {
+    const result = await quitVote(idx);
+    if (result?.data?.message === 'success') {
+      setVote('-1');
+    } else if (result?.data?.message === 'fail') {
+      console.log(result)
+      alert('접근 권한이 없습니다.');
+    } else {
+      console.log(result);
+      navigate('/error');
+    };
   };
-  const handleVoteChanged = (e) => {
-    setVote(e.target.value);
+  const handleVoteChanged = (event) => {
+    setVote(event.target.value);
   };
 
-  const onVoteButtonClicked = () => {
-    createVote(idx, vote)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          alert('투표하였습니다.');
-        } else {
-          alert('투표에 실패하였습니다...');
-        }
-      })
-      .catch((err) => console.log(err));
+  const onVoteButtonClicked = async () => {
+    const result = await createVote(idx, vote)
+    if (result?.data?.message === 'success') {
+      alert('투표하였습니다.');
+    } else {
+      alert('투표에 실패하였습니다...');
+    }
     setVote('');
   };
 
-  const onVoteCancelButtonClicked = () => {
-    deleteVote(idx)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          alert('투표를 철회하였습니다.');
-          setVote('');
-        } else if (res.data.message === 'fail') {
-          alert('먼저 투표를 해주세요!');
-          setVote('');
-        }
-      })
-      .catch((err) => console.log(err));
+  const onVoteCancelButtonClicked = async () => {
+    const result = await deleteVote(idx)
+    if (result?.data?.message === 'success') {
+      alert('투표를 철회하였습니다.');
+    } else if (result?.data?.message === 'fail') {
+      alert('먼저 투표를 해주세요!');
+    }
+    setVote('');
   };
 
   return (

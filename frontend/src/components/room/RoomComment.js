@@ -20,76 +20,58 @@ const RoomComment = ({ idx }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const user = useSelector((state) => state.user);
 
+  const getDetailRoom = async (idx) => {
+    const result = await detailRoom(idx);
+
+    if (result?.data?.message === 'success') {
+      setTotalComments(result.data.commentList.length);
+      setCommentList([...result.data.commentList.slice(0, currentPage * 5)]);
+      setTotalPage(Math.ceil(result.data.commentList.length / 5));
+    };
+  };
+
   useEffect(() => {
-    detailRoom(idx)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setTotalComments(res.data.commentList.length);
-          setCommentList([...res.data.commentList.slice(0, currentPage * 5)]);
-          setTotalPage(Math.ceil(res.data.commentList.length / 5));
-        }
-      })
-      .catch((err) => console.log(err));
+    getDetailRoom(idx);
+
   }, [currentPage, totalPage, totalComments, isEditMode]);
 
-  const submit = () => {
+  const submit = async () => {
     const body = { content };
-    createRoomComment(idx, body)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setTotalComments((curr) => curr + 1);
-          setContent('');
-          alert('댓글 작성 완료!');
-        } else {
-          setContent('');
-          alert('댓글작성에 실패하였습니다.');
-        }
-      })
-      .catch(() => {
-        setContent('');
-        alert('댓글작성에 실패하였습니다.');
-      });
+    const result = await createRoomComment(idx, body)
+    if (result?.data?.message === 'success') {
+      setTotalComments((curr) => curr + 1);
+      setContent('');
+      alert('댓글 작성 완료!');
+    } else {
+      setContent('');
+      alert('댓글작성에 실패하였습니다.');
+    };
   };
 
-  const edit = () => {
+  const edit = async () => {
     const body = { content: editInput };
-    editRoomComment(currentIdx, body)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setIsEditMode(false);
-          setCurrentIdx(-1);
-          setEditInput('');
-          alert('댓글 수정 완료');
-        } else {
-          setIsEditMode(false);
-          setCurrentIdx(-1);
-          setEditInput('');
-          alert('댓글 수정 실패');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsEditMode(false);
-        setCurrentIdx(-1);
-        setEditInput('');
-        alert('댓글 수정 실패');
-      });
+    const result = await editRoomComment(currentIdx, body);
+    if (result?.data?.message === 'success') {
+      setIsEditMode(false);
+      setCurrentIdx(-1);
+      setEditInput('');
+      alert('댓글 수정 완료');
+    } else {
+      setIsEditMode(false);
+      setCurrentIdx(-1);
+      setEditInput('');
+      alert('댓글 수정 실패');
+    };
   };
 
-  const handleDeleteButton = (commentIdx) => {
-    deleteRoomComment(commentIdx)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setTotalComments((curr) => curr - 1);
-          alert('댓글 삭제 완료');
-        } else {
-          alert('댓글 삭제 실패');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        alert('잘못된 접근입니다.');
-      });
+  const handleDeleteButton = async (commentIdx) => {
+    const result = await deleteRoomComment(commentIdx);
+    if (result?.data?.message === 'success') {
+      setTotalComments((curr) => curr - 1);
+      alert('댓글 삭제 완료');
+    } else {
+      alert('댓글 삭제 실패');
+    };
   };
 
   const handleToggleEdit = (idx, input) => {
@@ -97,6 +79,7 @@ const RoomComment = ({ idx }) => {
     setIsEditMode(true);
     setEditInput(input);
   };
+  
   const cancel = () => {
     setIsEditMode(false);
     setCurrentIdx(-1);

@@ -21,41 +21,41 @@ const RoomEdit = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+
+  const getDetailRoom = async (idx) => {
+    const result = await detailRoom(idx);
+
+    if (result?.data?.message === 'success') {
+      setTitle(result.data.result.title);
+      setContent(result.data.result.content);
+    } else {
+      navigate('../list');
+    };
+  }
+
   useEffect(() => {
-    detailRoom(idx)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          setTitle(res.data.result.title);
-          setContent(res.data.result.content);
-        }
-      })
-      .catch((err) => {
-        if (err.status === 404 || err.status === 400) {
-          navigate('../list');
-        }
-      });
+    getDetailRoom(idx);
   }, []);
 
   const onTitleChanged = (event) => {
     setTitle(event.target.value);
   };
 
-  const onSubmitClicked = (event) => {
+  const onSubmitClicked = async (event) => {
     event.preventDefault();
 
     const body = { title, content };
 
     if (title && content) {
-      updateRoom(idx, body)
-        .then((res) => {
-          if (res.data.message === 'success') {
-            navigate(`/room/${idx}`);
-          } else if (res.data.message === 'fail') {
-            alert('잘못된 요청입니다.');
-            navigate('../list');
-          }
-        })
-        .catch(() => navigate('/error'));
+      const result = await updateRoom(idx, body)
+      if (result?.data?.message === 'success') {
+        navigate(`/room/${idx}`);
+      } else if (result?.data?.message === 'fail') {
+        alert('잘못된 요청입니다.');
+        navigate('../list');
+      } else {
+        navigate('/error');
+      };
     }
   };
 
