@@ -30,27 +30,32 @@ const PwInquiryEmailSend = () => {
 
   return (
     <div className="form">
-      <h2>비밀번호 찾기</h2>
-      <div>
-        <TextField
-          helperText="비밀번호를 찾고자 하는 이메일을 입력해 주세요."
-          label="이메일"
-          type="email"
-          value={email}
-          onChange={emailUpdate}
-          onKeyPress={handleKeyPress}
-          color="veryperi"
-        />
-        <Button
-          variant="contained"
-          color="veryperi"
-          onClick={emailSend}
-          size="large"
-          type="submit"
-        >
-          전송
-        </Button>
+      { isSuccess ?
+      <h3>이메일을 확인하여 새로운 비밀번호를 입력해주세요.</h3>
+      : <div>
+        <h2>비밀번호 찾기</h2>
+        <div>
+          <TextField
+            helperText="비밀번호를 찾고자 하는 이메일을 입력해 주세요."
+            label="이메일"
+            type="email"
+            value={email}
+            onChange={emailUpdate}
+            onKeyPress={handleKeyPress}
+            color="veryperi"
+          />
+          <Button
+            variant="contained"
+            color="veryperi"
+            onClick={emailSend}
+            size="large"
+            type="submit"
+          >
+            전송
+          </Button>
+        </div>
       </div>
+      }
     </div>
   );
 }
