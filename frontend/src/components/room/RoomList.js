@@ -16,7 +16,7 @@ const RoomList = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState(false);
 
   useEffect(() => {
     getRoomList(currentPage)
@@ -95,10 +95,45 @@ const RoomList = () => {
                       </Link>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {rooms.map((room) => (
+                    <TableRow key={room.idx}>
+                      <TableCell align='center'>
+                        {room.live ? '🔊' : '🔈'}
+                      </TableCell>
+                      <TableCell align='center'>
+                        <Link
+                          to={`../${room.idx}`}
+                          style={{ textDecoration: 'none' }}>
+                          {room.title}
+                        </Link>
+                      </TableCell>
+                      <TableCell align='center'>
+                        {room.createDate.substr(0, 10)}
+                      </TableCell>
+                      <TableCell align='center'>{room.nickname}</TableCell>
+                      <TableCell align='center'>{room.hit}</TableCell>
+                      <TableCell align='center'>
+                        <Link
+                          to={`../${room.idx}`}
+                          style={{ textDecoration: 'none' }}>
+                          입장하기🔥
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+          <Pagination
+            count={lastPage}
+            page={currentPage}
+            showFirstButton
+            showLastButton
+            onChange={onChangeHandler}
+          />
         </div>
         <Pagination
           count={lastPage}

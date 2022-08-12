@@ -12,6 +12,7 @@ import com.ssafy.backend.model.mapper.RoomMapper;
 import com.ssafy.backend.model.repository.MatchRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.DeleteUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,14 @@ public class RoomServiceImpl implements RoomService {
 
     private final MatchMapper matchMapper;
 
-    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper) {
+    private final DeleteUserService deleteUserService;
+
+    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper, DeleteUserService deleteUserService) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.matchRepository = matchRepository;
         this.matchMapper = matchMapper;
+        this.deleteUserService = deleteUserService;
     }
 
     @Override
@@ -63,7 +67,8 @@ public class RoomServiceImpl implements RoomService {
         System.out.println(match.getChampionId());
         System.out.println(match.getChampionName());
         roomDto.setMatch(matchMapper.entityToDto(match));
-        roomDto.setNickname(room.getUser().getNickname());
+        String nickName = deleteUserService.checkNickName(room.getUser().getNickname());
+        roomDto.setNickname(nickName);
         return roomDto;
     }
 
@@ -80,7 +85,7 @@ public class RoomServiceImpl implements RoomService {
         List<Room> roomList = roomRepository.findAllByUser(user);
         List<RoomDto> list = new ArrayList<>();
 
-        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        String nickname = deleteUserService.checkNickName(userRepository.findNicknameByIdx(user.getIdx()));
         for(Room r : roomList){
             list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchMapper.entityToDto(r.getMatch())));
         }
@@ -122,10 +127,10 @@ public class RoomServiceImpl implements RoomService {
         System.out.println(roomList.size());
 
         for(Room r : roomList){
-            String nickname = userRepository.findNicknameByIdx(r.getUser().getIdx());
+            String nickName = deleteUserService.checkNickName(userRepository.findNicknameByIdx(r.getUser().getIdx()));
             //Match to MatchDto
             MatchDto matchDto = matchMapper.entityToDto(r.getMatch());
-            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto));
+            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto));
         }
         return list;
     }

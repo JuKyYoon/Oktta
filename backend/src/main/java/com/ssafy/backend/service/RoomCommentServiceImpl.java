@@ -6,6 +6,7 @@ import com.ssafy.backend.model.exception.CommentNotFoundException;
 import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.*;
+import com.ssafy.backend.util.DeleteUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,13 @@ public class RoomCommentServiceImpl implements RoomCommentService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
-    public RoomCommentServiceImpl(RoomCommentRepository roomCommentRepository, UserRepository userRepository, RoomRepository roomRepository) {
+    private final DeleteUserService deleteUserService;
+
+    public RoomCommentServiceImpl(RoomCommentRepository roomCommentRepository, UserRepository userRepository, RoomRepository roomRepository, DeleteUserService deleteUserService) {
         this.roomCommentRepository = roomCommentRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
+        this.deleteUserService = deleteUserService;
     }
 
     /**
@@ -36,7 +40,7 @@ public class RoomCommentServiceImpl implements RoomCommentService {
         List<RoomCommentDto> list = new ArrayList<>();
 
         for(RoomComment r : roomCommentList){
-            String nickname = userRepository.findNicknameByIdx(r.getUser().getIdx());
+            String nickname = deleteUserService.checkNickName(userRepository.findNicknameByIdx(r.getUser().getIdx()));
             list.add(new RoomCommentDto(r.getIdx(), nickname, r.getContent(), r.getCreateTime()));
         }
 

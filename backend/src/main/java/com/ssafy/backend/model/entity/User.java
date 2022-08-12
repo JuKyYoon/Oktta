@@ -2,6 +2,7 @@ package com.ssafy.backend.model.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,8 +45,8 @@ public class User {
     @Column(name = "sns_type")
     private int snsType;
 
-    @Column(name = "profile_img")
-    private int profileImg;
+    @Column(name = "profile_img", columnDefinition = "varchar(255) default 'https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png'")
+    private String profileImg;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(255) default 'ROLE_GUEST'")
@@ -62,6 +63,7 @@ public class User {
         this.password = builder.password;
         this.role = builder.role;
         this.snsType = builder.snsType;
+        this.profileImg = builder.profileImg;
     }
 
     public Long getIdx() {
@@ -92,7 +94,7 @@ public class User {
         return snsType;
     }
 
-    public int getProfileImg() {
+    public String getProfileImg() {
         return profileImg;
     }
 
@@ -108,10 +110,18 @@ public class User {
         this.role = role;
     }
 
+    public void deleteUser(){
+        this.id = String.valueOf(this.idx);
+        this.nickname = "deleteuser" + this.idx;
+        this.password = null;
+        this.snsType = -1;
+        this.profileImg = null;
+        this.role = UserRole.ROLE_GUEST;
+    }
+
     public static User.Builder builder() {
         return new User.Builder();
     }
-
     // Builder 패턴 ( Not Lombok )
     public static class Builder {
 
@@ -120,10 +130,16 @@ public class User {
         private String password;
         private UserRole role;
         private int snsType;
+        private String profileImg;
 
         // Optional Parameter
         public Builder role(String role) {
             this.role = UserRole.valueOf(role);
+            return this;
+        }
+
+        public Builder profileImg(String profileImg){
+            this.profileImg = profileImg;
             return this;
         }
 
@@ -143,7 +159,12 @@ public class User {
             this.role = role;
             this.snsType = snsType;
         }
-
+        public Builder(String id, String nickname, String password, String profileImg){
+            this.id = id;
+            this.nickname = nickname;
+            this.password = password;
+            this.profileImg = profileImg;
+        }
         public User build() {
             return new User(this);
         }

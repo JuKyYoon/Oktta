@@ -1,61 +1,75 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { emailAuth, logoutRequest } from "../../services/userService";
-import Home from "../Home";
+import { EMAIL_AUTH }  from "@/modules/types.js";
 
 const EmailAuth = () => {
   const [msg, setMsg] = useState("");
   const [time, setTime] = useState(5);
+  const timeRef = useRef(5);
+  const timerRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const user = useSelector((state) => state.user);
+  const login = useSelector((state) => state.user.isLogin);
 
-  const token = location.pathname.split("/").pop();
+  const { token } = useParams();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setTime(time - 1);
-    }, 1000);
-  })
+  const authEmail = async () => {
+    const result = await emailAuth(token);
+    if(result?.data?.message === "success") {
+      setMsg("success");
+      dispatch({
+        type: EMAIL_AUTH,
+      });
 
-  useEffect(() => {
-    emailAuth(token)
-      .then((res) => {
-        setMsg(res.payload.data.message);
-      })
-      .catch((err) => console.log(err));
-    if (user.isLogin) {
-      dispatch(logoutRequest())
-        .catch((err) => { console.log(err) })
+      timerRef.current = setInterval(() => {
+        console.log("down")
+        timeRef.current-=1;
+        setTime(timeRef.current);
+    
+        if(timeRef.current === 0) {
+          clearInterval(timerRef.current);
+          if(login) {
+            navigate("/");
+          } else {
+            navigate("/user/login");
+          }
+        }
+      }, 1000);
+
+    } else {
+      console.log(result);
     }
-    setTimeout(() => {
-      navigate("/user/login");
-    }, 5000);
+  }
+
+  useEffect(() => {
+    authEmail();
+
+    return () => {
+      clearInterval(timerRef.current);
+      console.log("unmount")
+    }
   }, []);
 
   return (
     <>
-      {!!msg ?
-        <>
-          {msg === "success" ?
-            <h1>
-              {time}초 후 메인 페이지로 이동합니다. <br />
-              인증이 완료되었습니다. <br />
-              <Button><a href='/'>홈으로</a></Button>
-            </h1> :
-            <h1>잘못된 인증 요청입니다. <br />
-              다시 이메일 인증을 요청하세요. <br />
-              <Button><a href='/'>홈으로</a></Button>
-            </h1>
-          }
-        </> : <></>
+      {msg === "success" ?
+        <h1>
+          {time}초 후 메인 페이지로 이동합니다. <br />
+          인증이 완료되었습니다. <br />
+          <Button><a href='/user/login'>로그인하기</a></Button>
+          <Link to='/user/login'>홈으로</Link>
+        </h1> :
+        <h1>잘못된 인증 요청입니다. <br />
+          다시 이메일 인증을 요청하세요. <br />
+          <Link to='/'>홈으로</Link>
+        </h1>
       }
     </>
   );
-
 };
 
 export default EmailAuth;

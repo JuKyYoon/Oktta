@@ -26,6 +26,18 @@ public class BaseControllerAdvice {
     @Value("${response.fail}")
     private String failMsg;
 
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ResponseEntity<BaseResponseBody> sessionNotFoundException(Exception e, HttpServletRequest req) {
+        LOGGER.debug("Session Not Found");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(MessageResponse.of(404, failMsg, "Session Not Found"));
+    }
+
     @ExceptionHandler(DuplicatedEnterSession.class)
     public ResponseEntity<BaseResponseBody> duplicatedEnterSession(Exception e, HttpServletRequest req) {
         LOGGER.debug("Already in the session");
@@ -205,6 +217,18 @@ public class BaseControllerAdvice {
         
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponseBody.of(200, failMsg));
+    }
+
+    @ExceptionHandler(FileTypeException.class)
+    public ResponseEntity<BaseResponseBody> FileTypeException(Exception e, HttpServletRequest req){
+        LOGGER.debug("FILE TYPE ERROR");
+        LOGGER.error(e.getClass().getCanonicalName());
+        e.printStackTrace();
+        LOGGER.error(req.getRequestURI());
+        LOGGER.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(BaseResponseBody.of(403, failMsg));
     }
 
     @ExceptionHandler(WebClientResponseException.NotFound.class)
