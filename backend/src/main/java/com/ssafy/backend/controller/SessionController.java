@@ -222,8 +222,17 @@ public class SessionController {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println("<------------ 녹화 시작 ------------>");
 
-        Recording result = sessionService.recordingStart(principal.getUsername(), sessionIdx, params);
-        return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        Map<Boolean, Recording> map = sessionService.recordingStart(principal.getUsername(), sessionIdx, params);
+        if(map.containsKey(false)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponseBody(403, failMsg));
+        }
+
+        Recording result = map.get(true);
+        if(result != null) {
+            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponseBody(400, failMsg));
+        }
     }
 
     @PostMapping("/recording/stop/{idx}")
@@ -231,7 +240,16 @@ public class SessionController {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println("<------------ 녹화 중단 ------------>");
         
-        Recording result = sessionService.recordingStop(principal.getUsername(), sessionIdx, params);
-        return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        Map<Boolean, Recording> map = sessionService.recordingStop(principal.getUsername(), sessionIdx, params);
+        if(map.containsKey(false)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponseBody(403, failMsg));
+        }
+
+        Recording result = map.get(true);
+        if(result != null) {
+            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponseBody(400, failMsg));
+        }
     }
 }

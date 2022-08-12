@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -203,10 +204,13 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Recording recordingStart(String userId, Long sessionIdx, Map<String, Object> params) {
+    public Map<Boolean, Recording> recordingStart(String userId, Long sessionIdx, Map<String, Object> params) {
+        Map<Boolean, Recording> result = new HashMap<>();
 
-        if(!check(userId, sessionIdx)){
-            return null;
+        // 403 -> throw
+        if(!check(userId, sessionIdx)) {
+            result.put(false, null);
+            return result;
         }
 
         Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) params.get("outputMode"));
@@ -216,29 +220,33 @@ public class SessionServiceImpl implements SessionService {
         try {
             Recording recording = this.openVidu.startRecording(sessionIdx.toString(), properties);
             this.sessionRecordings.put(sessionIdx.toString(), true);
-            return recording;
+            result.put(true, recording);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
-            return null;
+            result.put(true, null);
+        } finally {
+            return result;
         }
     }
 
     @Override
-    public Recording recordingStop(String userId, Long sessionIdx, Map<String, Object> params) {
+    public Map<Boolean, Recording> recordingStop(String userId, Long sessionIdx, Map<String, Object> params) {
+        Map<Boolean, Recording> result = new HashMap<>();
 
         // 403 -> throw
         if(!check(userId, sessionIdx)) {
-            return null;
+            result.put(false, null);
+            return result;
         }
 
         String recordingId = (String) params.get("recording");
         try {
             Recording recording = this.openVidu.stopRecording(recordingId);
             this.sessionRecordings.remove(recording.getSessionId());
-            return recording;
+            result.put(true, recording);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
-
-            // 400 -> throw
-            return null;
+            result.put(true, null);
+        } finally {
+            return result;
         }
     }
 
