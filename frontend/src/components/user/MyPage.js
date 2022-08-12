@@ -197,8 +197,10 @@ const MyPage = () => {
                         <Link to={`../../board/${board.idx}`}>{board.title}</Link>
                       </div>
                     ))}
+                    <div className="pagination">
                     <Pagination count={Math.ceil(boardList.length / 7)} page={page}
                       color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : null}`} onChange={pageChange} />
+                    </div>
                   </>
                 )}
               </div>

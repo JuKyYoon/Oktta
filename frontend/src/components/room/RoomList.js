@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
 import Loading from '../layout/Loading';
-import { getRoomList } from '../../services/roomService';
+import { getRoomList, roomHitRequest } from '../../services/roomService';
 import '../../styles/room.scss';
 import {
   Table,
@@ -29,6 +29,10 @@ const RoomList = () => {
       navigate('/');
     };
   };
+
+  const roomHit = async (roomIdx) => {
+    roomHitRequest(roomIdx);
+  }
 
   useEffect(() => {
     createRoomList(currentPage);
@@ -73,6 +77,7 @@ const RoomList = () => {
                       </TableCell>
                       <TableCell align='center'>
                         <Link
+                          onClick={() => roomHit(`${room.idx}`)}
                           to={`../${room.idx}`}
                           style={{ textDecoration: 'none' }}>
                           {room.title}
