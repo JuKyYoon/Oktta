@@ -138,10 +138,6 @@
   align-items: center;
 }
 
-
-
-
-
 // 게임 불러오기 모달
 .modal-box {
   position: absolute;
@@ -205,7 +201,7 @@
   background-color: #9fb7e4;
 }
 
-.loss {
+.lose {
   background-color: #ff968d;
 }
 
@@ -279,4 +275,8 @@
 
 .create-room-champion-image {
   height: 30px;
+}
+
+.create-room-notice {
+  color: red;
 }
