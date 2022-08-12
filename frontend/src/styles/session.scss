@@ -49,51 +49,58 @@
 }
 
 .chat-div {
-
+  max-height: 73vh;
+  // height: 75vh;
   // display: flex;
   // flex-direction: column;
   // justify-content: flex-end;
 
   #chatting-list {
-    height: 100%;
-    max-height: 65vh;
+    height: 90%;
+    max-height: 100%;
     overflow-y: scroll;
-    box-shadow:0px 0px 0px 10px red inset;
-    padding : 10px;
+    box-shadow:0px 0px 0px 1px #d6d6d6 inset;
+    // padding : 1px;
     // background-color: green;
     
 
     .my-chat {
       // background-color: white;
+      background-color: #3f51b5;
+      margin-left: auto;
+      border-radius: 30px 0px 30px 30px;
+      color: white;
+      width: 70%;
+      margin-bottom: 10px;
+
       .chat-nickname {
-          text-align: right;
-        font-weight: 800;
+        padding-right: 5px;
+        text-align: right;
+        font-weight: 500;
       }
 
       .chat-content {
         margin-left: auto;
-        font-size: 20px;
-        background-color: blue;
-        color: white;
-        padding : 15px;
-        border-radius: 30px;
-        width: 70%;
+        padding : 0px 15px 10px 15px;
         white-space : normal 
       }
     }
 
     .other-chat {
       // background-color: grey;
+      background-color: #d6d6d6;
+      width: 70%;
+      border-radius: 0px 30px 30px 30px;
+      margin-bottom: 10px;
+
+
       .chat-nickname {
-        font-weight: 800;
+        padding-left: 5px;
+        font-weight: 500;
       }
 
       .chat-content {
-        font-size: 20px;
-        background-color: grey;
-        padding : 15px;
-        border-radius: 30px;
-        width: 70%;
+        padding : 0px 15px 10px 15px;
         word-break:break-all;
         word-wrap:break-word;
       }
@@ -104,13 +111,16 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 20%;
-    background-color: aliceblue;
+    // height: 20%;
+    box-shadow:0px 0px 0px 1px #d6d6d6 inset;
+
+    // background-color: blue;
 
     .chatting-bottom {
       display: flex;
       flex-direction: row;
       justify-content: right;
+      span {padding: 10px;}
       button {
         margin-left: auto;
         // margin-right: auto;
@@ -119,20 +129,6 @@
 
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // #main-session {
