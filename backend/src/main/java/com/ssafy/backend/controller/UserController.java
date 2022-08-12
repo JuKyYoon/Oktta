@@ -1,17 +1,13 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
-import com.ssafy.backend.model.exception.SocialUserException;
-import com.ssafy.backend.model.exception.UserNotFoundException;
-import com.ssafy.backend.model.mapper.UserMapper;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
-import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.UserInfoResponse;
+import com.ssafy.backend.service.LOLService;
 import com.ssafy.backend.service.UserService;
-import com.ssafy.backend.util.AwsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.mail.MessagingException;
 import java.util.Map;
@@ -38,8 +33,10 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService){
+    private final LOLService lolService;
+    public UserController(UserService userService, LOLService lolService){
         this.userService = userService;
+        this.lolService = lolService;
     }
 
     /**
@@ -151,6 +148,9 @@ public class UserController {
     public ResponseEntity<UserInfoResponse> getMyInfo(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDto userDto = userService.setUserInfo(principal.getUsername());
+        LolAuth lolAuth = lolService.getUserLolAuth(principal.getUsername());
+        userDto.setTier(lolAuth.getTier());
+        userDto.setSummonerName(lolAuth.getSummonerName());
         return ResponseEntity.status(200).body(UserInfoResponse.of(200, successMsg, userDto));
     }
 
