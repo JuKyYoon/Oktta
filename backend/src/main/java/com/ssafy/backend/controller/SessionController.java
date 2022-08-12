@@ -103,7 +103,7 @@ public class SessionController {
         System.out.println("session close!!!!!!!!!!!!!");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Room room = sessionService.getSessionRoom(Long.parseLong(boardIdx));
+        Room room = sessionService.getSessionRoom(sessionIdx);
         boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         if(isOwner) {

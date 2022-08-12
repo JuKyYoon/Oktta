@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "room")
@@ -54,6 +55,8 @@ public class Room {
     @JoinColumn(name = "match_id")
     private Match match;
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<RoomComment> comments;
 
     public Long getIdx() {
         return idx;
