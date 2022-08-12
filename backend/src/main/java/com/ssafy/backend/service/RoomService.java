@@ -13,6 +13,6 @@ public interface RoomService {
     public int getLastPage(int limit);
     int updateHit(Long idx);
     List<RoomDto> myRooms(String id);
-    List<RoomDto> getRecentHotRooms(int page, int limit);
+    List<RoomDto> getOnAirRoomList(int page, int limit);
     List<RoomDto> getTopRoomList();
 }

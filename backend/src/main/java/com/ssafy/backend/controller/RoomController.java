@@ -1,10 +1,6 @@
 package com.ssafy.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.ssafy.backend.model.dto.BoardCommentDto;
-import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
@@ -120,8 +116,8 @@ public class RoomController {
     }
 
     @GetMapping("/live")
-    public ResponseEntity<? extends BaseResponseBody> getRecentHotRoomList(@RequestParam(defaultValue = "1") int page) {
-        List<RoomDto> list = roomService.getRecentHotRooms(page, pagingLimit);
+    public ResponseEntity<? extends BaseResponseBody> getOnAirRoomList(@RequestParam(defaultValue = "1") int page) {
+        List<RoomDto> list = roomService.getOnAirRoomList(page, pagingLimit);
         int lastPage = roomService.getLastPage(pagingLimit);
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list, lastPage));
     }

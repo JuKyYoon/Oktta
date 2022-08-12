@@ -12,7 +12,6 @@ import com.ssafy.backend.model.mapper.RoomMapper;
 import com.ssafy.backend.model.repository.MatchRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
-import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -96,8 +95,13 @@ public class RoomServiceImpl implements RoomService {
                 () -> new UserNotFoundException("User Not Found")
         );
         LOGGER.info(user.getNickname());
+        MatchDto matchDto = roomDto.getMatch();
+        Match match = matchDto == null ?
+                roomRepository.getReferenceById(roomDto.getIdx()).getMatch()
+                : matchMapper.dtoToEntity(matchDto);
         int result = roomRepository.updateRoom(roomDto.getTitle(), roomDto.getContent(), roomDto.getIdx(),
-                user, LocalDateTime.now());
+                user, LocalDateTime.now(), match);
+
         return result == 1;
     }
 
@@ -138,8 +142,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> getRecentHotRooms(int page, int limit){
-        List<Room> roomList = roomRepository.findLiveRoom(limit, (page - 1) * limit);
+    public List<RoomDto> getOnAirRoomList(int page, int limit){
+        List<Room> roomList = roomRepository.findLiveRoomList(limit, (page - 1) * limit);
         List<RoomDto> list = new ArrayList<>();
         for(Room room : roomList){
             RoomDto roomDto = RoomMapper.mapper.toDto(room);
@@ -154,7 +158,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomDto> getTopRoomList() {
-        List<Room> roomList = roomRepository.findTopRoom();
+        List<Room> roomList = roomRepository.findTopRoomList();
         List<RoomDto> list = new ArrayList<>();
         for(Room room : roomList){
             RoomDto roomDto = RoomMapper.mapper.toDto(room);
