@@ -37,7 +37,7 @@ public class MatchMapper {
         String[] death = match.getDeath().split(PREFIX);
         String[] puuid = match.getPuuid().split(PREFIX);
         String[] win = match.getWin().split(PREFIX);
-        for(int i = 0; i < championIds.length; i++){
+        for(int i = 0; i < participantIds.length; i++){
             ParticipantDto participantDto = new ParticipantDto();
             participantDto.setParticipantId(Integer.parseInt(participantIds[i]));
             participantDto.setTeamId(Integer.parseInt(teamIds[i]));
@@ -45,7 +45,9 @@ public class MatchMapper {
             participantDto.setChampionName(championNames[i]);
             participantDto.setSummonerId(summonerIds[i]);
             participantDto.setSummonerName(summonerNames[i]);
-            participantDto.setTeamPosition(teamPositions[i]);
+            if(match.getGameMode().equals("CLASSIC")) {
+                participantDto.setTeamPosition(teamPositions[i]);
+            }
             participantDto.setKills(Integer.parseInt(kill[i]));
             participantDto.setAssists(Integer.parseInt(assist[i]));
             participantDto.setDeaths(Integer.parseInt(death[i]));
@@ -81,7 +83,9 @@ public class MatchMapper {
             teamId.append(participant.getTeamId()).append(PREFIX);
             summonerId.append(participant.getSummonerId()).append(PREFIX);
             summonerName.append(participant.getSummonerName()).append(PREFIX);
-            teamPosition.append(participant.getTeamPosition()).append(PREFIX);
+            if(participant.getTeamPosition() != null){
+                teamPosition.append(participant.getTeamPosition()).append(PREFIX);
+            }
             championId.append(participant.getChampionId()).append(PREFIX);
             championName.append(participant.getChampionName()).append(PREFIX);
             kill.append(participant.getKills()).append(PREFIX);
