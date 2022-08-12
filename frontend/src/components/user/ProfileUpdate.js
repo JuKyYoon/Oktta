@@ -23,12 +23,13 @@ import {
 import { debounce } from 'lodash';
 import { LOGOUT } from '../../modules/types';
 
-const debounceFunc = debounce((value, request, setState) => {
-  request(value)
-    .then((res) => {
-      setState(res.data.message)
-    })
-    .catch((err) => alert('올바르지 않은 접근입니다.'))
+const debounceFunc = debounce(async (value, request, setState) => {
+  const result = await request(value)
+  if (result?.data?.message) {
+    setState(result?.data?.message)
+  } else {
+    alert('올바르지 않은 접근입니다.')
+  };
 }, 500);
 
 const ProfileUpdate = () => {
@@ -54,11 +55,16 @@ const ProfileUpdate = () => {
   const [isNewPasswordSame, setIsNewPasswordSame] = useState(false);
 
   const [password, setPassword] = useState('');
+  const [delPassword, setDelPassword] = useState('');
 
   const [open_delbtn, setOpenDelBtn] = useState(false);
 
   const passwordChange = (event) => {
     setPassword(event.target.value);
+  };
+
+  const delPasswordChange = (event) => {
+    setDelPassword(event.target.value);
   };
 
   const nicknameChange = (event) => {
@@ -69,7 +75,7 @@ const ProfileUpdate = () => {
       const isNicknameValid = !regNickname.test(event.target.value);
       setIsNicknameValid(isNicknameValid);
 
-      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음';
+      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음' || event.target.value.length > 10;
       setBanned(banned);
 
       if (isNicknameValid && !banned) {
@@ -84,7 +90,7 @@ const ProfileUpdate = () => {
   };
 
   const newPasswordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
     const isNewPasswordValid = regPassword.test(event.target.value);
 
     setNewPassword(event.target.value);
@@ -102,30 +108,27 @@ const ProfileUpdate = () => {
     setIsNewPasswordSame(newPassword === event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     switch (mode) {
       case 'nickname':
         if (nicknameChecked === 'fail') {
           alert('이미 사용중인 닉네임입니다.');
         } else {
-          updateNicknameRequest({
+          const result = await updateNicknameRequest({
             nickname,
             password,
           })
-            .then((res) => {
-              if (res.payload.data.message === 'success') {
-                dispatch(res);
-                alert('닉네임이 변경되었습니다.');
-                navigate('/user/mypage');
-              } else {
-                alert('비밀번호를 확인해주세요.');
-                setPassword('');
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
+          if (result?.payload?.data?.message === 'success') {
+            dispatch(res);
+            alert('닉네임이 변경되었습니다.');
+            navigate('/user/mypage');
+          } else if (result?.payload?.data?.message === 'fail') {
+            alert('비밀번호를 확인해주세요.');
+            setPassword('');
+          } else {
+            alert('잘못된 접근입니다.')
+          };
+        };
         break;
       case 'password':
         if (!isNewPasswordValid) {
@@ -133,21 +136,22 @@ const ProfileUpdate = () => {
         } else if (!isNewPasswordSame) {
           alert('비밀번호 확인이 일치하지 않습니다.');
         } else {
-          updatePasswordRequest({
+          const result = await updatePasswordRequest({
             newPassword,
             oldPassword: password,
-          }).then((res) => {
-            if (res.data.message === 'success') {
-              alert('비밀번호가 변경되었습니다.');
-              navigate('/user/mypage');
-            } else {
-              alert('비밀번호를 확인해주세요.');
-              setPassword('');
-              setNewPassword('');
-              setNewPasswordCheck('');
-            }
-          }).catch((err) => console.log(err));
-        }
+          })
+          if (result?.data?.message === 'success') {
+            alert('비밀번호가 변경되었습니다.');
+            navigate('/user/mypage');
+          } else if (result?.data?.message === 'fail') {
+            alert('비밀번호를 확인해주세요.');
+            setPassword('');
+            setNewPassword('');
+            setNewPasswordCheck('');
+          } else {
+            alert('잘못된 접근입니다.')
+          };
+        };
         break;
       default:
         alert('올바르지 않은 접근입니다.');
@@ -163,21 +167,18 @@ const ProfileUpdate = () => {
     setOpenDelBtn(false);
   };
 
-  const deleteUser = () => {
-    delAccount({ data: { password } })
-      .then((res) => {
-        if (res.payload.data.message === "success") {
-          navigate('/');
-          alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
-          dispatch({ type: LOGOUT });
-        }
-        else {
-          alert("비밀번호를 잘못 입력했습니다.");
-          handleClose();
-        }
-      })
-      .catch((err) => console.log(err))
-  }
+  const deleteUser = async () => {
+    const result = await delAccount({ data: { delPassword } });
+    if (result?.payload?.data?.message === "success") {
+      navigate('/');
+      alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
+      dispatch({ type: LOGOUT });
+    }
+    else {
+      alert("비밀번호를 잘못 입력했습니다.");
+      handleClose();
+    };
+  };
 
   return (
     <div className='form'>
@@ -257,7 +258,7 @@ const ProfileUpdate = () => {
                           : '닉네임 중복 여부를 확인중입니다.'
                         : '사용할 수 없는 닉네임입니다.'
                       : '닉네임에 특수문자를 사용할 수 없습니다.'
-                  : '특수문자를 제외한 닉네임을 입력해주세요.'}
+                  : '10글자 이하의 닉네임을 입력해주세요.'}
               </FormHelperText>
             </FormControl>
           </div>
@@ -283,7 +284,7 @@ const ProfileUpdate = () => {
                 error={!!newPassword && !isNewPasswordValid}>
                 {isNewPasswordValid
                   ? '안전한 비밀번호입니다.'
-                  : '영문 + 숫자 조합으로 8자 이상으로 설정해주세요.'}
+                  : '영문 + 숫자 조합으로 8~16자로 설정해주세요.'}
               </FormHelperText>
             </FormControl>
           </div>
@@ -347,8 +348,8 @@ const ProfileUpdate = () => {
                 type="password"
                 fullWidth
                 variant="standard"
-                value={password}
-                onChange={passwordChange}
+                value={delPassword}
+                onChange={delPasswordChange}
                 color='veryperi'
               />
             </DialogContent> :

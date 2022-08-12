@@ -43,15 +43,13 @@ const VoteChart = (props) => {
   };
 
   return (
-    <div>
-      <div id='chart'>
-        <ReactApexChart
-          options={donutData.options}
-          series={donutData.series}
-          type='donut'
-          width='500'
-        />
-      </div>
+    <div id='chart'>
+      <ReactApexChart
+        options={donutData.options}
+        series={donutData.series}
+        type='donut'
+        width='500'
+      />
     </div>
   );
 };
