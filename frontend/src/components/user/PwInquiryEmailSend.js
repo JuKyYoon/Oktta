@@ -6,6 +6,7 @@ import { pwInquiryEmailSendRequest } from "../../services/userService";
 
 const PwInquiryEmailSend = () => {
   const [email, setEmail] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const emailUpdate = (event) => {
     setEmail(event.target.value);
@@ -21,6 +22,7 @@ const PwInquiryEmailSend = () => {
     const result = await pwInquiryEmailSendRequest(email);
     if (result?.data?.message === 'success') {
       alert('이메일이 발송되었습니다.');
+      setIsSuccess(true);
     } else if (result?.data?.message === 'fail') {
       alert('유효하지 않은 이메일입니다.');
     } else {
@@ -55,7 +57,7 @@ const PwInquiryEmailSend = () => {
           </Button>
         </div>
       </div>
-      }
+       }
     </div>
   );
 }
