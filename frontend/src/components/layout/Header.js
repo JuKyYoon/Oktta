@@ -11,9 +11,11 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onLogoutHandler = async () => {
-    const result = await logoutRequest();
-    dispatch(result);
+  const onLogoutHandler = () => {
+    logoutRequest();
+    dispatch({
+      type: LOGOUT
+    });
     navigate('/');
   };
 
