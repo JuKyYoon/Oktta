@@ -69,9 +69,13 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart("profileImg") MultipartFile profileImage) throws MessagingException {
-        userService.registUser(user, profileImage);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart(name = "profileImg", required = false) MultipartFile profileImage) throws MessagingException {
+        boolean result = userService.registUser(user, profileImage);
+        if(result){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        }else{
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, failMsg));
+        }
     }
 
     /**

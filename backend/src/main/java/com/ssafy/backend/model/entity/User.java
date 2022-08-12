@@ -110,10 +110,18 @@ public class User {
         this.role = role;
     }
 
+    public void deleteUser(){
+        this.id = String.valueOf(this.idx);
+        this.nickname = "deleteuser" + this.idx;
+        this.password = null;
+        this.snsType = -1;
+        this.profileImg = null;
+        this.role = UserRole.ROLE_GUEST;
+    }
+
     public static User.Builder builder() {
         return new User.Builder();
     }
-
     // Builder 패턴 ( Not Lombok )
     public static class Builder {
 
