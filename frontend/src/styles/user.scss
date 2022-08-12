@@ -41,7 +41,7 @@
 .mypage-lol-info {
   display: flex;
   flex-direction: column;
-  background-color: #d7d7fa;
+  background-color: $box-color;
   border-radius: 10px;
   border-top-left-radius: 0px;
   padding: 1%;
@@ -57,12 +57,12 @@
 .mypage-contents-box {
   display: flex;
   flex-direction: column;
-  background-color: #d7d7fa;
+  background-color: $box-color;
   border-radius: 10px;
   border-top-left-radius: 0px;
   padding: 1%;
   height: 350px;
-  justify-content: space-between;
+  justify-content: start;
 }
 
 .mypage-contents-item {
@@ -77,24 +77,24 @@
 }
 
 .mypage-mode {
-  border: #d7d7fa 1px solid;
-  border-top: #d7d7fa 2px solid;
+  border: $box-color 1px solid;
+  border-top: $box-color 2px solid;
   padding: 5px;
   cursor: pointer;
 }
 
 .mypage-mode-start {
-  border-left: #d7d7fa 2px solid;
+  border-left: $box-color 2px solid;
   border-top-left-radius: 10px;
 }
 
 .mypage-mode-end {
-  border-right: #d7d7fa 2px solid;
+  border-right: $box-color 2px solid;
   border-top-right-radius: 10px;
 }
 
 .mypage-selected {
-  background-color: #d7d7fa;
+  background-color: $box-color;
   color: black;
 }
 
@@ -132,18 +132,36 @@
   color: black !important;
 }
 
-  /* 입력 폼 정렬 */
 .form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  margin-top: 2%;
+  background-color: white;
+  // padding-top: 10px;
+  // margin-top: 2%;
+}
+
+.login {
+  display: flex;
+  justify-content: center;
+}
+  /* 입력 폼 정렬 */
+.login-form {
+  radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2%;
+  width: auto;
+  background-color: white;
+  // padding-top: 10px;
+  // margin-top: 2%;
 }
 
 /* 로그인 폼 정렬 */
-.loginform {
+.input-form {
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
@@ -244,5 +262,9 @@
 
   .css-1pxa9xg-MuiAlert-message {
     font-size: 13px;
-  }  
+  }
+  
+  .pagination {
+    background-color: #ff003e;
+  }
 }

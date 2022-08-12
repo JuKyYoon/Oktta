@@ -9,7 +9,7 @@ public class RoomCommentDto {
     private Long idx;
     private String nickname;
     private String profileImage;
-    private String tier;
+    private int tier;
     private String content;
     private LocalDateTime createTime;
 
@@ -63,11 +63,11 @@ public class RoomCommentDto {
         this.profileImage = profileImage;
     }
 
-    public String getTier() {
+    public int getTier() {
         return tier;
     }
 
-    public void setTier(String tier) {
+    public void setTier(int tier) {
         this.tier = tier;
     }
 }

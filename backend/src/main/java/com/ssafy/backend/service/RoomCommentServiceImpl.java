@@ -21,14 +21,15 @@ public class RoomCommentServiceImpl implements RoomCommentService {
     private final RoomCommentRepository roomCommentRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
-
     private final DeleteUserService deleteUserService;
+    private final LolAuthRepository lolAuthRepository;
 
-    public RoomCommentServiceImpl(RoomCommentRepository roomCommentRepository, UserRepository userRepository, RoomRepository roomRepository, DeleteUserService deleteUserService) {
+    public RoomCommentServiceImpl(RoomCommentRepository roomCommentRepository, UserRepository userRepository, RoomRepository roomRepository, DeleteUserService deleteUserService, LolAuthRepository lolAuthRepository) {
         this.roomCommentRepository = roomCommentRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.deleteUserService = deleteUserService;
+        this.lolAuthRepository = lolAuthRepository;
     }
 
     /**
@@ -40,8 +41,17 @@ public class RoomCommentServiceImpl implements RoomCommentService {
         List<RoomCommentDto> list = new ArrayList<>();
 
         for(RoomComment r : roomCommentList){
-            String nickname = deleteUserService.checkNickName(userRepository.findNicknameByIdx(r.getUser().getIdx()));
-            list.add(new RoomCommentDto(r.getIdx(), nickname, r.getContent(), r.getCreateTime()));
+            User user = r.getUser();
+            String nickname = deleteUserService.checkNickName(user.getNickname());
+            RoomCommentDto roomCommentDto = new RoomCommentDto(r.getIdx(), nickname, r.getContent(), r.getCreateTime());
+            if(!nickname.equals("알수없음")){
+                roomCommentDto.setProfileImage(user.getProfileImg());
+                LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+                if(lolAuth != null){
+                    roomCommentDto.setTier(lolAuth.getTier());
+                }
+            }
+            list.add(roomCommentDto);
         }
 
         return list;

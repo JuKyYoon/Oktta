@@ -121,3 +121,11 @@ export const getMatchDetail = async (dataToSubmit) => {
     return err;
   };
 };
+
+export const roomHitRequest = (dataToSubmit) => {
+  try {
+    axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+  } catch (err) {
+    
+  }
+};
