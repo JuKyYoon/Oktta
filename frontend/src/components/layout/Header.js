@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutRequest } from "../../services/userService";
 import BeforeEmailAuth from "../user/BeforeEmailAuth";
 import Navbar from "./Navbar";
+import { LOGOUT } from "@/modules/types";
 
 const Header = () => {
   const state = useSelector((state) => state);
