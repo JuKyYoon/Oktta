@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
+import com.ssafy.backend.model.exception.InputDataNullException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
@@ -53,9 +54,15 @@ public class RoomController {
     public ResponseEntity<MessageResponse> createRoom(@RequestBody Map<String, Object> map) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RoomDto roomDto = new RoomDto();
-        roomDto.setTitle(map.get("title").toString());
-        roomDto.setContent(map.get("content").toString());
-        MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
+        String title = map.get("title").toString();
+        String content = map.get("content").toString();
+        Object matchObj = map.get("matchDto");
+        if(title == null || content == null || matchObj == null || matchObj.toString().equals("{}")){
+            throw new InputDataNullException("INPUT DATA IS NULL");
+        }
+        roomDto.setTitle(title);
+        roomDto.setContent(content);
+        MatchDto matchDto = new ObjectMapper().convertValue(matchObj, MatchDto.class);
         roomDto.setMatchDto(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
         voteService.createVote(roomIdx, LocalDateTime.now());
