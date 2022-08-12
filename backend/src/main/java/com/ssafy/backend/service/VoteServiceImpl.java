@@ -56,7 +56,7 @@ public class VoteServiceImpl implements VoteService{
                 () -> new UserNotFoundException("User Not Found")
         );
 
-        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndAndUserIdx(roomIdx, user.getIdx());
+        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndUserIdx(roomIdx, user.getIdx());
 
         /**
          * voteRecord
@@ -90,7 +90,7 @@ public class VoteServiceImpl implements VoteService{
                 () -> new UserNotFoundException("User Not Found")
         );
 
-        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndAndUserIdx(roomIdx, user.getIdx());
+        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndUserIdx(roomIdx, user.getIdx());
         Vote vote = voteRepository.findById(roomIdx.toString()).orElseThrow(
                 () -> new VoteNotFoundException("Vote Not Found")
         );
@@ -149,7 +149,7 @@ public class VoteServiceImpl implements VoteService{
                 () -> new UserNotFoundException("User Not Found")
         );
 
-        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndAndUserIdx(roomIdx, user.getIdx());
+        VoteRecord voteRecord = voteRecordRepository.findByRoomIdxAndUserIdx(roomIdx, user.getIdx());
         return (voteRecord == null) ? 0 : voteRecord.getNumber();
     }
 }
