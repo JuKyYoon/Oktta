@@ -1,7 +1,6 @@
 package com.ssafy.backend.model.dto;
 
 import com.ssafy.backend.model.dto.lol.MatchDto;
-import com.ssafy.backend.model.entity.Match;
 
 import java.time.LocalDateTime;
 
