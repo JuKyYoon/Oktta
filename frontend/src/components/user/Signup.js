@@ -14,12 +14,13 @@ import {
 import { debounce } from "lodash";
 import { useNavigate } from "react-router";
 
-const debounceFunc = debounce((value, request, setState) => {
-  request(value)
-    .then((res) => {
-      setState(res.data.message)
-    })
-    .catch((err) => alert('올바르지 않은 접근입니다.'))
+const debounceFunc = debounce(async (value, request, setState) => {
+  const result = await request(value)
+  if (result?.data?.message) {
+    setState(result?.data?.message)
+  } else {
+    alert('올바르지 않은 접근입니다.')
+  };
 }, 500);
 
 const Signup = () => {
@@ -60,7 +61,7 @@ const Signup = () => {
   };
 
   const passwordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
     const isPasswordValid = regPassword.test(event.target.value);
 
     setPassword(event.target.value);
@@ -87,7 +88,7 @@ const Signup = () => {
       const isNicknameValid = !regNickname.test(event.target.value);
       setIsNicknameValid(isNicknameValid);
 
-      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음';
+      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음' || event.target.value.length > 10;
       setBanned(banned);
 
       if (isNicknameValid && !banned) {
@@ -102,34 +103,35 @@ const Signup = () => {
   };
 
   // 회원가입 구현 부분
-  const handleSubmit = (event) => {
+  const handleSubmit = async () => {
     const user = {
       id: email,
       password: password,
       nickname: nickname,
     };
+
     formData.append('user', new Blob([JSON.stringify(user)], { type: "application/json" }));
-    if (formData.get('profileImg') === null) {
+    if (!formData.get('profileImg')) {
       formData.append('profileImg', new Blob([], { type: "image/png" }));
-    }
-    signupRequest(formData)
-      .then((res) => {
-        if (res.data.message === "success") {
-          alert("회원가입을 축하드립니다! \n이메일을 확인하여 이메일 인증을 완료해주세요.");
-          navigate("/user/login");
-        } else {
-          alert("회원가입에 실패하였습니다!");
-        }
-      })
-      .catch((err) => {
-        alert("회원가입에 오류가 생겼습니다. 다시 시도해주세요.");
-      });
+    };
+
+    const result = await signupRequest(formData);
+    if (result?.data?.message === "success") {
+      alert("회원가입을 축하드립니다! \n이메일을 확인하여 이메일 인증을 완료해주세요.");
+      navigate("/user/login");
+    } else if (result?.data?.message === "fail") {
+      alert("회원가입에 실패하였습니다!");
+    } else {
+      alert("회원가입에 오류가 생겼습니다. 다시 시도해주세요.");
+    };
   };
 
   const formData = new FormData();
   const handleFileInput = (event) => {
-    formData.append('profileImg', new Blob([event.target.files[0]], { type: event.target.files[0].type }));
-  }
+    if (event.target.files[0]) {
+      formData.append('profileImg', new Blob([event.target.files[0]], { type: event.target.files[0].type }));
+    };
+  };
 
   return (
     <div className="form">
@@ -174,7 +176,7 @@ const Signup = () => {
         <FormHelperText error={!!password && !isPasswordValid}>
           {isPasswordValid
             ? "안전한 비밀번호입니다."
-            : "영문 + 숫자 조합으로 8자 이상으로 설정해주세요."}
+            : "영문 + 숫자 조합으로 8~16자로 설정해주세요."}
         </FormHelperText>
       </FormControl>
       <br />
@@ -212,7 +214,7 @@ const Signup = () => {
                   : '닉네임 중복 여부를 확인중입니다.'
                 : '사용할 수 없는 닉네임입니다.'
               : '닉네임에 특수문자를 사용할 수 없습니다.'
-            : '특수문자를 제외한 닉네임을 입력해주세요.'}
+            : '10글자 이하의 닉네임을 입력해주세요.'}
         </FormHelperText>
       </FormControl>
       <br />

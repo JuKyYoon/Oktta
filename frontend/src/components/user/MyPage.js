@@ -1,4 +1,3 @@
-/* eslint-disable*/
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -28,18 +27,23 @@ const MyPage = () => {
     const result = await getMyRoom();
     if(result?.data?.message === "success") {
       setRoomList(result?.data?.list);
-
-      const res= await getProfileRequest();
-      if(res?.data?.message === "success") {
-        setProfile(res?.data?.result)
-      }  else {
-        console.log("프로파일 불러오기 실패");
-        // navigate('/')
-      }
     } else {
       console.log("불러오기 실패")
-      // navigate('/')
-    }
+    };
+
+    const result2 = await getProfileRequest();
+    if(result2?.data?.message === "success") {
+      setProfile(result2?.data?.result)
+    } else {
+      console.log("프로파일 불러오기 실패");
+    };
+
+    // const result3 = await getMyBoard();
+    // if(result3?.data?.message === "success") {
+    //   setBoardList(result3?.data?.list)
+    // } else {
+    //   console.log("게시물 불러오기 실패");
+    // };
   }
 
   useEffect(() => {
@@ -55,49 +59,47 @@ const MyPage = () => {
   };
 
   const handleFileInput = (event) => {
-    console.log(event)
     setSelectedFile(event.target.files[0]);
   }
 
-  const reload = () => {
+  const reload = async () => {
     // 이미지 저장 후 리로드
-    getProfileRequest()
-      .then((res) => {
-        if (res.data.message === "success") {
-          setProfile(res.data.result)
-        }
-      })
-      .catch((err) => navigate('/error'))
+    const result = await getProfileRequest();
+    if (result?.data?.message === "success") {
+      setProfile(result.data.result)
+    } else {
+      navigate('/error')
+    };
   }
 
-  const handleDefaultImg = () => {
-    setDefaultImg()
-      .then((res) => {
-        if (res.data.message === "success") {
-          setOpenProfile(false);
-          reload();
-        }
-      })
-      .catch((err) => navigate('/error'))
+  const handleDefaultImg = async () => {
+    const result = await setDefaultImg();
+    if (result?.data?.message === "success") {
+      setOpenProfile(false);
+      reload();
+    } else {
+      navigate('/error');
+    };
   }
 
-  const handleSetProfile = () => {
+  const handleSetProfile = async () => {
     const formData = new FormData();
-    if (selectedFile === null) {
+    if (!selectedFile) {
       alert('업로드 된 사진이 없습니다.');
       setOpenProfile(false);
     }
     else {
       formData.append('profileImg', selectedFile);
-      setProfileImg(formData)
-        .then((res) => {
-          if (res.data.message === "success") {
-            setOpenProfile(false);
-            reload();
-          }
-        })
-        .catch((err) => navigate('/error'))
-    }
+      const result = await setProfileImg(formData);
+      if (result?.data?.message === 'success') {
+        setOpenProfile(false);
+        reload();
+      } else if (result?.response?.data?.message === 'fail') {
+        alert('잘못된 파일 형식입니다.')
+      } else {
+        navigate('/error');
+      };
+    };
   }
 
   return (

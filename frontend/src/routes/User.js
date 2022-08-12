@@ -7,10 +7,8 @@ import Signup from '../components/user/Signup';
 import MyPage from '../components/user/MyPage';
 import UpdateProfile from '../components/user/ProfileUpdate';
 import NotFound from '../components/error/NotFound';
-import { useSelector } from 'react-redux';
 
 const User = () => {
-  const user = useSelector((state) => state.user);
   return (
     <Routes>
       <Route path='signup' element={<Signup />} />

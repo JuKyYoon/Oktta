@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { emailAuth, logoutRequest } from "../../services/userService";
+import { emailAuth } from "../../services/userService";
 import { EMAIL_AUTH }  from "@/modules/types.js";
 
 const EmailAuth = () => {

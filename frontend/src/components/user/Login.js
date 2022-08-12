@@ -24,25 +24,22 @@ const Login = () => {
   const errorMessage = useRef();
 
   // 로그인 구현 부분
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async (event) => {
     event.preventDefault();
     const body = {
       id: email,
       password: password,
     };
-    loginRequest(body)
-      .then((res) => {
-        if (res.payload.data.message === "success") {
-          dispatch(res);
-          navigate("/");
-        } else {
-          // 에러 메시지 보이기
-          errorMessage.current.style.display = "block";
-        }
-      })
-      .catch((err) => {
+    const result = await loginRequest(body);
+      if (result?.payload?.data?.message === 'success') {
+        dispatch(result);
+        navigate("/");
+      } else if (result?.payload?.data?.message === 'fail') {
+        // 에러 메시지 보이기
+        errorMessage.current.style.display = 'block';
+      } else {
         navigate("/error");
-      });
+      }
   };
 
   return (

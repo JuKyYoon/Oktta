@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-
 import {
   FormControl,
   InputLabel,
   Input,
   FormHelperText,
   Button,
+  Box,
+  Modal,
+  TextField,
 } from '@mui/material';
-
-import { Box, Button, Modal, TextField } from '@mui/material';
-
 import { useNavigate } from 'react-router';
 import {
   createRoom,
@@ -50,11 +49,12 @@ const RoomCreate = () => {
   const [matchSelected, setMatchSelected] = useState({});
   const [matchSelectedDetail, setMatchSelectedDetail] = useState(false);
   const [matchForSubmit, setMatchForSubmit] = useState({});
-
+  
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
     // 검색 내역 초기화
+    setPageNum(0);
     setMatchList([]);
     setMatchListView([]);
     setSearchState('before');
@@ -104,54 +104,45 @@ const RoomCreate = () => {
     }
 
     // 검색 내역 초기화
+    setPageNum(0);
     setMatchList([]);
     setMatchListView([]);
     setSearchState('before');
     setMatchSelected({});
-    setOpen(false);
     setSummonerNameSearch('');
+    setOpen(false);
   };
 
-  const onSearchSubmit = (event) => {
+  const onSearchSubmit = async (event) => {
     event.preventDefault();
     setSummonerNameSearch(summonerName);
-    getMatches(summonerName)
-      .then((result) => setSearchState(result));
+    const result = await getMatches(summonerName, pageNum);
+    setSearchState(result);
   };
 
-  const getMatches = async (summonerName) => {
+  const getMatches = async (summonerName, pageNum) => {
     if (!summonerName) {
       return;
-    }
+    };
 
     setSearchState('pending');
-    const data = await getMatchBySummoner(summonerName, pageNum)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          return res.data.matchList;
-        } else {
-          return [];
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 404) {
-          setSearchState('fail');
-        } else {
-          console.log(err);
-          alert('잘못된 접근입니다.');
-        }
-        return 'fail';
-      });
-    const matchList = [];
+    const result = await getMatchBySummoner(summonerName, pageNum);
+    let matchData
 
-    if (data === 'fail') {
-      return data;
+    if (result?.data?.message === 'success') {
+      matchData = result.data.matchList;
+    } else if (result?.data?.message === 'fail') {
+      matchData = [];
+    } else if (result?.response?.status === 404) {
+      return 'fail'
+    } else {
+      alert('잘못된 접근입니다.');
+      return 'fail'
     }
-
-    for (let matchId of data) {
-      await getMatchDetail(matchId)
-        .then((res) => matchList.push(res))
-        .catch((err) => console.log(err));
+    const matchList = [];
+    for (let matchId of matchData) {
+      const { data } = await getMatchDetail(matchId);
+      matchList.push(data);
     };
     
     if (matchList.length > 0) {
@@ -205,36 +196,37 @@ const RoomCreate = () => {
     setSummonerName(event.target.value)
   };
 
-  const onHandlePage = (event) => {
+  const onHandlePage = async (event) => {
     const newPageNum = pageNum + parseInt(event.target.value);
     if (newPageNum >= 0) {
       setPageNum(newPageNum);
       setMatchSelected({});
-      getMatches(summonerNameSearch)
-        .then((result) => setSearchState(result));
+      const result = await getMatches(summonerNameSearch, newPageNum);
+      setSearchState(result);
     };
   };
   // 게임 정보 --------------
 
-  const onSubmitClicked = (event) => {
+  const onSubmitClicked = async (event) => {
     event.preventDefault();
     const body = {
       title,
       content,
       matchDto: matchForSubmit,
     };
-    console.log(body);
 
-    createRoom(body)
-      .then((res) => {
-        if (res.data.message === 'success') {
-          navigate(`/room/${res.data.result}`);
-        } else {
-          alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
-          navigate('/room/list');
-        }
-      })
-      .catch((err) => console.log(err));
+    const result = await createRoom(body)
+    if (result?.data?.message === 'success') {
+      navigate(`/room/${result.data.result}`);
+    } else if (result?.response?.status === 400) {
+      alert('게임을 선택해 주세요.')
+    } else if (result?.response?.status === 403) {
+      console.log('노토큰입니다.화이팅')
+    } else {
+      alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
+      console.log(result)
+      navigate('/room/list');
+    };
   };
 
   const isValid = Boolean(title) && Boolean(content);

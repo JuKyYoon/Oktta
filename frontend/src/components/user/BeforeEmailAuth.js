@@ -7,19 +7,16 @@ const BeforeEmailAuth = () => {
   const [clicked, setClicked] = useState(false);
 
   // 인증메일 보내기
-  const sendEmailHandler = () => {
+  const sendEmailHandler = async () => {
     setClicked(true);
-    sendEmail()
-      .then((res) => {
-        if (res.data.message === "success") {
-          alert("인증 이메일을 다시 발송하였습니다.");
-        }
-        else {
-          alert("인증 이메일 전송에 실패하였습니다.");
-          setClicked(false);
-        }
-      })
-      .catch((err) => alert("인증 이메일 전송에 실패하였습니다."));
+    const result = await sendEmail();
+    if (result?.data?.message === "success") {
+      alert("인증 이메일을 다시 발송하였습니다.");
+    }
+    else {
+      alert("인증 이메일 전송에 실패하였습니다.");
+      setClicked(false);
+    };
   };
 
   return (

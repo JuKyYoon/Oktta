@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutRequest } from "../../services/userService";
 import BeforeEmailAuth from "../user/BeforeEmailAuth";
-import { initState } from "../../modules/user";
 import Navbar from "./Navbar";
+import { LOGOUT } from "@/modules/types";
 
 const Header = () => {
   const state = useSelector((state) => state);
@@ -13,14 +13,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   const onLogoutHandler = () => {
-    dispatch(logoutRequest())
-      .then((res) => navigate('/'))
-      .catch((err) => {
-        state.user = initState;
-        localStorage.removeItem('persist:root');
-        navigate('/');
-        // console.log(err);
-      });
+    logoutRequest();
+    dispatch({
+      type: LOGOUT
+    });
+    navigate('/');
   };
 
   return (
