@@ -26,10 +26,10 @@ const ScreenShare = (props) => {
   const sessionRef = useRef();
 
   const [participants, setParticipants] = useState([
-    // { nickname: 'samsung', rank: 24, connectionId: 'conid1', audioActive: false },
-    // { nickname: 'apple', rank: 54, connectionId: 'conid2', audioActive: false },
-    // { nickname: '일이삼사일이삼사삼사', rank: 0, connectionId: 'conid3', audioActive: true },
-    // { nickname: 'sony', rank: 94, connectionId: 'conid4', audioActive: false },
+    // { nickname: 'samsung', rank: 24, connectionId: 'conid1', audioActive: false, isSpeaking: false},
+    // { nickname: 'apple', rank: 54, connectionId: 'conid2', audioActive: false, isSpeaking: false },
+    // { nickname: '일이삼사일이삼사삼사', rank: 0, connectionId: 'conid3', audioActive: true, isSpeaking: true },
+    // { nickname: 'sony', rank: 94, connectionId: 'conid4', audioActive: false, isSpeaking: true },
   ]);
 
   const [chat, setChat] = useState([
@@ -85,6 +85,7 @@ const ScreenShare = (props) => {
     console.log(token)
     // OpenVidu 객체 생성.
     const openVidu = new OpenVidu();
+    // openVidu.enableProdMode();
     setOpenVidu(openVidu);
 
     // 세션 초기화
@@ -99,6 +100,7 @@ const ScreenShare = (props) => {
       let user = JSON.parse(data[1]);
       console.log(user);
       user.audioActive = false;
+      user.isSpeaking = false;
       user.connectionId = event.connection.connectionId;
       user.role = event.connection.role ? event.connection.role : 'publisher';
       setParticipants( prevArr => [...prevArr, user]); 
@@ -181,6 +183,29 @@ const ScreenShare = (props) => {
         )
       }
     })
+
+    mySession.on("publisherStartSpeaking", (event) => {
+      // console.log("speaking Start-----------------------------------")
+      const spekingId = event.connection.connectionId;
+      setParticipants((participants) => 
+        participants.map(e => 
+          e.connectionId == spekingId ? {...e, isSpeaking : true } : e
+        )
+      )
+      // console.log("-----------------------------------")
+    })
+
+    mySession.on("publisherStopSpeaking", (event) => {
+      // console.log("-----------------------------speaking stop------")
+      const spekingId = event.connection.connectionId;
+      setParticipants((participants) => 
+        participants.map(e => 
+          e.connectionId == spekingId ? {...e, isSpeaking : false } : e
+        )
+      )
+      // console.log("-----------------------------------")
+    })
+
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
     // 스스로 통신을 중단할 수 없으며, 스스로 stream 교체 만 가능하다.
@@ -530,7 +555,9 @@ const ScreenShare = (props) => {
               </Button> */}
               <List>
                 {participants.map((user, index) => (
-                <ListItem key={user.connectionId} disablePadding>
+                <ListItem key={user.connectionId} disablePadding sx={{
+                  boxShadow: user.isSpeaking ? "0px 0px 0px 5px #3f50e7 inset" : ""
+                }}>
                   <ListItemButton>
                     <ListItemIcon>
                       {user.audioActive 
@@ -659,7 +686,6 @@ const ScreenShare = (props) => {
           </Box>
         </Grid>
       </Grid>
-      <video id="hidden-video"></video>
     </Box>
   );
 };
