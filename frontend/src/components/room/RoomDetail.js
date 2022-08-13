@@ -20,23 +20,44 @@ const RoomDetail = () => {
   const [room, setRoom] = useState({});
   const [vote, setVote] = useState('');
   const [voteDto, setVoteDto] = useState(null);
+  const [currentVote, setCurrentVote] = useState('');
 
   const getDetailRoom = async (idx) => {
-    const result = await detailRoom(idx)
-    // 투표가 종료된 방이면 voteDto값 설정해주기
+    const result = await detailRoom(idx);
+    // console.log(result);
     if (result?.data?.message !== 'success') {
-      alert('잘못된 접근입니다.')
+      alert('잘못된 접근입니다.');
       navigate('../list');
     }
+    // 투표가 종료된 방이면 voteDto값 설정해주기
     if (result?.data?.result?.voteDto) {
       setVoteDto(result.data.result.voteDto);
-    } 
+    }
+    // 방 정보 room에 저장
     setRoom(result?.data?.result);
   };
 
   useEffect(() => {
     getDetailRoom(idx);
-  }, [vote]);
+  }, []);
+
+  switch (room.myVote) {
+    case '1':
+      setCurrentVote('탑');
+      break;
+    case '2':
+      setCurrentVote('정글');
+      break;
+    case '3':
+      setCurrentVote('미드');
+      break;
+    case '4':
+      setCurrentVote('원딜');
+      break;
+    case '5':
+      setCurrentVote('서포터');
+      break;
+  }
 
   const onDeleteButtonClicked = async () => {
     const result = await deleteRoom(idx);
@@ -44,35 +65,50 @@ const RoomDetail = () => {
     if (result?.data?.message === 'success') {
       navigate('../list');
     } else if (result?.data?.message === 'fail') {
-      console.log(result)
       // 200 실패이면 남의 글 삭제
       alert('잘못된 요청입니다.');
     } else {
-      alert('잘못된 요청입니다.')
-      console.log(result?.response?.status)
+      alert('잘못된 요청입니다.');
+      // console.log(result?.response?.status);
       navigate('../list');
-    };
+    }
   };
 
   const onVoteEndButtonClicked = async () => {
     const result = await quitVote(idx);
     if (result?.data?.message === 'success') {
-      setVote('-1');
+      location.reload();
     } else if (result?.data?.message === 'fail') {
-      console.log(result)
       alert('접근 권한이 없습니다.');
     } else {
-      console.log(result);
       navigate('/error');
-    };
+    }
   };
   const handleVoteChanged = (event) => {
     setVote(event.target.value);
   };
 
   const onVoteButtonClicked = async () => {
-    const result = await createVote(idx, vote)
+    const result = await createVote(idx, vote);
+    // setVote(vote);
     if (result?.data?.message === 'success') {
+      switch (vote) {
+        case '1':
+          setCurrentVote('탑');
+          break;
+        case '2':
+          setCurrentVote('정글');
+          break;
+        case '3':
+          setCurrentVote('미드');
+          break;
+        case '4':
+          setCurrentVote('원딜');
+          break;
+        case '5':
+          setCurrentVote('서포터');
+          break;
+      }
       alert('투표하였습니다.');
     } else {
       alert('투표에 실패하였습니다...');
@@ -81,8 +117,10 @@ const RoomDetail = () => {
   };
 
   const onVoteCancelButtonClicked = async () => {
-    const result = await deleteVote(idx)
+    const result = await deleteVote(idx);
     if (result?.data?.message === 'success') {
+      setCurrentVote('');
+
       alert('투표를 철회하였습니다.');
     } else if (result?.data?.message === 'fail') {
       alert('먼저 투표를 해주세요!');
@@ -120,6 +158,11 @@ const RoomDetail = () => {
           ) : (
             <div>
               <h3>투표가 진행중입니다!</h3>
+              <div className='current-vote'>
+                {currentVote === ''
+                  ? '투표를 진행해주세요'
+                  : `현재 투표한 포지션: ${currentVote}`}
+              </div>
               <div className='vote-component'>
                 <img
                   src='../assets/donut_chart.png'
@@ -128,7 +171,6 @@ const RoomDetail = () => {
                   alt='도넛차트'
                 />
                 <div className='radio-button'>
-                  <h3>범인 고르기</h3>
                   <label>
                     <input
                       type='radio'
@@ -186,7 +228,8 @@ const RoomDetail = () => {
                     variant='outlined'
                     color='veryperi'
                     onClick={onVoteButtonClicked}
-                    disabled={vote === '' ? true : false}>
+                    disabled={vote === '' ? true : false}
+                  >
                     투표하기
                   </Button>
                   <Button
@@ -194,7 +237,8 @@ const RoomDetail = () => {
                     size='small'
                     variant='outlined'
                     color='veryperi'
-                    onClick={onVoteCancelButtonClicked}>
+                    onClick={onVoteCancelButtonClicked}
+                  >
                     투표철회
                   </Button>
                 </div>
@@ -215,7 +259,8 @@ const RoomDetail = () => {
             <Button
               className='detail-button'
               variant='outlined'
-              color='veryperi'>
+              color='veryperi'
+            >
               수정하기
             </Button>
           </Link>
@@ -226,7 +271,8 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onDeleteButtonClicked}>
+            onClick={onDeleteButtonClicked}
+          >
             방 삭제하기
           </Button>
         ) : null}
@@ -235,7 +281,8 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onVoteEndButtonClicked}>
+            onClick={onVoteEndButtonClicked}
+          >
             투표 종료하기
           </Button>
         ) : null}

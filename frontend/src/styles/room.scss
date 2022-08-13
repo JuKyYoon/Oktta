@@ -8,11 +8,9 @@
   padding: 10px;
 }
 
-
 .hrLine {
   width: 80%;
 }
-
 
 // RoomList 관련
 .create-button {
@@ -23,28 +21,25 @@
   width: 80%;
 }
 
-
 // RoomCreate, RoomEdit관련
-.room-title-form{
+.room-title-form {
   margin-bottom: 10px;
   margin-top: 5px;
   width: 40%;
 }
-.room-button{
+.room-button {
   margin: 10px;
 }
-.room-editor{
+.room-editor {
   margin-bottom: 10px;
 }
-.ck-editor__editable{
+.ck-editor__editable {
   min-height: 400px;
 }
-
 
 .myBtn {
   font-size: 28px;
 }
-
 
 // RoomDetail 관련
 .detail-component {
@@ -87,7 +82,11 @@
   aspect-ratio: 1;
   margin: 5%;
 }
-
+.current-vote {
+  text-align: center;
+  margin-bottom: 5px;
+  color: gray;
+}
 
 // RoomComment 관련
 .comments-wrapper {
@@ -96,7 +95,7 @@
   align-items: center;
   width: 80%;
 }
-.comment-title{
+.comment-title {
   margin-right: auto;
 }
 .comments-header {
@@ -131,16 +130,6 @@
 .comments-edit-textarea {
   width: 70%;
 }
-.comments-footer {
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-  align-items: center;
-}
-
-
-
-
 
 // 게임 불러오기 모달
 .modal-box {
