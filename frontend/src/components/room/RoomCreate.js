@@ -142,8 +142,12 @@ const RoomCreate = () => {
     const matchList = [];
     for (let matchId of matchData) {
       const { data } = await getMatchDetail(matchId);
+      if (data == undefined) {
+        return 'error'
+      }
       matchList.push(data);
     };
+    
     
     if (matchList.length > 0) {
       setMatchList(matchList);
@@ -305,6 +309,8 @@ const RoomCreate = () => {
                 <Loading />
               ) : searchState == 'fail' ? (
                 <p>소환사를 찾을 수 없습니다. 다시 검색해 주세요.</p>
+              ) : searchState == 'error' ? (
+                <p>데이터를 가져오는 중 오류가 발생했습니다.</p>
               ) : (
                 <div className='modal-result-list'>
                   {matchListView.map((match, idx) => (

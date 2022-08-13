@@ -112,7 +112,7 @@ const MyPage = () => {
                 <img src={profile.profileImg} width={250} />
               </div>
               <Button onClick={handleClickOpenProfile} className='mypage-left-item'>
-                <FlipCameraIosIcon fontSize='large' />
+                <FlipCameraIosIcon fontSize='large' sx={{color: "black"}} />
               </Button>
               <Dialog open={open_profile} onClose={handleClose} className='mypage-left-item'>
                 <DialogTitle>프로필 이미지 업로드</DialogTitle>

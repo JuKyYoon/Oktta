@@ -134,7 +134,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="form">
+    <div className="signup">
+    <div className="signup-form">
       <h2>회원가입</h2>
       <br />
       <FormControl>
@@ -146,18 +147,18 @@ const Signup = () => {
           color="veryperi"
           value={email}
           onChange={emailChange}
-        />
+          />
         <FormHelperText
           error={!!email && (!isEmailValid || emailChecked === "fail")}
-        >
+          >
           {email
             ? isEmailValid
-              ? emailChecked
-                ? emailChecked === 'success'
-                  ? '사용 가능한 이메일입니다.'
-                  : '이미 사용중인 이메일입니다.'
-                : '이메일 중복 여부를 확인중입니다.'
-              : '유효하지 않은 이메일입니다.'
+            ? emailChecked
+            ? emailChecked === 'success'
+            ? '사용 가능한 이메일입니다.'
+            : '이미 사용중인 이메일입니다.'
+            : '이메일 중복 여부를 확인중입니다.'
+            : '유효하지 않은 이메일입니다.'
             : '이메일을 입력해 주세요.'}
         </FormHelperText>
       </FormControl>
@@ -172,7 +173,7 @@ const Signup = () => {
           color="veryperi"
           value={password}
           onChange={passwordChange}
-        />
+          />
         <FormHelperText error={!!password && !isPasswordValid}>
           {isPasswordValid
             ? "안전한 비밀번호입니다."
@@ -189,7 +190,7 @@ const Signup = () => {
           color="veryperi"
           value={passwordCheck}
           onChange={passwordCheckChange}
-        />
+          />
         <FormHelperText error={!!passwordCheck && !isPasswordSame}>
           {!passwordCheck || isPasswordSame
             ? " "
@@ -203,17 +204,17 @@ const Signup = () => {
         <Input color="veryperi" value={nickname} onChange={nicknameChange} />
         <FormHelperText
           error={!!nickname && (!isNicknameValid || nicknameChecked === "fail" || banned)}
-        >
+          >
           {nickname
             ? isNicknameValid
-              ? !banned
-                ? nicknameChecked
-                  ? nicknameChecked === 'success'
-                    ? '사용 가능한 닉네임입니다.'
-                    : '이미 사용중인 닉네임입니다.'
-                  : '닉네임 중복 여부를 확인중입니다.'
-                : '사용할 수 없는 닉네임입니다.'
-              : '닉네임에 특수문자를 사용할 수 없습니다.'
+            ? !banned
+            ? nicknameChecked
+            ? nicknameChecked === 'success'
+            ? '사용 가능한 닉네임입니다.'
+            : '이미 사용중인 닉네임입니다.'
+            : '닉네임 중복 여부를 확인중입니다.'
+            : '사용할 수 없는 닉네임입니다.'
+            : '닉네임에 특수문자를 사용할 수 없습니다.'
             : '10글자 이하의 닉네임을 입력해주세요.'}
         </FormHelperText>
       </FormControl>
@@ -225,7 +226,7 @@ const Signup = () => {
             type='file'
             accept='image/*'
             onChange={e => handleFileInput(e)}
-          />
+            />
         </div>
       </FormControl>
       <br />
@@ -244,10 +245,11 @@ const Signup = () => {
           !nickname ||
           nicknameChecked !== "success"
         }
-      >
+        >
         가입하기
       </Button>
     </div>
+  </div>
   );
 };
 

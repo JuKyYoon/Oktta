@@ -30,7 +30,7 @@ public class RoomController {
 
     @Value("${pagingLimit}")
     private int pagingLimit;
-    
+
     @Value("${myLimit}")
     private int myLimit;
 
@@ -57,7 +57,7 @@ public class RoomController {
         String title = map.get("title").toString();
         String content = map.get("content").toString();
         Object matchObj = map.get("matchDto");
-        if(title == null || content == null || matchObj == null || matchObj.toString().equals("{}")){
+        if(title == null || content == null || matchObj == null || "{}".equals(matchObj.toString())){
             throw new InputDataNullException("INPUT DATA IS NULL");
         }
         roomDto.setTitle(title);

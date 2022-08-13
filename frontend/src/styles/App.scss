@@ -1,9 +1,20 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900");
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+
 $veryperi: #6667ab;
-$background-color: whitesmoke;
+$background-color: white;
 $box-color: #d7d7fa;
+$hover-color:#d7d7fa71;
+$font-size-large: 20px;
+$font-size-medium: 15px;
+$font-size-small: 10px;
+$shadow-color: rgba(0, 0, 0, 0.322);
+
 /* App css */
 html, body, #root, #root>div {
-  height: 100%
+  height: 100%;
+  margin: 0;
 }
 
 body {
@@ -11,9 +22,10 @@ body {
 }
 
 main {
-  padding-top: 3%;
   height: 85vh;
   background-color: $background-color;
+  display: flex;
+  justify-content: center;
 }
 
 a {
@@ -23,7 +35,9 @@ a {
 }
 
 * {
-  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
 }
 
 ul {
@@ -36,41 +50,175 @@ h2 {
 
 /* Header 관련 CSS */
 /* 버튼 */
-.css-1q39md6-MuiButtonBase-root-MuiButton-root {
-  color: black !important;
-}
-
-.logo {
-  width: 200px;
-}
-
-@media (max-width: 991px) {
-  .logo {
-    width: 150px;
-  }
-}
+// .css-1q39md6-MuiButtonBase-root-MuiButton-root {
+//   color: black !important;
+// }
 
 .header-main-div {
-  height: 110px;
-  min-height: 110px;
+  height: 15vh;
+  display: flex;
+  flex-direction: column;
+  // height: 150px;
+  min-height: 140px;
+  max-height: 150px;
+  align-items: center;
   // background-color:blue;
 }
 
 .header {
+  background-color: white;
+  width: 90%;
   display: flex;
   align-items: center;
+  // justify-self: center;
   justify-content: space-between;
   // margin: 10px;
 }
 
-.header-right-btn {
+.header-right {
   display: flex;
+}
+
+.header-right-btn {
+  font-size: $font-size-medium;
+  // font-weight: bold;
+  padding: 0px 10px;
+  align-items: center;
+  border-radius: 7px;
+}
+
+.header-right-btn:hover {
+  color: $veryperi;
+  font-weight: bold;
+  // box-shadow: 0px 0px 10px 0px $veryperi;
+  // background-color: $background-color;
+}
+
+.logo {
+  margin: 20px;
+}
+
+.logo-image {
+  width: 200px;
+}
+
+@media (max-width: 991px) {
+  .logo-image {
+    width: 150px;
+  }
 }
 
 .nav-bar {
   display: flex;
+  align-items: center;
   flex-direction: row;
   justify-content: center;
+}
+
+.nav-menu {
+  display: flex;
+  width: 120px;
+  font-size: $font-size-large;
+  padding: 6px 30px;
+  // margin: 0px 40px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  // justify-self: ;
+}
+
+.nav-menu:hover {
+  color: $veryperi;
+  font-weight: bold;
+  background-color: $background-color;
+  box-shadow: 5px 5px 10px 1px $hover-color ;
+  // background-color: $hover-color;
+}
+
+.nav-menu-middle {
+  // border-left: 1px solid black;
+  // border-right: 1px solid black;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.block-box {
+  display: block;
+  width: 100px;
+  height: 50px;
+  margin: 10px;
+}
+
+
+.content h2 {
+  color: #fff;
+  font-size: 40px;
+  position: absolute;
+  // transform: translate(-50%, -50%);
+}
+.content h2:nth-child(1) {
+  color: transparent;
+  -webkit-text-stroke: 2px red;
+}
+
+.content h2:nth-child(2) {
+  color: red;
+  animation: animate 4s ease-in-out infinite;
+}
+
+.content-disabled h2 {
+  color: #fff;
+  // font-family: 'Nanum Brush Script', cursive;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 40px;
+  position: absolute;
+  // transform: translate(-50%, -50%);
+}
+
+.content-disabled h2:nth-child(1) {
+  color: transparent;
+  -webkit-text-stroke: 1px $veryperi;
+}
+
+.content-disabled h2:nth-child(2) {
+  color: $veryperi;
+  animation: animate 6s ease-in-out infinite;
+}
+
+@keyframes animate {
+  0%,
+  100% {
+    clip-path: polygon(
+      0% 45%,
+      16% 44%,
+      33% 50%,
+      54% 60%,
+      70% 61%,
+      84% 59%,
+      100% 52%,
+      100% 100%,
+      0% 100%
+    );
+  }
+
+  50% {
+    clip-path: polygon(
+      0% 60%,
+      15% 65%,
+      34% 66%,
+      51% 62%,
+      67% 50%,
+      84% 45%,
+      100% 46%,
+      100% 100%,
+      0% 100%
+    );
+  }
 }
 
 /* 에러 메시지 색상 */

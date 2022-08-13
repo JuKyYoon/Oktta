@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
+  margin-top: 35px;
+  // justify-content: center;
+  width: 80%;
 }
 
 
@@ -23,6 +24,9 @@
   width: 80%;
 }
 
+.MuiTableRow-hover {
+  cursor: pointer;
+}
 
 // RoomCreate, RoomEdit관련
 .room-title-form{
@@ -34,6 +38,7 @@
   margin: 10px;
 }
 .room-editor{
+  width: 1000px;
   margin-bottom: 10px;
 }
 .ck-editor__editable{

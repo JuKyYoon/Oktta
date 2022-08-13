@@ -1,14 +1,25 @@
 @import './App.scss';
 
 .mypage {
-  position: relative;
-  margin-top: 5%;
+  display: flex;
+  // width: 90wh;
+  // position: relative;
+  // margin-top: 5%;
+  justify-content: center;
+  flex-direction: row;
+  // flex-wrap: wrap;
+  width: 80vw;
+  // align-items: center;
 }
 
 // 마이페이지
 .mypage-top {
     display: flex;
-    justify-content: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 5%;
+    // align-items: center;
+    // min-width: 1200px;
   }
   
 .mypage-left {
@@ -16,15 +27,25 @@
   flex-direction: column;
   align-items: center;
   margin: 2.5%;
-  width: 30%;
+  width: 40%;
 }
 
-// .mypage-image-profile {
-//   border: $veryperi 3px solid;
-//   border-radius: 100%;
-//   width: 80%;
-//   aspect-ratio: 1;
-// }
+#mypage-image-profile {
+  width: 250px;
+  height: 250px;
+  // overflow: hidden;
+  > img {
+    width: 100%;
+    object-fit: cover;
+    max-width: 250px;
+    max-height: 250px;
+    // height: auto;
+    border-radius: 50%;
+  }
+  // border: $veryperi 3px solid;
+  // width: 80%;
+  // aspect-ratio: 1;
+}
 
 .mypage-left-item {
   margin: 15px;
@@ -38,7 +59,7 @@
   align-self: center;
 }
 
-.mypage-lol-info {
+.mypage-lol-info {  
   display: flex;
   flex-direction: column;
   background-color: $box-color;
@@ -51,7 +72,7 @@
 
 .mypage-right {
   margin: 2.5%;
-  width: 40%;
+  width: 60%;
 }
 
 .mypage-contents-box {
@@ -120,9 +141,9 @@
 }
 
  /* 회원 탈퇴 버튼 */
-.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-  color: black !important;
-}
+// .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+//   color: black !important;
+// }
 
 #delete-btn {
   color: rgb(219, 219, 219) !important;
@@ -142,21 +163,25 @@
   // margin-top: 2%;
 }
 
-.login {
+.login, .signup {
   display: flex;
   justify-content: center;
+  margin: 0;
+  padding: 0;
 }
   /* 입력 폼 정렬 */
-.login-form {
-  radius: 10px;
+.login-form, .signup-form {
   display: flex;
+  min-width: 550px;
+  height: 550px;
+  margin-top: 5%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2%;
-  width: auto;
-  background-color: white;
-  // padding-top: 10px;
+  padding: 20px;
+  background-color: $background-color;
+  box-shadow: 2px 2px 5px 0px $shadow-color;
+  border-radius: 10px;
   // margin-top: 2%;
 }
 
@@ -186,21 +211,30 @@
   background-color: $veryperi !important;
 }
 
-#naverIdLogin {
-  padding-top: 8px;
-  width: 200px;
+.social-login-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  > a {
+    margin: 0px 5px;
+    
+  }
+  > a > img {
+    border-radius: 7px;
+    box-shadow: 2px 2px 5px 0px $shadow-color;
+  }
+  > a > img:hover {
+    border-radius: 7px;
+    box-shadow: 2px 2px 10px 0px $shadow-color;
+  }
 }
 
-#kakaoIdLogin {
-  padding-top: 8px;
+.social-login-button {
   width: 200px;
-  height: 55px;
+  height: 50px;
 }
 
-#googleIdLogin {
-  width: 205px;
-  height: 60px;
-}
 
 .login_or {
   position: relative;
@@ -227,6 +261,12 @@
 }
 
 @media (max-width: 991px) {
+
+  .mypage {
+    margin-top: 35px;
+    align-items: center;
+  }
+
   .mypage-top {
     flex-direction: column;
     align-items: center;
@@ -237,23 +277,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2.5%;
+    margin: 17px;
     width: 50%;
   }
 
   .mypage-right {
-    margin: 2.5%;
+    margin: 17px;
     width: 85%;
   }
 
-  .css-e53awj-MuiStack-root {
-    flex-direction: column !important;
+  // .css-e53awj-MuiStack-root {
+  //   flex-direction: column !important;
+  // }
+
+  .social-login-form {
+    flex-direction: column;
   }
 
-  #googleIdLogin {
-    width: 205px;
-    height: 60px;
-    margin-left: 15px;
+  .social-login-button {
+    margin: 1px 0px;
   }
 
   .email-auth-notice {
