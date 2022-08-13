@@ -5,10 +5,7 @@ import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
-import com.ssafy.backend.model.response.BaseResponseBody;
-import com.ssafy.backend.model.response.MessageResponse;
-import com.ssafy.backend.model.response.RecordingResponse;
-import com.ssafy.backend.model.response.SessionEnterResponse;
+import com.ssafy.backend.model.response.*;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
@@ -24,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -258,9 +256,20 @@ public class SessionController {
 
         Recording result = map.get(true);
         if(result != null) {
+            sessionService.saveRecordUrl(roomIdx, result.getUrl());
             return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
         }
+    }
+
+    /**
+     * @param roomIdx
+     * 해당 room에 대하여 녹화된 영상들의 url
+     */
+    @GetMapping("/recording/get/{idx}")
+    public ResponseEntity<? extends  BaseResponseBody> getRecording(@PathVariable("idx") Long roomIdx) {
+        List<String> videos = sessionService.getVideos(roomIdx);
+        return ResponseEntity.status(200).body(VideoResponse.of(200, successMsg, videos));
     }
 }

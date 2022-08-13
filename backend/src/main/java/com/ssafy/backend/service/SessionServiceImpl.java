@@ -2,9 +2,11 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.Video;
 import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.model.repository.VideoRepository;
 import com.ssafy.backend.util.RedisService;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
@@ -32,6 +34,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final UserRepository userRepository;
 
+    private final VideoRepository videoRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -41,13 +45,14 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
         this.redisService = redisService;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
         this.userRepository = userRepository;
+        this.videoRepository = videoRepository;
     }
 
     @Override
@@ -247,6 +252,24 @@ public class SessionServiceImpl implements SessionService {
         } finally {
             return result;
         }
+    }
+
+    @Override
+    public void saveRecordUrl(Long roomIdx, String recordUrl) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found Exception")
+        );
+
+        videoRepository.save(new Video.Builder(room, recordUrl).build());
+    }
+
+    @Override
+    public List<String> getVideos(Long roomIdx) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found Exception")
+        );
+
+        return videoRepository.findRecordUrlByRoom(room);
     }
 
     /**
