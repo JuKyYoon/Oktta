@@ -147,6 +147,7 @@ const ScreenShare = (props) => {
         subscriber.on('videoElementCreated', event => {
           console.log('subscriber audioElementCreated')
           // event.element.play();
+          // var video = document.getElementById("hidden-video").play();
         });
   
         // 타인이 공유
@@ -233,6 +234,8 @@ const ScreenShare = (props) => {
           insertMode: 'APPEND',
         });
         console.log('Audio Activated')
+
+        // 여기서 권한을 요청함. 그거에 따라서 
         mySession.publish(audioPublisher);
         setPublisher(audioPublisher);
       })
@@ -478,19 +481,22 @@ const ScreenShare = (props) => {
     window.addEventListener('beforeunload', closeWindow);
 
     window.onload = function() {
-      console.log('audio check');
+      console.log('audio check--------------------------------------------');
       navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
           AudioContext = window.AudioContext || window.webkitAudioContext;
           audioContext = new AudioContext();
+
+          
+          if (!session) {
+            console.log("세션 입장");
+            creaetSession();
+          }
       }).catch(e => {
+        alert("소리 권한 허용해주세요")
           console.error(`Audio permissions denied: ${e}`);
       });
     }
 
-    // if (!session) {
-    //   console.log("세션 입장");
-    //   creaetSession();
-    // }
 
     return () => {
       window.removeEventListener('beforeunload', closeWindow);
@@ -508,7 +514,7 @@ const ScreenShare = (props) => {
         zIndex: "1111",
         top: "15%"
       }}/> : null}
-      
+
       <Grid container direction='row' sx={{ width: 1, height: 1, flexGrow: 1}} spacing={0}>
         <Slide direction="right" in={leftDrawerOpen} mountOnEnter unmountOnExit>
           <Grid item xs={1.8} zeroMinWidth className={'user-div'}  sx={{
@@ -564,7 +570,7 @@ const ScreenShare = (props) => {
         }}> 
           <Box sx={{ height: '100%' }} style={{'backgroundColor' : 'none'}} >
           <div id="video-container">
-            {/* <video autoPlay loop>
+            {/* <video autoPlay muted>
               <source src="/flower.webm" type="video/webm" />
               Sorry, your browser doesn't support embedded videos.
             </video> */}
@@ -653,6 +659,7 @@ const ScreenShare = (props) => {
           </Box>
         </Grid>
       </Grid>
+      <video id="hidden-video"></video>
     </Box>
   );
 };
