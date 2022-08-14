@@ -20,6 +20,8 @@ public class RoomDto {
     private int myVote;
     private VoteDto voteDto;
     private MatchDto matchDto;
+    private String hostSummonerName;
+    private int hostTeamId;
 
     public RoomDto() {
     }
@@ -43,6 +45,19 @@ public class RoomDto {
         this.people = people;
         this.hit = hit;
         this.matchDto = matchDto;
+    }
+
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit, MatchDto matchDto, String hostSummonerName, int hostTeamId){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
+        this.matchDto = matchDto;
+        this.hostSummonerName = hostSummonerName;
+        this.hostTeamId = hostTeamId;
     }
 
     public Long getIdx() {
@@ -155,5 +170,21 @@ public class RoomDto {
 
     public void setMyVote(int myVote) {
         this.myVote = myVote;
+    }
+
+    public String getHostSummonerName() {
+        return hostSummonerName;
+    }
+
+    public void setHostSummonerName(String hostSummonerName) {
+        this.hostSummonerName = hostSummonerName;
+    }
+
+    public int getHostTeamId() {
+        return hostTeamId;
+    }
+
+    public void setHostTeamId(int hostTeamId) {
+        this.hostTeamId = hostTeamId;
     }
 }

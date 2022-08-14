@@ -6,6 +6,7 @@ import SocialLogin from "./SocialLogin";
 import { loginRequest } from "../../services/userService.js";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -75,9 +76,9 @@ const Login = () => {
             입력하신 내용을 다시 확인해주세요.
           </div>
           <br />
-          <Button type="submit" variant="contained" fullWidth>
-            로그인
-          </Button>
+            <Button type = "submit" color="veryperi" variant="contained" fullWidth>
+              로그인
+            </Button>
         </form>
         <br />
         <div>

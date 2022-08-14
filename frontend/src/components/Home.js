@@ -1,8 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  const state = useSelector(state => state);
+
   return (
-    <div className="main-content">
+    <div className={`main-content ${state.user.auth === '0' ? "user-no-auth" : null}`}>
       <div className="block-box">
         <div className="content">
           <h2>ON AIR</h2>

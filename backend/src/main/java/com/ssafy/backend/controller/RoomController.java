@@ -57,11 +57,20 @@ public class RoomController {
         String title = map.get("title").toString();
         String content = map.get("content").toString();
         Object matchObj = map.get("matchDto");
-        if(title == null || content == null || matchObj == null || "{}".equals(matchObj.toString())){
+        String hostSummonerName = map.get("hostSummonerName").toString();
+        String hostTeamId = map.get("hostTeamId").toString();
+        if(title == null
+                || content == null
+                || hostSummonerName == null
+                || hostTeamId == null
+                || matchObj == null
+                || "{}".equals(matchObj.toString())){
             throw new InputDataNullException("INPUT DATA IS NULL");
         }
         roomDto.setTitle(title);
         roomDto.setContent(content);
+        roomDto.setHostSummonerName(hostSummonerName);
+        roomDto.setHostTeamId(Integer.parseInt(hostTeamId));
         MatchDto matchDto = new ObjectMapper().convertValue(matchObj, MatchDto.class);
         roomDto.setMatchDto(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());

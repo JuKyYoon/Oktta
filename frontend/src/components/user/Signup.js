@@ -138,7 +138,7 @@ const Signup = () => {
     <div className="signup-form">
       <h2>회원가입</h2>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="email" color="veryperi">
           이메일
         </InputLabel>
@@ -163,7 +163,7 @@ const Signup = () => {
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="password" color="veryperi">
           비밀번호
         </InputLabel>
@@ -181,7 +181,7 @@ const Signup = () => {
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="passwordCheck" color="veryperi">
           비밀번호 확인
         </InputLabel>
@@ -197,7 +197,7 @@ const Signup = () => {
             : "비밀번호가 일치하지 않습니다."}
         </FormHelperText>
       </FormControl>
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="nickname" color="veryperi">
           닉네임
         </InputLabel>
@@ -219,7 +219,7 @@ const Signup = () => {
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <div>
           <p>프로필 이미지 업로드 (선택)</p>
           <input

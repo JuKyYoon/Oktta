@@ -43,7 +43,7 @@ const RoomList = () => {
     if (date == undefined) {
       return "";
     }
-    date = dayjs.utc(date).local().format();
+    date = dayjs.utc(date).local();
     let diffDate = nowTime.diff(date, "d");
     if (diffDate == 0) {
       return `${ nowTime.diff(date, "h") }시간 전`;
@@ -82,10 +82,10 @@ const RoomList = () => {
               <TableHead sx={{ borderBottom: 'solid' }}>
                 <TableRow>
                   <TableCell align='center' width="10%">라이브</TableCell>
-                  <TableCell align='center' width="48%">제목</TableCell>
-                  <TableCell align='center' width="17%">작성자</TableCell>
-                  <TableCell align='center' width="9%">작성일</TableCell>
-                  <TableCell align='center' width="7%">조회수</TableCell>
+                  <TableCell align='center' width="42%">제목</TableCell>
+                  <TableCell align='center' width="16%">작성자</TableCell>
+                  <TableCell align='center' width="16%">작성일</TableCell>
+                  <TableCell align='center' width="8%">조회수</TableCell>
                 </TableRow>
               </TableHead>
                 <TableBody>

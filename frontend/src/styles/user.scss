@@ -4,20 +4,25 @@
   display: flex;
   // width: 90wh;
   // position: relative;
-  // margin-top: 5%;
-  justify-content: center;
-  flex-direction: row;
+  margin-top: 30px;
+  // justify-content: center;
+  flex-direction: column;
   // flex-wrap: wrap;
   width: 80vw;
   // align-items: center;
+
+  > .block-box {
+    height: 50px;
+  }
 }
+
 
 // 마이페이지
 .mypage-top {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 5%;
+    // width: 100%;
+    // justify-content: space-between;
+    // margin-top: 5%;
     // align-items: center;
     // min-width: 1200px;
   }
@@ -75,15 +80,22 @@
   width: 60%;
 }
 
+.mypage-right-menu > span {
+  font-size: $font-size-medium;
+  font-weight: bold;
+}
+
 .mypage-contents-box {
   display: flex;
   flex-direction: column;
+  position: relative;
   background-color: $box-color;
   border-radius: 10px;
   border-top-left-radius: 0px;
-  padding: 1%;
-  height: 350px;
-  justify-content: start;
+  // padding: 1%;
+  height: 100%;
+  // justify-content: start;
+  align-items: center;
 }
 
 .mypage-contents-item {
@@ -92,8 +104,9 @@
   text-overflow: ellipsis;
   background-color: white;
   border-radius: 10px;
-  padding: 1%;
-  margin: 2%;
+  width: 90%;
+  padding: 3px;
+  margin: 3px;
   height: 25px;
 }
 
@@ -129,6 +142,11 @@
 
 .default-profile-img {
   text-align: center;
+}
+
+.pagination {
+  position: absolute;
+  bottom: 10px;
 }
 
 .no-pagination {
@@ -170,7 +188,7 @@
   padding: 0;
 }
   /* 입력 폼 정렬 */
-.login-form, .signup-form {
+.login-form, .signup-form, .user-edit-form {
   display: flex;
   min-width: 550px;
   height: 550px;
@@ -194,11 +212,11 @@
 }
 
 // 회원가입 폼
-.css-1nrlq1o-MuiFormControl-root {
-  width: 315px;
-}
+// .css-1nrlq1o-MuiFormControl-root {
+//   width: 315px;
+// }
 
-// 회원가입 경고문
+회원가입 경고문
 .css-1wc848c-MuiFormHelperText-root.Mui-error {
   font-size: 13px;
   letter-spacing: -.5px;
@@ -207,9 +225,9 @@
 }
 
 /* 회원가입 버튼 색상 */
-.css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
-  background-color: $veryperi !important;
-}
+// .css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
+//   background-color: $veryperi !important;
+// }
 
 .social-login-form {
   display: flex;
@@ -262,10 +280,6 @@
 
 @media (max-width: 991px) {
 
-  .mypage {
-    margin-top: 35px;
-    align-items: center;
-  }
 
   .mypage-top {
     flex-direction: column;
@@ -278,13 +292,16 @@
     flex-direction: column;
     align-items: center;
     margin: 17px;
-    width: 50%;
+    // width: 50%;
   }
 
   .mypage-right {
     margin: 17px;
-    width: 85%;
+    min-width: 400px;
+    min-height: 350px;
+    // width: 85%;
   }
+
 
   // .css-e53awj-MuiStack-root {
   //   flex-direction: column !important;
@@ -306,7 +323,4 @@
     font-size: 13px;
   }
   
-  .pagination {
-    background-color: #ff003e;
-  }
 }

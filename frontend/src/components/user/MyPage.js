@@ -106,6 +106,12 @@ const MyPage = () => {
     <div className='mypage'>
       {user.auth === "0" ? null :
         <>
+          <div className="block-box">
+            <div className="content-disabled ">
+              <h2>마이 페이지</h2>
+              <h2>마이 페이지</h2>
+            </div>
+          </div>
           <div className='mypage-top'>
             <div className='mypage-left'>
               <div id='mypage-image-profile' className='mypage-left-item'>
@@ -124,7 +130,7 @@ const MyPage = () => {
                       type='file'
                       accept='image/*'
                       onChange={event => handleFileInput(event)}
-                    />
+                      />
                     <br /><br />
                     ⚠️미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
                     경고없이 삭제될 수 있습니다.
@@ -143,26 +149,32 @@ const MyPage = () => {
                   <Button onClick={handleSetProfile}>새로운 이미지 등록</Button>
                 </DialogActions>
               </Dialog>
-              <Link to='/user/updateProfile' className='mypage-left-item'>회원 정보 수정하기</Link>
+              <Button
+                component={Link} to='/user/updateProfile'
+                variant={'contained'}
+                color='veryperi'>
+                회원 정보 수정
+              </Button>
+              {/* <Link to='/user/updateProfile' className='mypage-left-item'>회원 정보 수정하기</Link> */}
             </div>
             <div className='mypage-right'>
               <div className='mypage-right-menu'>
                 <span
                   onClick={() => setMode('info')}
                   className={`mypage-mode mypage-mode-start ${mode === 'info' ? 'mypage-selected' : null
-                    }`}>
+                }`}>
                   내 정보
                 </span>
                 <span
                   onClick={() => setMode('room')}
                   className={`mypage-mode ${mode === 'room' ? 'mypage-selected' : null
-                    }`}>
+                }`}>
                   옥상에서 한판 한 목록
                 </span>
                 <span
                   onClick={() => setMode('board')}
                   className={`mypage-mode mypage-mode-end ${mode === 'board' ? 'mypage-selected' : null
-                    }`}>
+                }`}>
                   작성한 글 목록
                 </span>
               </div>
@@ -178,14 +190,17 @@ const MyPage = () => {
                 {mode === 'room' && (
                   <>
                     <div>
-                      총 <b>{roomList.length}</b>개의 게시물을 작성하였습니다.</div>
+                      총 <b>{roomList.length}</b>개의 게시물을 작성하였습니다.
+                    </div>
                     {roomList.slice((page - 1) * 7, page * 7).map((room, idx) => (
-                      <div key={idx} className='mypage-contents-item'>
-                        <Link to={`../../room/${room.idx}`}>{room.title}</Link>
-                      </div>
+                      <Link to={`../../room/${room.idx}`} className='mypage-contents-item'>
+                        <div key={idx} >
+                          {room.title}
+                        </div>
+                      </Link>
                     ))}
                     <Pagination count={Math.ceil(roomList.length / 7)} page={page}
-                      color='veryperi' className={`${roomList.length === 0 ? 'no-pagination' : null}`} onChange={pageChange} />
+                      color='veryperi' className={`${roomList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
                   </>
                 )}
                 {mode === 'board' && (
@@ -193,20 +208,22 @@ const MyPage = () => {
                     <div>
                       총 <b>{boardList.length}</b>개의 게시물을 작성하였습니다.</div>
                     {boardList.slice((page - 1) * 7, page * 7).map((board, idx) => (
-                      <div key={idx} className='mypage-contents-item'>
-                        <Link to={`../../board/${board.idx}`}>{board.title}</Link>
-                      </div>
+                      <Link to={`../../board/${board.idx}`} className='mypage-contents-item'>
+                        <div key={idx}>
+                          {board.title}
+                        </div>
+                      </Link>
                     ))}
                     <div className="pagination">
                     <Pagination count={Math.ceil(boardList.length / 7)} page={page}
-                      color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : null}`} onChange={pageChange} />
+                      color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
                     </div>
                   </>
                 )}
               </div>
             </div>
           </div >
-        </>}
+       </>}
     </div >
   );
 };
