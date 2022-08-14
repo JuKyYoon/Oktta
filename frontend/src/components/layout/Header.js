@@ -29,6 +29,12 @@ const Header = () => {
         {state.user.isLogin ? (
           <div className="header-right-btn">
             <Button
+              // onClick={onTierHandler}
+              sx={{ my: 2, color: "black", display: "block" }}
+            >
+              티어 인증하기
+            </Button>
+            <Button
               sx={{ my: 2, color: "white", display: "block" }}
               onClick={onLogoutHandler}
             >

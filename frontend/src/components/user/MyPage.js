@@ -15,8 +15,8 @@ const MyPage = () => {
   const [open_profile, setOpenProfile] = useState(false);
   const [mode, setMode] = useState('info');
   const [profile, setProfile] = useState({});
-  const [roomList, setRoomList] = useState([]);
-  const [boardList, setBoardList] = useState([]);
+  const [roomList, setRoomList] = useState(false);
+  const [boardList, setBoardList] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -26,26 +26,12 @@ const MyPage = () => {
   };
 
   const getMyPage = async () => {
-    const result = await getMyRoom();
-    if (result?.data?.message === "success") {
-      setRoomList(result?.data?.list);
-    } else {
-      console.log("불러오기 실패")
-    };
-
     const result2 = await getProfileRequest();
     if (result2?.data?.message === "success") {
       setProfile(result2?.data?.result)
     } else {
       console.log("프로파일 불러오기 실패");
     };
-
-    // const result3 = await getMyBoard();
-    // if(result3?.data?.message === "success") {
-    //   setBoardList(result3?.data?.list)
-    // } else {
-    //   console.log("게시물 불러오기 실패");
-    // };
   }
 
   useEffect(() => {
@@ -96,12 +82,13 @@ const MyPage = () => {
       if (result?.data?.message === 'success') {
         reload();
         setOpenProfile(false);
-        setPending(false);
       } else if (result?.response?.data?.message === 'fail') {
-        alert('잘못된 파일 형식입니다.')
+        alert('잘못된 파일 형식입니다.');
+        setOpenProfile(false);
       } else {
         navigate('/error');
       };
+      setPending(false);
     };
   }
 
@@ -135,6 +122,30 @@ const MyPage = () => {
   const ProfileNow = () => {
     profileShow.current.src = profile.profileImg;
     setSelectedFile('now');
+  }
+
+  const roomClick = async () => {
+    if (roomList === false) {
+      const result = await getMyRoom();
+      if (result?.data?.message === "success") {
+        setRoomList(result?.data?.list);
+      } else {
+        console.log("불러오기 실패")
+      };
+    }
+    setMode('room');
+  }
+
+  const boardClick = async () => {
+    if (boardList === false) {
+      // const result3 = await getMyBoard();
+      // if(result3?.data?.message === "success") {
+      //   setBoardList(result3?.data?.list)
+      // } else {
+      //   console.log("게시물 불러오기 실패");
+      // };
+    }
+    setMode('board');
   }
 
   return (
@@ -195,13 +206,13 @@ const MyPage = () => {
                   내 정보
                 </span>
                 <span
-                  onClick={() => setMode('room')}
+                  onClick={roomClick}
                   className={`mypage-mode ${mode === 'room' ? 'mypage-selected' : null
                     }`}>
                   옥상에서 한판 한 목록
                 </span>
                 <span
-                  onClick={() => setMode('board')}
+                  onClick={boardClick}
                   className={`mypage-mode mypage-mode-end ${mode === 'board' ? 'mypage-selected' : null
                     }`}>
                   작성한 글 목록

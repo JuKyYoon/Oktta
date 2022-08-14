@@ -127,7 +127,7 @@ const Signup = () => {
     } else if (result?.data?.message === "fail") {
       alert("회원가입에 실패하였습니다!");
     } else {
-      alert("회원가입에 오류가 생겼습니다. 다시 시도해주세요.");
+      alert('잘못된 파일 형식입니다.');
     };
   };
 
