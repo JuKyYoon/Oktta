@@ -24,6 +24,6 @@ public interface SessionService {
     void clearSession();
     Map<Boolean, Recording> recordingStart(String userId, Long roomIdx, Map<String, Object> params);
     Map<Boolean, Recording> recordingStop(String userId, Long roomIdx, Map<String, Object> params);
-    void saveRecordUrl(Long roomIdx, String recordUrl);
+    boolean saveRecordUrl(Long roomIdx, Recording result);
     List<String> getVideos(Long roomIdx);
 }

@@ -254,10 +254,14 @@ public class SessionController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
 
-        Recording result = map.get(true);
-        if(result != null) {
-            sessionService.saveRecordUrl(roomIdx, result.getUrl());
-            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        Recording recordingResult = map.get(true);
+        if(recordingResult != null) {
+            
+            // 최소 5분 이상의 녹화만 저장
+            if(!sessionService.saveRecordUrl(roomIdx, recordingResult))
+                return ResponseEntity.status(200).body(RecordingResponse.of(200,"Not Enough Recording Time"));
+
+            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, recordingResult));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
         }

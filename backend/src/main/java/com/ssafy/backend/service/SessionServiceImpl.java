@@ -255,12 +255,17 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void saveRecordUrl(Long roomIdx, String recordUrl) {
+    public boolean saveRecordUrl(Long roomIdx, Recording result) {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found Exception")
         );
 
-        videoRepository.save(new Video.Builder(room, recordUrl).build());
+        // 녹화 시간 검사
+        if(result.getDuration() < 300)
+            return false;
+
+        videoRepository.save(new Video.Builder(room, result.getUrl()).build());
+        return true;
     }
 
     @Override
