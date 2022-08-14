@@ -12,6 +12,7 @@ import '../../styles/room.scss';
 const RoomComment = ({ idx }) => {
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
+
   // 페이지네이션 마지막 페이지
   const [lastPage, setLastPage] = useState(0);
 
@@ -20,9 +21,7 @@ const RoomComment = ({ idx }) => {
 
   // 댓글 생성 내용
   const [content, setContent] = useState('');
-
-  // 이거 왜 필요함 ?
-  const [totalComments, setTotalComments] = useState(0);
+  const [lastIdx, setLastIdx] = useState(0);
 
   // 현재 수정할려고 하는 댓글 idx
   const [currentIdx, setCurrentIdx] = useState(-1);
@@ -34,7 +33,6 @@ const RoomComment = ({ idx }) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   // 리렌더하기위함
-  const [reRender, setRerender] = useState(0);
 
   // 현재 로그인한 유저 정보
   const user = useSelector((state) => state.user);
@@ -43,8 +41,10 @@ const RoomComment = ({ idx }) => {
     const result = await detailRoom(idx);
 
     if (result?.data?.message === 'success') {
-      // console.log(result);
       setCommentList(result.data.list);
+      if (result.data.list.length != 0) {
+        setLastIdx(result.data.list[result.data.list.length - 1].idx);
+      }
       setLastPage(Math.ceil(result.data.list.length / 5));
     }
   };
@@ -52,14 +52,29 @@ const RoomComment = ({ idx }) => {
   useEffect(() => {
     getDetailRoom(idx);
   }, []);
-
   const submit = async () => {
-    const body = { content };
+    const body = { content: content.trim() };
 
     const result = await createRoomComment(idx, body);
     if (result?.data?.message === 'success') {
-      // setCommentList([...commentList, content]);
+      const nickname = user.nickname;
+      setLastIdx((curr) => curr + 1);
+      const commentIdx = lastIdx + 1;
+      const createTime = new Date(+new Date() + 3240 * 10000)
+        .toISOString()
+        .split('T')[0];
+
+      const newComment = {
+        idx: commentIdx,
+        createTime,
+        nickname,
+        content: content.trim(),
+      };
+      setCommentList([...commentList, newComment]);
       setContent('');
+      if (commentList.length / 5 >= lastPage) {
+        setLastPage((curr) => curr + 1);
+      }
       alert('댓글 작성 완료!');
     } else {
       setContent('');
@@ -68,8 +83,17 @@ const RoomComment = ({ idx }) => {
   };
 
   const edit = async () => {
-    const body = { content: editInput };
+    const body = { content: editInput.trim() };
     const result = await editRoomComment(currentIdx, body);
+    const findIdx = commentList.findIndex((item) => item.idx == currentIdx);
+    let copyCommentList = [...commentList];
+    if (findIdx != -1) {
+      copyCommentList[findIdx] = {
+        ...copyCommentList[findIdx],
+        content: editInput.trim(),
+      };
+    }
+    setCommentList([...copyCommentList]);
     setIsEditMode(false);
     setCurrentIdx(-1);
     setEditInput('');
@@ -83,6 +107,15 @@ const RoomComment = ({ idx }) => {
   const handleDeleteButton = async (commentIdx) => {
     const result = await deleteRoomComment(commentIdx);
     if (result?.data?.message === 'success') {
+      let copyCommentList = [...commentList];
+      const findIdx = commentList.findIndex((item) => item.idx == commentIdx);
+      if (findIdx != -1) {
+        copyCommentList.splice(findIdx, 1);
+      }
+      setCommentList([...copyCommentList]);
+      if (commentList.length / 5 < lastPage) {
+        setLastPage((curr) => curr - 1);
+      }
       alert('댓글 삭제 완료');
     } else {
       alert('댓글 삭제 실패');
@@ -104,7 +137,7 @@ const RoomComment = ({ idx }) => {
 
   return (
     <div className='comments-wrapper'>
-      <h2 className='comment-title'>댓글</h2>
+      <h2 className='comment-title'>댓글 {commentList.length}</h2>
       <div className='comments-header'>
         <div>
           <TextField
@@ -117,14 +150,13 @@ const RoomComment = ({ idx }) => {
             multiline
             placeholder='댓글을 입력해주세요✏️'
           />
-          {content !== '' ? (
+          {content.trim().length >= 2 !== '' ? (
             <Button
               sx={{ ml: 2 }}
               variant='outlined'
               onClick={submit}
               size='large'
-              color='veryperi'
-            >
+              color='veryperi'>
               등록하기
             </Button>
           ) : (
@@ -133,8 +165,7 @@ const RoomComment = ({ idx }) => {
               variant='outlined'
               disabled={true}
               size='large'
-              color='veryperi'
-            >
+              color='veryperi'>
               등록하기
             </Button>
           )}
@@ -142,12 +173,14 @@ const RoomComment = ({ idx }) => {
         <div className='comments-body'>
           {commentList.map((comment, index) => {
             if (
-              6 * (currentPage - 1) <= index &&
-              index < 5 + 6 * (currentPage - 1)
+              5 * (currentPage - 1) <= index &&
+              index < 5 + 5 * (currentPage - 1)
             ) {
               return (
                 <div key={comment.idx} className='comments-comment'>
-                  <div className='comment-date'>{comment.createTime}</div>
+                  <div className='comment-date'>
+                    {comment.createTime.substr(0, 10)}
+                  </div>
 
                   {currentIdx === comment.idx ? (
                     <div>
@@ -161,13 +194,12 @@ const RoomComment = ({ idx }) => {
                         multiline
                         placeholder='댓글을 입력해주세요✏️'
                       />
-                      {editInput !== '' ? (
+                      {editInput.trim().length >= 2 !== '' ? (
                         <Button
                           sx={{ ml: 1, mr: 1 }}
                           variant='outlined'
                           onClick={edit}
-                          color='veryperi'
-                        >
+                          color='veryperi'>
                           수정하기
                         </Button>
                       ) : (
@@ -175,8 +207,7 @@ const RoomComment = ({ idx }) => {
                           sx={{ ml: 1, mr: 1 }}
                           variant='outlined'
                           disabled={true}
-                          color='veryperi'
-                        >
+                          color='veryperi'>
                           수정하기
                         </Button>
                       )}
@@ -184,8 +215,7 @@ const RoomComment = ({ idx }) => {
                         sx={{ ml: 1, mr: 1 }}
                         variant='outlined'
                         onClick={cancel}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         취소
                       </Button>
                       <hr></hr>
@@ -199,8 +229,7 @@ const RoomComment = ({ idx }) => {
                             sx={{ m: 1 }}
                             variant='outlined'
                             onClick={() => handleDeleteButton(comment.idx)}
-                            color='veryperi'
-                          >
+                            color='veryperi'>
                             삭제
                           </Button>
                         ) : null}
@@ -211,8 +240,7 @@ const RoomComment = ({ idx }) => {
                             onClick={() =>
                               handleToggleEdit(comment.idx, comment.content)
                             }
-                            color='veryperi'
-                          >
+                            color='veryperi'>
                             수정
                           </Button>
                         ) : null}

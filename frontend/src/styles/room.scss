@@ -87,6 +87,21 @@
   margin-bottom: 5px;
   color: gray;
 }
+.modal{
+  .modal-title{
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 2rem 0;
+  }
+  .modal-button{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    button{
+      font-size: 1.4rem;
+    }
+  }
+}
 
 // RoomComment 관련
 .comments-wrapper {

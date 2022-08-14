@@ -27,12 +27,12 @@ const RoomList = () => {
     } else {
       alert('게시물 불러오기 실패');
       navigate('/');
-    };
+    }
   };
 
   const roomHit = async (roomIdx) => {
     roomHitRequest(roomIdx);
-  }
+  };
 
   useEffect(() => {
     createRoomList(currentPage);
@@ -46,29 +46,28 @@ const RoomList = () => {
   return (
     <div>
       {rooms ? (
-      <div className='room'>
-        <h1>현재 방 목록</h1>
-        <Link
-          className='create-button'
-          to={`../create`}
-          style={{ textDecoration: 'none' }}
-        >
-          <Button variant='contained' color='veryperi'>
-            방 만들기
-          </Button>
-        </Link>
-        <div className='table-container'>
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ borderBottom: 'solid' }}>
-                <TableRow>
-                  <TableCell align='center'>라이브 상태</TableCell>
-                  <TableCell align='center'>제목</TableCell>
-                  <TableCell align='center'>작성일</TableCell>
-                  <TableCell align='center'>작성자</TableCell>
-                  <TableCell align='center'>조회수</TableCell>
-                </TableRow>
-              </TableHead>
+        <div className='room'>
+          <h1>현재 방 목록</h1>
+          <Link
+            className='create-button'
+            to={`../create`}
+            style={{ textDecoration: 'none' }}>
+            <Button variant='contained' color='veryperi'>
+              방 만들기
+            </Button>
+          </Link>
+          <div className='table-container'>
+            <TableContainer>
+              <Table>
+                <TableHead sx={{ borderBottom: 'solid' }}>
+                  <TableRow>
+                    <TableCell align='center'>라이브 상태</TableCell>
+                    <TableCell align='center'>제목</TableCell>
+                    <TableCell align='center'>작성일</TableCell>
+                    <TableCell align='center'>작성자</TableCell>
+                    <TableCell align='center'>조회수</TableCell>
+                  </TableRow>
+                </TableHead>
                 <TableBody>
                   {rooms.map((room) => (
                     <TableRow key={room.idx}>

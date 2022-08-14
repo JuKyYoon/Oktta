@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router';
 import { deleteRoom, detailRoom } from '../../services/roomService';
 import { createVote, deleteVote, quitVote } from '../../services/voteService';
-import { Button } from '@mui/material';
+import { Button, Dialog, DialogContent, IconButton } from '@mui/material';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
@@ -21,6 +23,7 @@ const RoomDetail = () => {
   const [vote, setVote] = useState('');
   const [voteDto, setVoteDto] = useState(null);
   const [currentVote, setCurrentVote] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
@@ -228,8 +231,7 @@ const RoomDetail = () => {
                     variant='outlined'
                     color='veryperi'
                     onClick={onVoteButtonClicked}
-                    disabled={vote === '' ? true : false}
-                  >
+                    disabled={vote === '' ? true : false}>
                     투표하기
                   </Button>
                   <Button
@@ -237,8 +239,7 @@ const RoomDetail = () => {
                     size='small'
                     variant='outlined'
                     color='veryperi'
-                    onClick={onVoteCancelButtonClicked}
-                  >
+                    onClick={onVoteCancelButtonClicked}>
                     투표철회
                   </Button>
                 </div>
@@ -259,8 +260,7 @@ const RoomDetail = () => {
             <Button
               className='detail-button'
               variant='outlined'
-              color='veryperi'
-            >
+              color='veryperi'>
               수정하기
             </Button>
           </Link>
@@ -271,8 +271,7 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onDeleteButtonClicked}
-          >
+            onClick={() => setShowDeleteModal(true)}>
             방 삭제하기
           </Button>
         ) : null}
@@ -281,13 +280,41 @@ const RoomDetail = () => {
             className='detail-button'
             variant='contained'
             color='veryperi'
-            onClick={onVoteEndButtonClicked}
-          >
+            onClick={onVoteEndButtonClicked}>
             투표 종료하기
           </Button>
         ) : null}
       </div>
       <hr className='hrLine'></hr>
+      {/* 삭제확인모달 */}
+      <Dialog open={showDeleteModal}>
+        <DialogContent style={{ position: 'relative' }}>
+          <IconButton
+            style={{ position: 'absolute', top: '0', right: '0' }}
+            onClick={() => setShowDeleteModal(false)}>
+            <DisabledByDefaultOutlinedIcon />
+          </IconButton>
+          <div className='modal'>
+            <div className='modal-title'> 정말 삭제하시겠습니까 ?</div>
+            <div className='modal-button'>
+              <Button
+                variant='outlined'
+                color='error'
+                onClick={onDeleteButtonClicked}>
+                예
+              </Button>
+              <Button
+                variant='outlined'
+                color='primary'
+                onClick={() => {
+                  setShowDeleteModal(false);
+                }}>
+                아니오
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       <RoomComment idx={idx} />
     </div>
   );

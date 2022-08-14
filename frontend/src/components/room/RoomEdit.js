@@ -30,8 +30,8 @@ const RoomEdit = () => {
       setContent(result.data.result.content);
     } else {
       navigate('../list');
-    };
-  }
+    }
+  };
 
   useEffect(() => {
     getDetailRoom(idx);
@@ -44,10 +44,10 @@ const RoomEdit = () => {
   const onSubmitClicked = async (event) => {
     event.preventDefault();
 
-    const body = { title, content };
+    const body = { title: title.trim(), content };
 
     if (title && content) {
-      const result = await updateRoom(idx, body)
+      const result = await updateRoom(idx, body);
       if (result?.data?.message === 'success') {
         navigate(`/room/${idx}`);
       } else if (result?.data?.message === 'fail') {
@@ -55,11 +55,11 @@ const RoomEdit = () => {
         navigate('../list');
       } else {
         navigate('/error');
-      };
+      }
     }
   };
 
-  const isValid = Boolean(title) && Boolean(content);
+  const isValid = title.trim().length >= 2 && content.trim().length >= 2;
 
   return (
     <div className='room'>
