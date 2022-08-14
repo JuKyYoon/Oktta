@@ -35,7 +35,7 @@ const RoomCreate = () => {
   const navigate = useNavigate();
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value);
+    setTitle(event.target.value.trim());
   };
 
   // 게임 정보 불러오기 관련
@@ -49,7 +49,7 @@ const RoomCreate = () => {
   const [matchSelected, setMatchSelected] = useState({});
   const [matchSelectedDetail, setMatchSelectedDetail] = useState(false);
   const [matchForSubmit, setMatchForSubmit] = useState({});
-  
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
@@ -123,34 +123,37 @@ const RoomCreate = () => {
   const getMatches = async (summonerName, pageNum) => {
     if (!summonerName) {
       return;
-    };
+    }
 
     setSearchState('pending');
     const result = await getMatchBySummoner(summonerName, pageNum);
-    let matchData
+    let matchData;
 
     if (result?.data?.message === 'success') {
       matchData = result.data.matchList;
     } else if (result?.data?.message === 'fail') {
       matchData = [];
     } else if (result?.response?.status === 404) {
-      return 'fail'
+      return 'fail';
     } else {
       alert('잘못된 접근입니다.');
-      return 'fail'
+      return 'fail';
     }
     const matchList = [];
     for (let matchId of matchData) {
       const { data } = await getMatchDetail(matchId);
       matchList.push(data);
-    };
-    
+    }
+
     if (matchList.length > 0) {
       setMatchList(matchList);
       const matchListView = matchList.map((match) => {
         const matchId = match.metadata.matchId;
-        const target = match.info.participants
-          .filter((participant) => participant.summonerName.toLowerCase().replace(/ /g,"") === summonerName.toLowerCase().replace(/ /g,""))[0];
+        const target = match.info.participants.filter(
+          (participant) =>
+            participant.summonerName.toLowerCase().replace(/ /g, '') ===
+            summonerName.toLowerCase().replace(/ /g, '')
+        )[0];
         const matchResult = target.win ? '승리' : '패배';
         const championTarget = target.championName;
         const kda = `${target.kills} / ${target.deaths} / ${target.assists}`;
@@ -193,7 +196,7 @@ const RoomCreate = () => {
   };
 
   const onSummonerNameChanged = (event) => {
-    setSummonerName(event.target.value)
+    setSummonerName(event.target.value);
   };
 
   const onHandlePage = async (event) => {
@@ -203,33 +206,33 @@ const RoomCreate = () => {
       setMatchSelected({});
       const result = await getMatches(summonerNameSearch, newPageNum);
       setSearchState(result);
-    };
+    }
   };
   // 게임 정보 --------------
 
   const onSubmitClicked = async (event) => {
     event.preventDefault();
     const body = {
-      title,
+      title: title.trim(),
       content,
       matchDto: matchForSubmit,
     };
 
-    const result = await createRoom(body)
+    const result = await createRoom(body);
     if (result?.data?.message === 'success') {
       navigate(`/room/${result.data.result}`);
     } else if (result?.response?.status === 400) {
-      alert('게임을 선택해 주세요.')
+      alert('게임을 선택해 주세요.');
     } else if (result?.response?.status === 403) {
-      console.log('노토큰입니다.화이팅')
+      console.log('노토큰입니다.화이팅');
     } else {
       alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
-      console.log(result)
+      console.log(result);
       navigate('/room/list');
-    };
+    }
   };
 
-  const isValid = Boolean(title) && Boolean(content);
+  const isValid = title.trim().length >= 2 && content.trim().length >= 2;
 
   return (
     <div className='room'>
