@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FormControl,
   InputLabel,
@@ -23,6 +23,8 @@ const debounceFunc = debounce(async (value, request, setState) => {
   };
 }, 500);
 
+const formData = new FormData();
+
 const Signup = () => {
   // input값들 useState
   const [email, setEmail] = useState("");
@@ -41,6 +43,7 @@ const Signup = () => {
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [banned, setBanned] = useState(false);
 
+  const [uploadOpen, setUploadOpen] = useState(false);
   const navigate = useNavigate();
 
   const emailChange = (event) => {
@@ -110,8 +113,10 @@ const Signup = () => {
       nickname: nickname,
     };
 
+    formData.delete('user');
     formData.append('user', new Blob([JSON.stringify(user)], { type: "application/json" }));
-    if (!formData.get('profileImg')) {
+
+    if (formData.get('profileImg') === null) {
       formData.append('profileImg', new Blob([], { type: "image/png" }));
     };
 
@@ -122,16 +127,45 @@ const Signup = () => {
     } else if (result?.data?.message === "fail") {
       alert("회원가입에 실패하였습니다!");
     } else {
-      alert("회원가입에 오류가 생겼습니다. 다시 시도해주세요.");
+      alert('잘못된 파일 형식입니다.');
     };
   };
 
-  const formData = new FormData();
+  const profileSelect = useRef();
+  const profileShow = useRef();
+  const fileUpload = () => {
+    profileSelect.current.onClick = handleFileInput();
+    profileSelect.current.click();
+  }
+
   const handleFileInput = (event) => {
-    if (event.target.files[0]) {
-      formData.append('profileImg', new Blob([event.target.files[0]], { type: event.target.files[0].type }));
-    };
+    if (!uploadOpen) {
+      setUploadOpen(true);
+    }
+    else {
+      const file = event?.target?.files[0];
+      if (file) {
+        profileShow.current.style.display = '';
+        profileShow.current.src = URL.createObjectURL(file);
+        console.log(file);
+        formData.append('profileImg', new Blob([file], { type: file.type }), file.name);
+      }
+      else {
+        const getFile = formData?.get('profileImg');
+        if (getFile) {
+          formData.append('profileImg', getFile, getFile.name);
+        }
+      };
+      setUploadOpen(false);
+    }
   };
+
+  const delProfile = () => {
+    if (formData.get('profileImg')) {
+      formData.delete('profileImg');
+    }
+    profileShow.current.style.display = 'none';
+  }
 
   return (
     <div className="signup">
@@ -220,13 +254,21 @@ const Signup = () => {
       </FormControl>
       <br />
       <FormControl sx={{width: 315}}>
-        <div>
-          <p>프로필 이미지 업로드 (선택)</p>
+        <p>프로필 이미지 업로드 (선택)</p>
+        <div className="signup-profile">
+          <div className="profile-left">
+            <Button onClick={fileUpload}>업로드</Button>
+            <Button onClick={delProfile}>삭제</Button>
+          </div>
           <input
             type='file'
             accept='image/*'
-            onChange={e => handleFileInput(e)}
-            />
+            onChange={event => handleFileInput(event)}
+            style={{ display: 'none' }}
+            id='profileUploadBtn'
+            ref={profileSelect}
+          />
+          <img src="#" alt="profile-image" ref={profileShow} style={{ display: 'none', width: 200, alignSelf: 'center' }} />
         </div>
       </FormControl>
       <br />

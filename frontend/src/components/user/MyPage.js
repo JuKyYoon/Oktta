@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
@@ -6,6 +6,7 @@ import '../../styles/user.scss';
 import { getProfileRequest, setDefaultImg, setProfileImg } from '../../services/userService';
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
 import { getMyRoom } from '../../services/roomService';
+import Loading from '../layout/Loading';
 // import { getMyBoard } from '../../services/boardService';
 
 const MyPage = () => {
@@ -14,36 +15,23 @@ const MyPage = () => {
   const [open_profile, setOpenProfile] = useState(false);
   const [mode, setMode] = useState('info');
   const [profile, setProfile] = useState({});
-  const [roomList, setRoomList] = useState([]);
-  const [boardList, setBoardList] = useState([]);
+  const [roomList, setRoomList] = useState(false);
+  const [boardList, setBoardList] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const pageChange = (event, value) => {
     setPage(value);
   };
 
   const getMyPage = async () => {
-    const result = await getMyRoom();
-    if(result?.data?.message === "success") {
-      setRoomList(result?.data?.list);
-    } else {
-      console.log("불러오기 실패")
-    };
-
     const result2 = await getProfileRequest();
-    if(result2?.data?.message === "success") {
+    if (result2?.data?.message === "success") {
       setProfile(result2?.data?.result)
     } else {
       console.log("프로파일 불러오기 실패");
     };
-
-    // const result3 = await getMyBoard();
-    // if(result3?.data?.message === "success") {
-    //   setBoardList(result3?.data?.list)
-    // } else {
-    //   console.log("게시물 불러오기 실패");
-    // };
   }
 
   useEffect(() => {
@@ -57,10 +45,6 @@ const MyPage = () => {
   const handleClose = () => {
     setOpenProfile(false);
   };
-
-  const handleFileInput = (event) => {
-    setSelectedFile(event.target.files[0]);
-  }
 
   const reload = async () => {
     // 이미지 저장 후 리로드
@@ -81,25 +65,93 @@ const MyPage = () => {
       navigate('/error');
     };
   }
-
+  const [pending, setPending] = useState(false);
   const handleSetProfile = async () => {
-    const formData = new FormData();
-    if (!selectedFile) {
-      alert('업로드 된 사진이 없습니다.');
+    if (!selectedFile || selectedFile === 'default') {
+      setOpenProfile(false);
+      handleDefaultImg();
+    }
+    else if (selectedFile === 'now') {
       setOpenProfile(false);
     }
     else {
+      const formData = new FormData();
       formData.append('profileImg', selectedFile);
+      setPending(true);
       const result = await setProfileImg(formData);
       if (result?.data?.message === 'success') {
-        setOpenProfile(false);
         reload();
+        setOpenProfile(false);
       } else if (result?.response?.data?.message === 'fail') {
-        alert('잘못된 파일 형식입니다.')
+        alert('잘못된 파일 형식입니다.');
+        setOpenProfile(false);
       } else {
         navigate('/error');
       };
+      setPending(false);
     };
+  }
+
+  const profileSelect = useRef();
+  const profileShow = useRef();
+
+  const fileUpload = () => {
+    profileSelect.current.onClick = handleFileInput();
+    profileSelect.current.click();
+  }
+
+  const handleFileInput = (event) => {
+    if (!uploadOpen) {
+      setUploadOpen(true);
+    }
+    else {
+      const file = event?.target?.files[0];
+      if (file) {
+        profileShow.current.src = URL.createObjectURL(file);
+        setSelectedFile(file);
+      }
+      setUploadOpen(false);
+    }
+  };
+
+  const defaultProfile = () => {
+    profileShow.current.src = 'https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png';
+    setSelectedFile('default');
+  }
+
+  const ProfileNow = () => {
+    profileShow.current.src = profile.profileImg;
+    setSelectedFile('now');
+  }
+
+  const roomClick = async () => {
+    if (roomList === false) {
+      const result = await getMyRoom();
+      if (result?.data?.message === "success") {
+        setRoomList(result?.data?.list);
+      } else {
+        console.log("불러오기 실패")
+      };
+    }
+    setMode('room');
+  }
+
+  const boardClick = async () => {
+    if (boardList === false) {
+      // const result3 = await getMyBoard();
+      // if(result3?.data?.message === "success") {
+      //   setBoardList(result3?.data?.list)
+      // } else {
+      //   console.log("게시물 불러오기 실패");
+      // };
+    }
+    setMode('board');
+  }
+
+  const tierInfo = '../assets/lol_tier_250/' + parseInt(user.tier / 10) + '.webp'
+
+  const tierHandler = () => {
+
   }
 
   return (
@@ -121,33 +173,39 @@ const MyPage = () => {
                 <FlipCameraIosIcon fontSize='large' sx={{color: "black"}} />
               </Button>
               <Dialog open={open_profile} onClose={handleClose} className='mypage-left-item'>
-                <DialogTitle>프로필 이미지 업로드</DialogTitle>
-                <DialogContent>
-                  <div className='new-profile-img'>
-                    1MB 미만의 파일만 등록할 수 있습니다. <br /> (jpg, jpeg, gif, png)
+                <div className={`${pending ? 'profile-modal' : null}`}>
+                  <DialogTitle>프로필 이미지 업로드</DialogTitle>
+                  <DialogContent>
+                    1MB 미만의 파일만 등록할 수 있습니다. (jpg, jpeg, gif, png)
                     <br /><br />
-                    <input
-                      type='file'
-                      accept='image/*'
-                      onChange={event => handleFileInput(event)}
+                    <p>프로필 이미지 업로드 (선택)</p>
+                    <div className="signup-profile">
+                      <div className="profile-left">
+                        <Button onClick={ProfileNow}>현재 이미지</Button>
+                        <Button onClick={fileUpload}>이미지 업로드</Button>
+                        <Button onClick={defaultProfile}>기본 이미지</Button>
+                      </div>
+                      {pending ? <Loading /> : null}
+                      <input
+                        type='file'
+                        accept='image/*'
+                        onChange={event => handleFileInput(event)}
+                        style={{ display: 'none' }}
+                        id='profileUploadBtn'
+                        ref={profileSelect}
                       />
-                    <br /><br />
-                    ⚠️미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
-                    경고없이 삭제될 수 있습니다.
-                    <br /><br />
-                  </div>
-                  <div className='default-profile-img'>
-                    <br />
-                    기본 이미지
-                    <br /><br />
-                    <img src="https://oktta.s3.us-east-2.amazonaws.com/defaultProfile.png" width={100} />
-                  </div>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose} className="cancel">취소</Button>
-                  <Button onClick={handleDefaultImg}>기본 이미지 변경</Button>
-                  <Button onClick={handleSetProfile}>새로운 이미지 등록</Button>
-                </DialogActions>
+                      <br />
+                      <img src={profile.profileImg} alt="profile-image" ref={profileShow} style={{ width: 100, alignSelf: 'center' }} />
+                      <br /><br />
+                      ※미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
+                      경고없이 삭제될 수 있습니다.
+                    </div>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose} className="cancel">취소</Button>
+                    <Button onClick={handleSetProfile}>등록</Button>
+                  </DialogActions>
+                </div>
               </Dialog>
               <Button
                 component={Link} to='/user/updateProfile'
@@ -166,13 +224,13 @@ const MyPage = () => {
                   내 정보
                 </span>
                 <span
-                  onClick={() => setMode('room')}
+                  onClick={roomClick}
                   className={`mypage-mode ${mode === 'room' ? 'mypage-selected' : null
                 }`}>
                   옥상에서 한판 한 목록
                 </span>
                 <span
-                  onClick={() => setMode('board')}
+                  onClick={boardClick}
                   className={`mypage-mode mypage-mode-end ${mode === 'board' ? 'mypage-selected' : null
                 }`}>
                   작성한 글 목록
@@ -181,10 +239,18 @@ const MyPage = () => {
               <div className={mode === 'info' ? 'mypage-lol-info' : 'mypage-contents-box'}>
                 {mode === 'info' && (
                   <>
-                    <img className='mypage-image-tier' src='../../assets/lol_tiers/unranked.png' width={200} />
-                    {/* 둘 중 하나만 뜨도록 하기 */}
-                    <Button>티어 인증하기</Button>
-                    <h1 className='mypage-summoner'>소환사명</h1>
+                    {user.tier ?
+                      <>
+                        <img className='mypage-image-tier' src={tierInfo} width={200} />
+                        <h1 className='mypage-summoner'>{user.summonerName}</h1>
+                        <Button onClick={tierHandler}>티어 재인증</Button>
+                      </>
+                      :
+                      <>
+                        <img className='mypage-image-tier' src='../../assets/lol_tiers/unranked.png' width={200} />
+                        <Button onClick={tierHandler}>티어 인증하기</Button>
+                      </>
+                    }
                   </>
                 )}
                 {mode === 'room' && (

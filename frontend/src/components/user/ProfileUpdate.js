@@ -168,14 +168,15 @@ const ProfileUpdate = () => {
   };
 
   const deleteUser = async () => {
-    const result = await delAccount({ data: { delPassword } });
-    if (result?.payload?.data?.message === "success") {
+    const result = await delAccount({ data: { 'password': delPassword } });
+    if (result?.data?.message === "success") {
       navigate('/');
       alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
       dispatch({ type: LOGOUT });
     }
     else {
       alert("비밀번호를 잘못 입력했습니다.");
+      setDelPassword('');
       handleClose();
     };
   };
@@ -184,23 +185,17 @@ const ProfileUpdate = () => {
     <div className="main-content">
     <div className='user-edit-form'>
       <h2>회원정보 수정</h2>
-      <Stack direction="row" spacing={2}>
-        <Button
-          variant={mode === 'nickname' ? 'contained' : 'text'}
-          onClick={() => setMode('nickname')}
-          color='veryperi'>
+      <div className='update-menu'>
+        <div onClick={() => setMode('nickname')} className={`update-menu-item ${mode === 'nickname' ? 'menu-selected' : null}`}>
           닉네임 변경
-        </Button>
+        </div>
         {snsType ?
           null :
-          <Button
-          variant={mode === 'password' ? 'contained' : 'text'}
-          onClick={() => setMode('password')}
-          color='veryperi'>
+          <div onClick={() => setMode('password')} className={`update-menu-item ${mode === 'password' ? 'menu-selected' : null}`}>
             비밀번호 변경
-          </Button>
+          </div>
         }
-      </Stack>
+      </div>
       <br />
       <br />
       {snsType ?

@@ -20,6 +20,12 @@ const Header = () => {
     navigate("/");
   };
 
+  const tierInfo = '../assets/lol_tiers_ico/' + parseInt(state.user.tier / 10) + '.ico'
+
+  const goMypage = () => {
+    navigate('/user/mypage');
+  }
+
   return (
     <div className="header-main-div">
       <div className="header">
@@ -28,6 +34,15 @@ const Header = () => {
         </Link>
         {state.user.isLogin ? (
           <div className="header-right">
+            {state.user.tier ?
+                <Button disabled><img src={tierInfo} />{state.user.summonerName}</Button> :
+                <Button
+                  sx={{ my: 2, color: "black", display: "block" }}
+                  onClick={goMypage}
+                >
+                  티어 인증하기
+                </Button>
+            }
             <Link to="/user/myPage" className="header-right-btn">
               <Button sx={{ my: 2, color: "black", display: "block" }}>
                 {state.user.nickname}
@@ -57,7 +72,7 @@ const Header = () => {
       </div>
       <Navbar />
       {state.user.auth === "0" && <BeforeEmailAuth />}
-    </div>
+    </div >
   );
 };
 export default Header;
