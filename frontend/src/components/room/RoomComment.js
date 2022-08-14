@@ -109,12 +109,8 @@ const RoomComment = ({ idx }) => {
   const handleDeleteButton = async (commentIdx) => {
     const result = await deleteRoomComment(commentIdx);
     if (result?.data?.message === 'success') {
-      let copyCommentList = [...commentList];
-      const findIdx = commentList.findIndex((item) => item.idx == commentIdx);
-      if (findIdx != -1) {
-        copyCommentList.splice(findIdx, 1);
-      }
-      setCommentList([...copyCommentList]);
+      setCommentList(commentList.filter(comment => comment.idx !== commentIdx))
+
       if (commentList.length / 5 < lastPage) {
         setLastPage((curr) => curr - 1);
       }
