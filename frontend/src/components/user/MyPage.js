@@ -165,7 +165,7 @@ const MyPage = () => {
             </div>
           </div>
           <div className='mypage-top'>
-            <div className='mypage-left'>
+            <div className='mypage-left'>              
               <div id='mypage-image-profile' className='mypage-left-item'>
                 <img src={profile.profileImg} width={250} />
               </div>
@@ -195,7 +195,9 @@ const MyPage = () => {
                         ref={profileSelect}
                       />
                       <br />
-                      <img src={profile.profileImg} alt="profile-image" ref={profileShow} style={{ width: 100, alignSelf: 'center' }} />
+                      <div className='mypage-image-profile-preview'>
+                        <img src={profile.profileImg} alt="profile-image" ref={profileShow} />
+                      </div>
                       <br /><br />
                       ※미풍양속을 저해하는 저속, 음란한 내용의 그림 등록시
                       경고없이 삭제될 수 있습니다.

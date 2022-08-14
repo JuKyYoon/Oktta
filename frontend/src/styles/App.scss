@@ -24,8 +24,9 @@ body {
 main {
   height: 85vh;
   background-color: $background-color;
-  display: flex;
-  justify-content: center;
+  // text-align: center;
+  // display: flex;
+  // justify-content: center;
 }
 
 a {
@@ -72,13 +73,15 @@ h2 {
   width: 90%;
   display: flex;
   align-items: center;
-  // justify-self: center;
   justify-content: space-between;
-  // margin: 10px;
 }
 
 .header-right {
   display: flex;
+  button {
+    white-space: nowrap;
+  }
+
 }
 
 .header-right-btn {
@@ -106,6 +109,15 @@ h2 {
 
 
 @media (max-width: 991px) {
+
+  .header{
+    width: 98%;
+  }
+
+  .logo {
+    margin: 0;
+  }
+
   .logo-image {
     width: 150px;
   }
@@ -161,7 +173,7 @@ h2 {
 .main-content {
   display: flex;
   flex-direction: column;
-  margin-top: 30px;
+  margin: 30px auto;
   width: 80%;
 }
 

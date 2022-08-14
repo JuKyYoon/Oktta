@@ -34,8 +34,10 @@ const Header = () => {
         </Link>
         {state.user.isLogin ? (
           <div className="header-right">
-            {state.user.tier ?
-                <Button disabled><img src={tierInfo} />{state.user.summonerName}</Button> :
+            {state.user.tier ?            
+              <Button sx={{color: "black !important", cursor: "default"}} disabled>
+                <img src={tierInfo} /> {state.user.summonerName}
+              </Button> :
                 <Button
                   sx={{ my: 2, color: "black", display: "block" }}
                   onClick={goMypage}

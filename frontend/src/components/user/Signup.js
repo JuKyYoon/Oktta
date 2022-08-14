@@ -267,8 +267,10 @@ const Signup = () => {
             style={{ display: 'none' }}
             id='profileUploadBtn'
             ref={profileSelect}
-          />
-          <img src="#" alt="profile-image" ref={profileShow} style={{ display: 'none', width: 200, alignSelf: 'center' }} />
+            />
+            <div className="signup-profile-image">
+              <img src="#" alt="profile-image" ref={profileShow} style={{ display: 'none'}} />
+            </div>
         </div>
       </FormControl>
       <br />
