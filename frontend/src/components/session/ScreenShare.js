@@ -528,10 +528,10 @@ const ScreenShare = (props) => {
           audioContext = new AudioContext();
 
           
-          // if (!session) {
-          //   console.log("세션 입장");
-          //   creaetSession();
-          // }
+          if (!session) {
+            console.log("세션 입장");
+            creaetSession();
+          }
       }).catch(e => {
         alert("소리 권한 허용해주세요")
           console.error(`Audio permissions denied: ${e}`);
