@@ -1,5 +1,8 @@
 @import './App.scss';
 
+$win: #9fb7e4;
+$lose: #ff968d;
+
 .room {
   display: flex;
   flex-direction: column;
@@ -145,6 +148,12 @@
 .comments-edit-textarea {
   width: 70%;
 }
+.comments-footer {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+}
 
 // 게임 불러오기 모달
 .modal-box {
@@ -206,11 +215,11 @@
 }
 
 .win {
-  background-color: #9fb7e4;
+  background-color: $win;
 }
 
-.loss {
-  background-color: #ff968d;
+.lose {
+  background-color: $lose;
 }
 
 .modal-result-item-selected {
@@ -283,4 +292,338 @@
 
 .create-room-champion-image {
   height: 30px;
+}
+
+.on-air-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+// 썸네일 관련
+.thumbnail-vertical:hover {
+  box-shadow: 6px 4px 4px gray;
+  cursor: pointer;
+}
+
+.thumbnail-vertical {
+  border-radius: 15px;
+  width: 370px;
+  box-shadow: 3px 2px 2px gray;
+  margin: 20px;
+  
+  .thumbnail-box {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 370px;
+    aspect-ratio: 1.8;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .thumbnail-team {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .thumbnail-champion-image {
+    height: 35px;
+  }
+  
+  .thumbnail-participant {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .thumbnail-participant-data {
+    width: 70%;
+  }
+  
+  .thumbnail-participant-text {
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  
+  .thumbnail-participant-kda {
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  
+  .thumbnail-vs {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    width: 20%;
+  }
+  
+  .win-left {
+    height: 100%;
+    background: linear-gradient(to left, $lose, $win);
+  }
+  
+  .win-right {
+    height: 100%;
+    background: linear-gradient(to right, $lose, $win );
+  }
+  
+  .thumbnail-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .thumbnail-onair {
+    margin: 0 10px;
+  }
+  
+  .thumbnail-onair-icon {
+    display: inline-block;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: red;
+    width: 14px;
+    height: 14px;
+    animation: live 2.5s infinite;
+  }
+  
+  @keyframes live {
+    0% {
+      box-shadow: 0 0 0 0 rgba(220,20,60,1);
+      
+    }
+    100% {
+        box-shadow: 0 0 0 7px rgba(220,20,60,0);
+    }
+  };
+  
+  .thumbnail-onair-text {
+    display: inline-block;
+    text-align: center; 
+    color: red; 
+    font-family: arial; 
+    font-weight: bold;
+    position: relative;
+    top: -1px;
+    left: 1px;
+  }
+  
+  
+  .thumbnail-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .thumbnail-info-h {
+    margin-bottom: 10px;
+  }
+  
+  .thumbnail-profile-image {
+    display: inline;
+    border-radius: 100%;
+    height: 40px;
+  }
+  
+  .thumbnail-title {
+    color: black;
+    font-weight: bold;
+    font-size: large;
+    margin: 5px 10px;
+  }
+  
+  .thumbnail-nickname {
+    color: black;
+    font-size: medium;
+    margin: 5px 10px;
+  }
+}
+
+.thumbnail-horizontal:hover {
+  cursor: pointer;
+}
+
+.thumbnail-horizontal {
+  display: flex;
+  justify-content: start;
+  width: 60%;
+  margin: 20px;
+  
+  .thumbnail-box {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 400px;
+    margin-right: 30px;
+    aspect-ratio: 1.8;
+    border-radius: 15px;
+    box-shadow: 3px 2px 2px gray;
+    overflow: hidden;
+  }
+  
+  .thumbnail-team {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .thumbnail-champion-image {
+    height: 35px;
+  }
+  
+  .thumbnail-participant {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .thumbnail-participant-data {
+    width: 70%;
+  }
+  
+  .thumbnail-participant-text {
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  
+  .thumbnail-participant-kda {
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  
+  .thumbnail-vs {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    width: 20%;
+  }
+  
+  .win-left {
+    height: 100%;
+    background: linear-gradient(to left, $lose, $win);
+  }
+  
+  .win-right {
+    height: 100%;
+    background: linear-gradient(to right, $lose, $win );
+  }
+  
+  .thumbnail-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: calc(100% - 430px);
+  }
+  
+  .thumbnail-onair {
+    margin-left: 10px 10px;
+  }
+  
+  .thumbnail-onair-icon {
+    display: inline-block;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: red;
+    width: 14px;
+    height: 14px;
+    animation: live 2.5s infinite;
+  }
+  
+  @keyframes live {
+    0% {
+      box-shadow: 0 0 0 0 rgba(220,20,60,1);
+      
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgba(220,20,60,0);
+    }
+  };
+  
+  .thumbnail-onair-text {
+    display: inline-block;
+    text-align: center; 
+    color: red; 
+    font-family: arial; 
+    font-weight: bold;
+    position: relative;
+    top: -1px;
+    left: 1px;
+  }
+  
+  
+  .thumbnail-info {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 80px);
+  }
+
+  .thumbnail-info-h {
+    width: 100%;
+  }
+  
+  .thumbnail-profile-image {
+    display: inline;
+    border-radius: 100%;
+    height: 40px;
+  }
+  
+  .thumbnail-title {
+    width: 100%;
+    color: black;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .thumbnail-user {
+    display: flex;
+    align-items: center;
+  }
+  
+  .thumbnail-nickname {
+    color: black;
+    font-size: 20px;
+    margin: 5px 10px;
+  }
+
+  .thumbnail-tier-image {
+    height: 150px;
+  }
+
+  .thumbnail-bottom {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .thumbnail-bottom-right {
+    align-self: end;
+  }
+
+  .thumbnail-people {
+    transform: translate(80px, 0px);
+  }
 }
