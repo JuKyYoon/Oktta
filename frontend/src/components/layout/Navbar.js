@@ -12,10 +12,8 @@ const Navbar = () => {
     return (
         <div className='nav-bar'>
             {pages.map((page, idx) => (
-                <Link to={page[1]} key={idx}>
-                    <Button sx={{ mr: 4, color: "black", display: "block" }}>
+                <Link to={page[1]} key={idx} className={`nav-menu ${idx === 1 ? "nav-menu-middle" : ""}`}>
                         {page[0]}
-                    </Button>
                 </Link>
             ))}
         </div>

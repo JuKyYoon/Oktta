@@ -119,7 +119,7 @@ const ProfileUpdate = () => {
             password,
           })
           if (result?.payload?.data?.message === 'success') {
-            dispatch(res);
+            dispatch(result);
             alert('닉네임이 변경되었습니다.');
             navigate('/user/mypage');
           } else if (result?.payload?.data?.message === 'fail') {
@@ -181,8 +181,9 @@ const ProfileUpdate = () => {
     };
   };
 
-  return (
-    <div className='form'>
+  return (    
+    <div className="main-content">
+    <div className='user-edit-form'>
       <h2>회원정보 수정</h2>
       <div className='update-menu'>
         <div onClick={() => setMode('nickname')} className={`update-menu-item ${mode === 'nickname' ? 'menu-selected' : null}`}>
@@ -211,7 +212,7 @@ const ProfileUpdate = () => {
               color='veryperi'
               value={password}
               onChange={passwordChange}
-            />
+              />
             <FormHelperText id='password-helper-text'>
               비밀번호를 입력해주세요.
             </FormHelperText>
@@ -234,7 +235,7 @@ const ProfileUpdate = () => {
                 color='veryperi'
                 value={nickname}
                 onChange={nicknameChange}
-              />
+                />
               <FormHelperText
                 id='nickname-helper-text'
                 error={
@@ -356,6 +357,7 @@ const ProfileUpdate = () => {
           </DialogActions>
         </Dialog>
       </div>
+    </div>
     </div>
   );
 };

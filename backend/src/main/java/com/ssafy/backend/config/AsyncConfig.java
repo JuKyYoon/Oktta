@@ -23,7 +23,18 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(10);
-        executor.setThreadNamePrefix("MailExecutor-");
+        executor.setThreadNamePrefix("mailExecutor-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "awsExecutor")
+    public Executor getAwsAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("awsExecutor-");
         executor.initialize();
         return executor;
     }

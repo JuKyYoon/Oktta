@@ -3,6 +3,7 @@ package com.ssafy.backend.config;
 import com.ssafy.backend.config.properties.AppProperties;
 import com.ssafy.backend.handler.security.OAuth2AuthenticationFailureHandler;
 import com.ssafy.backend.handler.security.OAuth2AuthenticationSuccessHandler;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
@@ -36,6 +37,8 @@ public class SecurityConfig {
 
 
     private final UserRepository userRepository;
+
+    private final LolAuthRepository lolAuthRepository;
 
     private final JwtProvider jwtProvider;
 
@@ -79,12 +82,13 @@ public class SecurityConfig {
     private final String frontUrl;
 
     public SecurityConfig(AppProperties appProperties, CustomOAuth2UserService oAuth2UserService,
-                          UserRepository userRepository, JwtProvider jwtProvider,
+                          UserRepository userRepository, LolAuthRepository lolAuthRepository, JwtProvider jwtProvider,
                           AuthenticationEntryPoint authenticationEntryPointHandler,
                           AccessDeniedHandler webAccessDeniedHandler, @Value("${frontend}") String frontUrl) {
         this.appProperties = appProperties;
         this.oAuth2UserService = oAuth2UserService;
         this.userRepository = userRepository;
+        this.lolAuthRepository = lolAuthRepository;
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPointHandler = authenticationEntryPointHandler;
         this.webAccessDeniedHandler = webAccessDeniedHandler;
@@ -165,8 +169,8 @@ public class SecurityConfig {
                 jwtProvider,
                 appProperties,
                 userRepository,
-                oAuth2AuthorizationRequestBasedOnCookieRepository()
-        );
+                oAuth2AuthorizationRequestBasedOnCookieRepository(),
+                lolAuthRepository);
     }
 
     /*

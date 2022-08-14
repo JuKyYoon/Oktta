@@ -1,7 +1,6 @@
 package com.ssafy.backend.model.dto;
 
 import com.ssafy.backend.model.dto.lol.MatchDto;
-import com.ssafy.backend.model.entity.Match;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +17,11 @@ public class RoomDto {
     private boolean live;
     private int people;
     private int hit;
+    private int myVote;
     private VoteDto voteDto;
     private MatchDto matchDto;
+    private String hostSummonerName;
+    private int hostTeamId;
 
     public RoomDto() {
     }
@@ -43,6 +45,19 @@ public class RoomDto {
         this.people = people;
         this.hit = hit;
         this.matchDto = matchDto;
+    }
+
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit, MatchDto matchDto, String hostSummonerName, int hostTeamId){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
+        this.matchDto = matchDto;
+        this.hostSummonerName = hostSummonerName;
+        this.hostTeamId = hostTeamId;
     }
 
     public Long getIdx() {
@@ -132,13 +147,6 @@ public class RoomDto {
     public void setVoteDto(VoteDto voteDto) {
         this.voteDto = voteDto;
     }
-    public MatchDto getMatch() {
-        return matchDto;
-    }
-
-    public void setMatch(MatchDto match) {
-        this.matchDto = match;
-    }
 
     public int getTier() {
         return tier;
@@ -154,5 +162,29 @@ public class RoomDto {
 
     public void setMatchDto(MatchDto matchDto) {
         this.matchDto = matchDto;
+    }
+
+    public int getMyVote() {
+        return myVote;
+    }
+
+    public void setMyVote(int myVote) {
+        this.myVote = myVote;
+    }
+
+    public String getHostSummonerName() {
+        return hostSummonerName;
+    }
+
+    public void setHostSummonerName(String hostSummonerName) {
+        this.hostSummonerName = hostSummonerName;
+    }
+
+    public int getHostTeamId() {
+        return hostTeamId;
+    }
+
+    public void setHostTeamId(int hostTeamId) {
+        this.hostTeamId = hostTeamId;
     }
 }

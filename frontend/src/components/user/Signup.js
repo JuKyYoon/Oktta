@@ -168,10 +168,11 @@ const Signup = () => {
   }
 
   return (
-    <div className="form">
+    <div className="signup">
+    <div className="signup-form">
       <h2>회원가입</h2>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="email" color="veryperi">
           이메일
         </InputLabel>
@@ -180,23 +181,23 @@ const Signup = () => {
           color="veryperi"
           value={email}
           onChange={emailChange}
-        />
+          />
         <FormHelperText
           error={!!email && (!isEmailValid || emailChecked === "fail")}
-        >
+          >
           {email
             ? isEmailValid
-              ? emailChecked
-                ? emailChecked === 'success'
-                  ? '사용 가능한 이메일입니다.'
-                  : '이미 사용중인 이메일입니다.'
-                : '이메일 중복 여부를 확인중입니다.'
-              : '유효하지 않은 이메일입니다.'
+            ? emailChecked
+            ? emailChecked === 'success'
+            ? '사용 가능한 이메일입니다.'
+            : '이미 사용중인 이메일입니다.'
+            : '이메일 중복 여부를 확인중입니다.'
+            : '유효하지 않은 이메일입니다.'
             : '이메일을 입력해 주세요.'}
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="password" color="veryperi">
           비밀번호
         </InputLabel>
@@ -206,7 +207,7 @@ const Signup = () => {
           color="veryperi"
           value={password}
           onChange={passwordChange}
-        />
+          />
         <FormHelperText error={!!password && !isPasswordValid}>
           {isPasswordValid
             ? "안전한 비밀번호입니다."
@@ -214,7 +215,7 @@ const Signup = () => {
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="passwordCheck" color="veryperi">
           비밀번호 확인
         </InputLabel>
@@ -223,36 +224,36 @@ const Signup = () => {
           color="veryperi"
           value={passwordCheck}
           onChange={passwordCheckChange}
-        />
+          />
         <FormHelperText error={!!passwordCheck && !isPasswordSame}>
           {!passwordCheck || isPasswordSame
             ? " "
             : "비밀번호가 일치하지 않습니다."}
         </FormHelperText>
       </FormControl>
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <InputLabel htmlFor="nickname" color="veryperi">
           닉네임
         </InputLabel>
         <Input color="veryperi" value={nickname} onChange={nicknameChange} />
         <FormHelperText
           error={!!nickname && (!isNicknameValid || nicknameChecked === "fail" || banned)}
-        >
+          >
           {nickname
             ? isNicknameValid
-              ? !banned
-                ? nicknameChecked
-                  ? nicknameChecked === 'success'
-                    ? '사용 가능한 닉네임입니다.'
-                    : '이미 사용중인 닉네임입니다.'
-                  : '닉네임 중복 여부를 확인중입니다.'
-                : '사용할 수 없는 닉네임입니다.'
-              : '닉네임에 특수문자를 사용할 수 없습니다.'
+            ? !banned
+            ? nicknameChecked
+            ? nicknameChecked === 'success'
+            ? '사용 가능한 닉네임입니다.'
+            : '이미 사용중인 닉네임입니다.'
+            : '닉네임 중복 여부를 확인중입니다.'
+            : '사용할 수 없는 닉네임입니다.'
+            : '닉네임에 특수문자를 사용할 수 없습니다.'
             : '10글자 이하의 닉네임을 입력해주세요.'}
         </FormHelperText>
       </FormControl>
       <br />
-      <FormControl>
+      <FormControl sx={{width: 315}}>
         <p>프로필 이미지 업로드 (선택)</p>
         <div className="signup-profile">
           <div className="profile-left">
@@ -286,10 +287,11 @@ const Signup = () => {
           !nickname ||
           nicknameChecked !== "success"
         }
-      >
+        >
         가입하기
       </Button>
     </div>
+  </div>
   );
 };
 

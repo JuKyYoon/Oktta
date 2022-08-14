@@ -16,7 +16,8 @@ public class UserDto {
     private int snsType;
     private String profileImg;
     private String role;
-
+    private int tier;
+    private String summonerName;
     public UserDto() {
     }
 
@@ -99,4 +100,19 @@ public class UserDto {
         this.role = role;
     }
 
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public String getSummonerName() {
+        return summonerName;
+    }
+
+    public void setSummonerName(String summonerName) {
+        this.summonerName = summonerName;
+    }
 }

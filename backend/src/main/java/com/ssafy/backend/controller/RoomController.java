@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.model.dto.RoomCommentDto;
 import com.ssafy.backend.model.dto.RoomDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
+import com.ssafy.backend.model.exception.InputDataNullException;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.RoomResponse;
@@ -29,7 +30,7 @@ public class RoomController {
 
     @Value("${pagingLimit}")
     private int pagingLimit;
-    
+
     @Value("${myLimit}")
     private int myLimit;
 
@@ -53,10 +54,25 @@ public class RoomController {
     public ResponseEntity<MessageResponse> createRoom(@RequestBody Map<String, Object> map) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RoomDto roomDto = new RoomDto();
-        roomDto.setTitle(map.get("title").toString());
-        roomDto.setContent(map.get("content").toString());
-        MatchDto matchDto = new ObjectMapper().convertValue(map.get("matchDto"), MatchDto.class);
-        roomDto.setMatch(matchDto);
+        String title = map.get("title").toString();
+        String content = map.get("content").toString();
+        Object matchObj = map.get("matchDto");
+        String hostSummonerName = map.get("hostSummonerName").toString();
+        String hostTeamId = map.get("hostTeamId").toString();
+        if(title == null
+                || content == null
+                || hostSummonerName == null
+                || hostTeamId == null
+                || matchObj == null
+                || "{}".equals(matchObj.toString())){
+            throw new InputDataNullException("INPUT DATA IS NULL");
+        }
+        roomDto.setTitle(title);
+        roomDto.setContent(content);
+        roomDto.setHostSummonerName(hostSummonerName);
+        roomDto.setHostTeamId(Integer.parseInt(hostTeamId));
+        MatchDto matchDto = new ObjectMapper().convertValue(matchObj, MatchDto.class);
+        roomDto.setMatchDto(matchDto);
         long roomIdx = roomService.createRoom(roomDto, principal.getUsername());
         voteService.createVote(roomIdx, LocalDateTime.now());
         return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, String.valueOf(roomIdx)));
@@ -64,18 +80,27 @@ public class RoomController {
 
     @GetMapping("/{idx}")
     public ResponseEntity<RoomResponse> getRoom(@PathVariable("idx") Long roomIdx) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RoomDto roomDto = roomService.getRoom(roomIdx);
 
         List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
         int temp = list.size() / pagingLimit;
         int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
-        
+
+        roomDto.setMyVote(voteService.getMyVote(roomIdx, principal.getUsername()));
         if(voteService.checkEnd(roomIdx, LocalDateTime.now())) {
             roomDto.setVoteDto(voteService.getVoteDto(roomIdx));
         }
 
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
+
+    @GetMapping("/comment/{idx}")
+    public ResponseEntity<BaseResponseBody> getCommentList(@PathVariable("idx") Long roomIdx) {
+        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
+        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
+    }
+
 
     @PutMapping("/hit/{idx}")
     public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long roomIdx) {
@@ -98,9 +123,13 @@ public class RoomController {
         LOGGER.info("Delete Room");
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = roomService.deleteRoom(Long.parseLong(idx), principal.getUsername());
-        voteService.deleteVote(Long.parseLong(idx));
 
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));
+        if(result){
+            voteService.deleteVote(Long.parseLong(idx));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        } else {
+            return ResponseEntity.status(200).body(BaseResponseBody.of(403, failMsg));
+        }
     }
 
     @GetMapping("")

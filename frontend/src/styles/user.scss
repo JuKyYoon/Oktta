@@ -1,14 +1,30 @@
 @import './App.scss';
 
 .mypage {
-  position: relative;
-  margin-top: 5%;
+  display: flex;
+  // width: 90wh;
+  // position: relative;
+  margin-top: 30px;
+  // justify-content: center;
+  flex-direction: column;
+  // flex-wrap: wrap;
+  width: 80vw;
+  // align-items: center;
+
+  > .block-box {
+    height: 50px;
+  }
 }
+
 
 // 마이페이지
 .mypage-top {
     display: flex;
-    justify-content: center;
+    // width: 100%;
+    // justify-content: space-between;
+    // margin-top: 5%;
+    // align-items: center;
+    // min-width: 1200px;
   }
   
 .mypage-left {
@@ -16,7 +32,24 @@
   flex-direction: column;
   align-items: center;
   margin: 2.5%;
-  width: 30%;
+  width: 40%;
+}
+
+#mypage-image-profile {
+  width: 250px;
+  height: 250px;
+  // overflow: hidden;
+  > img {
+    width: 100%;
+    object-fit: cover;
+    max-width: 250px;
+    max-height: 250px;
+    // height: auto;
+    border-radius: 50%;
+  }
+  // border: $veryperi 3px solid;
+  // width: 80%;
+  // aspect-ratio: 1;
 }
 
 .mypage-left-item {
@@ -35,10 +68,10 @@
   align-self: center;
 }
 
-.mypage-lol-info {
+.mypage-lol-info {  
   display: flex;
   flex-direction: column;
-  background-color: #d7d7fa;
+  background-color: $box-color;
   border-radius: 10px;
   border-top-left-radius: 0px;
   padding: 1%;
@@ -48,18 +81,25 @@
 
 .mypage-right {
   margin: 2.5%;
-  width: 40%;
+  width: 60%;
+}
+
+.mypage-right-menu > span {
+  font-size: $font-size-medium;
+  font-weight: bold;
 }
 
 .mypage-contents-box {
   display: flex;
   flex-direction: column;
-  background-color: #d7d7fa;
+  position: relative;
+  background-color: $box-color;
   border-radius: 10px;
   border-top-left-radius: 0px;
-  padding: 1%;
-  height: 350px;
-  justify-content: space-between;
+  // padding: 1%;
+  height: 100%;
+  // justify-content: start;
+  align-items: center;
 }
 
 .mypage-contents-item {
@@ -68,30 +108,31 @@
   text-overflow: ellipsis;
   background-color: white;
   border-radius: 10px;
-  padding: 1%;
-  margin: 2%;
+  width: 90%;
+  padding: 3px;
+  margin: 3px;
   height: 25px;
 }
 
 .mypage-mode {
-  border: #d7d7fa 1px solid;
-  border-top: #d7d7fa 2px solid;
+  border: $box-color 1px solid;
+  border-top: $box-color 2px solid;
   padding: 5px;
   cursor: pointer;
 }
 
 .mypage-mode-start {
-  border-left: #d7d7fa 2px solid;
+  border-left: $box-color 2px solid;
   border-top-left-radius: 10px;
 }
 
 .mypage-mode-end {
-  border-right: #d7d7fa 2px solid;
+  border-right: $box-color 2px solid;
   border-top-right-radius: 10px;
 }
 
 .mypage-selected {
-  background-color: #d7d7fa;
+  background-color: $box-color;
   color: black;
 }
 
@@ -101,6 +142,11 @@
 
 .default-profile-img {
   text-align: center;
+}
+
+.pagination {
+  position: absolute;
+  bottom: 10px;
 }
 
 .no-pagination {
@@ -128,9 +174,9 @@
 }
 
  /* 회원 탈퇴 버튼 */
-.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-  color: black !important;
-}
+// .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+//   color: black !important;
+// }
 
 #delete-btn {
   color: rgb(219, 219, 219) !important;
@@ -140,18 +186,40 @@
   color: black !important;
 }
 
-  /* 입력 폼 정렬 */
 .form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  margin-top: 2%;
+  background-color: white;
+  // padding-top: 10px;
+  // margin-top: 2%;
+}
+
+.login, .signup {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+  /* 입력 폼 정렬 */
+.login-form, .signup-form, .user-edit-form {
+  display: flex;
+  min-width: 550px;
+  height: 550px;
+  margin-top: 5%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: $background-color;
+  box-shadow: 2px 2px 5px 0px $shadow-color;
+  border-radius: 10px;
+  // margin-top: 2%;
 }
 
 /* 로그인 폼 정렬 */
-.loginform {
+.input-form {
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
@@ -159,11 +227,11 @@
 }
 
 // 회원가입 폼
-.css-1nrlq1o-MuiFormControl-root {
-  width: 315px;
-}
+// .css-1nrlq1o-MuiFormControl-root {
+//   width: 315px;
+// }
 
-// 회원가입 경고문
+회원가입 경고문
 .css-1wc848c-MuiFormHelperText-root.Mui-error {
   font-size: 13px;
   letter-spacing: -.5px;
@@ -172,25 +240,34 @@
 }
 
 /* 회원가입 버튼 색상 */
-.css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
-  background-color: $veryperi !important;
+// .css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
+//   background-color: $veryperi !important;
+// }
+
+.social-login-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  > a {
+    margin: 0px 5px;
+    
+  }
+  > a > img {
+    border-radius: 7px;
+    box-shadow: 2px 2px 5px 0px $shadow-color;
+  }
+  > a > img:hover {
+    border-radius: 7px;
+    box-shadow: 2px 2px 10px 0px $shadow-color;
+  }
 }
 
-#naverIdLogin {
-  padding-top: 8px;
+.social-login-button {
   width: 200px;
+  height: 50px;
 }
 
-#kakaoIdLogin {
-  padding-top: 8px;
-  width: 200px;
-  height: 55px;
-}
-
-#googleIdLogin {
-  width: 205px;
-  height: 60px;
-}
 
 .login_or {
   position: relative;
@@ -227,6 +304,8 @@
 }
 
 @media (max-width: 991px) {
+
+
   .mypage-top {
     flex-direction: column;
     align-items: center;
@@ -237,23 +316,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2.5%;
-    width: 50%;
+    margin: 17px;
+    // width: 50%;
   }
 
   .mypage-right {
-    margin: 2.5%;
-    width: 85%;
+    margin: 17px;
+    min-width: 400px;
+    min-height: 350px;
+    // width: 85%;
   }
 
-  .css-e53awj-MuiStack-root {
-    flex-direction: column !important;
+
+  // .css-e53awj-MuiStack-root {
+  //   flex-direction: column !important;
+  // }
+
+  .social-login-form {
+    flex-direction: column;
   }
 
-  #googleIdLogin {
-    width: 205px;
-    height: 60px;
-    margin-left: 15px;
+  .social-login-button {
+    margin: 1px 0px;
   }
 
   .email-auth-notice {
@@ -262,5 +346,6 @@
 
   .css-1pxa9xg-MuiAlert-message {
     font-size: 13px;
-  }  
+  }
+  
 }

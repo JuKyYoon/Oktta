@@ -244,7 +244,7 @@ public class BaseControllerAdvice {
 
     }
 
-    @ExceptionHandler(MatchNullException.class)
+    @ExceptionHandler(InputDataNullException.class)
     public ResponseEntity<BaseResponseBody> MatchNullException(Exception e, HttpServletRequest req){
         LOGGER.debug("MATCH NULL ERROR");
         LOGGER.error(e.getClass().getCanonicalName());
