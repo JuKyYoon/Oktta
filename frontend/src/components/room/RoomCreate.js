@@ -35,7 +35,7 @@ const RoomCreate = () => {
   const navigate = useNavigate();
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value);
+    setTitle(event.target.value.trim());
   };
 
   // 게임 정보 불러오기 관련

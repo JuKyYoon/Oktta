@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, TextField, Pagination } from '@mui/material';
 import {
-  detailRoom,
+  getRoomCommentList,
   createRoomComment,
   deleteRoomComment,
   editRoomComment,
-} from '../../services/roomService';
+} from '@/services/roomService';
 import '../../styles/room.scss';
 
 const RoomComment = ({ idx }) => {
@@ -38,9 +38,9 @@ const RoomComment = ({ idx }) => {
   const user = useSelector((state) => state.user);
 
   const getDetailRoom = async (idx) => {
-    const result = await detailRoom(idx);
-
+    const result = await getRoomCommentList(idx);
     if (result?.data?.message === 'success') {
+      // 받은 data 중 lastpage는 의미 있는 거?
       setCommentList(result.data.list);
       if (result.data.list.length != 0) {
         setLastIdx(result.data.list[result.data.list.length - 1].idx);
@@ -52,7 +52,8 @@ const RoomComment = ({ idx }) => {
   useEffect(() => {
     getDetailRoom(idx);
   }, []);
-  const submit = async () => {
+
+  const commentSubmit = async () => {
     const body = { content: content.trim() };
 
     const result = await createRoomComment(idx, body);
@@ -82,23 +83,24 @@ const RoomComment = ({ idx }) => {
     }
   };
 
-  const edit = async () => {
+  const commentEdit = async () => {
     const body = { content: editInput.trim() };
-    const result = await editRoomComment(currentIdx, body);
-    const findIdx = commentList.findIndex((item) => item.idx == currentIdx);
-    let copyCommentList = [...commentList];
-    if (findIdx != -1) {
-      copyCommentList[findIdx] = {
-        ...copyCommentList[findIdx],
-        content: editInput.trim(),
-      };
+    if(body.content.length < 2) { 
+      return;
     }
-    setCommentList([...copyCommentList]);
+    const result = await editRoomComment(currentIdx, body);
+
     setIsEditMode(false);
     setCurrentIdx(-1);
     setEditInput('');
     if (result?.data?.message === 'success') {
       alert('댓글 수정 완료');
+          
+      setCommentList((commentList) => 
+        commentList.map(item => 
+          item.idx == currentIdx ? {...item, content : body.content} : item
+        )
+      )
     } else {
       alert('댓글 수정 실패');
     }
@@ -150,25 +152,15 @@ const RoomComment = ({ idx }) => {
             multiline
             placeholder='댓글을 입력해주세요✏️'
           />
-          {content.trim().length >= 2 !== '' ? (
-            <Button
-              sx={{ ml: 2 }}
-              variant='outlined'
-              onClick={submit}
-              size='large'
-              color='veryperi'>
-              등록하기
-            </Button>
-          ) : (
-            <Button
-              sx={{ ml: 2 }}
-              variant='outlined'
-              disabled={true}
-              size='large'
-              color='veryperi'>
-              등록하기
-            </Button>
-          )}
+          <Button
+            sx={{ ml: 2 }}
+            variant='outlined'
+            onClick={commentSubmit}
+            disabled={content.trim().length < 2}
+            size='large'
+            color='veryperi'>
+            등록하기
+          </Button>
         </div>
         <div className='comments-body'>
           {commentList.map((comment, index) => {
@@ -194,23 +186,14 @@ const RoomComment = ({ idx }) => {
                         multiline
                         placeholder='댓글을 입력해주세요✏️'
                       />
-                      {editInput.trim().length >= 2 !== '' ? (
-                        <Button
-                          sx={{ ml: 1, mr: 1 }}
-                          variant='outlined'
-                          onClick={edit}
-                          color='veryperi'>
-                          수정하기
-                        </Button>
-                      ) : (
-                        <Button
-                          sx={{ ml: 1, mr: 1 }}
-                          variant='outlined'
-                          disabled={true}
-                          color='veryperi'>
-                          수정하기
-                        </Button>
-                      )}
+                      <Button
+                        sx={{ ml: 1, mr: 1 }}
+                        variant='outlined'
+                        onClick={commentEdit}
+                        disabled={editInput.trim().length < 2}
+                        color='veryperi'>
+                        수정하기
+                      </Button>
                       <Button
                         sx={{ ml: 1, mr: 1 }}
                         variant='outlined'
@@ -224,27 +207,25 @@ const RoomComment = ({ idx }) => {
                     <div>
                       <div className='comment-content'>{comment.content}</div>
                       <div className='comment-username'>
-                        {comment.nickname === user.nickname ? (
-                          <Button
-                            sx={{ m: 1 }}
-                            variant='outlined'
-                            onClick={() => handleDeleteButton(comment.idx)}
-                            color='veryperi'>
-                            삭제
-                          </Button>
-                        ) : null}
-                        {comment.nickname === user.nickname ? (
-                          <Button
-                            sx={{ m: 1 }}
-                            variant='outlined'
-                            onClick={() =>
-                              handleToggleEdit(comment.idx, comment.content)
-                            }
-                            color='veryperi'>
-                            수정
-                          </Button>
-                        ) : null}
-
+                        {comment.nickname === user.nickname ? 
+                          <>
+                            <Button
+                              sx={{ m: 1 }}
+                              variant='outlined'
+                              onClick={() => handleDeleteButton(comment.idx)}
+                              color='veryperi'>
+                              삭제
+                            </Button>
+                            <Button
+                              sx={{ m: 1 }}
+                              variant='outlined'
+                              onClick={() =>
+                                handleToggleEdit(comment.idx, comment.content)
+                              }
+                              color='veryperi'>
+                              수정
+                            </Button>
+                          </> : null}
                         {comment.nickname}
                       </div>
                       <hr />

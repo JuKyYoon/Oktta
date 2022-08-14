@@ -38,7 +38,7 @@ const RoomEdit = () => {
   }, []);
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value);
+    setTitle(event.target.value.trim());
   };
 
   const onSubmitClicked = async (event) => {
@@ -46,6 +46,7 @@ const RoomEdit = () => {
 
     const body = { title: title.trim(), content };
 
+    // 여기 else, else if 문 다시 수정하기.
     if (title && content) {
       const result = await updateRoom(idx, body);
       if (result?.data?.message === 'success') {
@@ -59,7 +60,7 @@ const RoomEdit = () => {
     }
   };
 
-  const isValid = title.trim().length >= 2 && content.trim().length >= 2;
+  const isValid = title.trim().length >= 2 && content.trim().length >= 5;
 
   return (
     <div className='room'>

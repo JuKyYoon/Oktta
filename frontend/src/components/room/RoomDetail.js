@@ -4,23 +4,24 @@ import { useNavigate, useParams } from 'react-router';
 import { deleteRoom, detailRoom } from '../../services/roomService';
 import { createVote, deleteVote, quitVote } from '../../services/voteService';
 import { Button, Dialog, DialogContent, IconButton } from '@mui/material';
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
-import '../../styles/room.scss';
 import { useSelector } from 'react-redux';
 import VoteChart from './VoteChart';
 import RoomComment from './RoomComment';
+import { FormControl, FormControlLabel, Radio, RadioGroup  } from "@mui/material";
+import { lolPosition, position } from '@/const/position';
+import '../../styles/room.scss';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   const { idx } = useParams();
-  const [room, setRoom] = useState({});
-  const [vote, setVote] = useState('');
+  const [room, setRoom] = useState(null);
+  const [vote, setVote] = useState(0);
   const [voteDto, setVoteDto] = useState(null);
   const [currentVote, setCurrentVote] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,23 +45,12 @@ const RoomDetail = () => {
     getDetailRoom(idx);
   }, []);
 
-  switch (room.myVote) {
-    case '1':
-      setCurrentVote('탑');
-      break;
-    case '2':
-      setCurrentVote('정글');
-      break;
-    case '3':
-      setCurrentVote('미드');
-      break;
-    case '4':
-      setCurrentVote('원딜');
-      break;
-    case '5':
-      setCurrentVote('서포터');
-      break;
-  }
+  useEffect(() => {
+    if(room !== null) {
+      setCurrentVote(lolPosition[parseInt(room.myVote)]);
+    }
+  }, [room]);
+
 
   const onDeleteButtonClicked = async () => {
     const result = await deleteRoom(idx);
@@ -87,36 +77,21 @@ const RoomDetail = () => {
       navigate('/error');
     }
   };
+
   const handleVoteChanged = (event) => {
-    setVote(event.target.value);
+    setVote(parseInt(event.target.value));
   };
 
   const onVoteButtonClicked = async () => {
     const result = await createVote(idx, vote);
     // setVote(vote);
     if (result?.data?.message === 'success') {
-      switch (vote) {
-        case '1':
-          setCurrentVote('탑');
-          break;
-        case '2':
-          setCurrentVote('정글');
-          break;
-        case '3':
-          setCurrentVote('미드');
-          break;
-        case '4':
-          setCurrentVote('원딜');
-          break;
-        case '5':
-          setCurrentVote('서포터');
-          break;
-      }
+      setCurrentVote(lolPosition[parseInt(vote)]);
       alert('투표하였습니다.');
     } else {
       alert('투표에 실패하였습니다...');
     }
-    setVote('');
+    setVote(0);
   };
 
   const onVoteCancelButtonClicked = async () => {
@@ -128,10 +103,12 @@ const RoomDetail = () => {
     } else if (result?.data?.message === 'fail') {
       alert('먼저 투표를 해주세요!');
     }
-    setVote('');
+    setVote(0);
   };
 
   return (
+    <>
+    { room !== null ? 
     <div className='room'>
       <h1>{room.title}</h1>
       <hr className='hrLine'></hr>
@@ -174,64 +151,25 @@ const RoomDetail = () => {
                   alt='도넛차트'
                 />
                 <div className='radio-button'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='top'
-                      value='1'
-                      checked={vote === '1'}
+                  <FormControl fullWidth>
+                    <RadioGroup
+                      aria-labelledby="demo-controlled-radio-buttons-group"
+                      name="controlled-radio-buttons-group"
+                      value={vote}
                       onChange={handleVoteChanged}
-                    />
-                    탑
-                  </label>
-
-                  <label>
-                    <input
-                      type='radio'
-                      name='jungle'
-                      value='2'
-                      checked={vote === '2'}
-                      onChange={handleVoteChanged}
-                    />
-                    정글
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='mid'
-                      value='3'
-                      checked={vote === '3'}
-                      onChange={handleVoteChanged}
-                    />
-                    미드
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='adc'
-                      value='4'
-                      checked={vote === '4'}
-                      onChange={handleVoteChanged}
-                    />
-                    원딜
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='supporter'
-                      value='5'
-                      checked={vote === '5'}
-                      onChange={handleVoteChanged}
-                    />
-                    서포터
-                  </label>
+                    >
+                    {position.map((el, index) => (
+                      <FormControlLabel key ={index} value={index+1} control={<Radio/>} label={el}/>
+                    ))}
+                    </RadioGroup>
+                  </FormControl>                  
                   <Button
                     className='detail-button'
                     size='small'
                     variant='outlined'
                     color='veryperi'
                     onClick={onVoteButtonClicked}
-                    disabled={vote === '' ? true : false}>
+                    disabled={vote >=1 && vote<=5 ? false : true}>
                     투표하기
                   </Button>
                   <Button
@@ -316,7 +254,7 @@ const RoomDetail = () => {
         </DialogContent>
       </Dialog>
       <RoomComment idx={idx} />
-    </div>
+    </div> : null } </>
   );
 };
 
