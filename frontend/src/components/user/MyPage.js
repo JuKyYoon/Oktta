@@ -148,6 +148,12 @@ const MyPage = () => {
     setMode('board');
   }
 
+  const tierInfo = '../assets/lol_tier_250/' + parseInt(user.tier / 10) + '.webp'
+
+  const tierHandler = () => {
+
+  }
+
   return (
     <div className='mypage'>
       {user.auth === "0" ? null :
@@ -221,10 +227,18 @@ const MyPage = () => {
               <div className={mode === 'info' ? 'mypage-lol-info' : 'mypage-contents-box'}>
                 {mode === 'info' && (
                   <>
-                    <img className='mypage-image-tier' src='../../assets/lol_tiers/unranked.png' width={200} />
-                    {/* 둘 중 하나만 뜨도록 하기 */}
-                    <Button>티어 인증하기</Button>
-                    <h1 className='mypage-summoner'>소환사명</h1>
+                    {user.tier ?
+                      <>
+                        <img className='mypage-image-tier' src={tierInfo} width={200} />
+                        <h1 className='mypage-summoner'>{user.summonerName}</h1>
+                        <Button onClick={tierHandler}>티어 재인증</Button>
+                      </>
+                      :
+                      <>
+                        <img className='mypage-image-tier' src='../../assets/lol_tiers/unranked.png' width={200} />
+                        <Button onClick={tierHandler}>티어 인증하기</Button>
+                      </>
+                    }
                   </>
                 )}
                 {mode === 'room' && (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Login from '../components/user/Login';
 import PwInquiryEmailSend from '../components/user/PwInquiryEmailSend';
 import PwInquiryNewPassword from '../components/user/PwInquiryNewPassword';
