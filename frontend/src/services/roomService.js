@@ -7,6 +7,15 @@ const ROOM_COMMENT_URL = 'api/v1/roomComments';
 const LOL_URL = 'api/v1/lol';
 const RIOT_MATCH = 'match/v5/matches'
 
+// room 댓글 목록 불러오기
+export const getRoomCommentList = async (idx) => {
+  try {
+    const payload = await axiosAuth.get(`${ROOM_URL}/comment/${idx}`);
+    return payload;
+  } catch (err) {
+    return err;
+  }
+}
 
 // room 생성
 export const createRoom = async (dataToSubmit) => {
