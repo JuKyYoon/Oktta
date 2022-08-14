@@ -73,6 +73,7 @@ const ScreenShare = (props) => {
   const [title, setTitle] = useState('제목');
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
+  const [recordingStatus, setRecordingStatus] = useState(false);
 
   const scrollRef = useRef();
 
@@ -492,6 +493,21 @@ const ScreenShare = (props) => {
   const toggleChatList = () => {
     setRightDrawerOpen(!rightDrawerOpen);
   }
+
+  const recordingToggle = () => {
+    if(recordingStatus) {
+      // 레코딩 시작
+    } else {
+      // 레코딩 중단
+    }
+    setRecordingStatus(!recordingStatus);
+  }
+
+  const scrollDown = () => {
+    console.log(scrollRef.current.scr)
+    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+
+  }
   
 
 
@@ -512,10 +528,10 @@ const ScreenShare = (props) => {
           audioContext = new AudioContext();
 
           
-          if (!session) {
-            console.log("세션 입장");
-            creaetSession();
-          }
+          // if (!session) {
+          //   console.log("세션 입장");
+          //   creaetSession();
+          // }
       }).catch(e => {
         alert("소리 권한 허용해주세요")
           console.error(`Audio permissions denied: ${e}`);
@@ -607,7 +623,9 @@ const ScreenShare = (props) => {
           <div id="session-button-div">
             <div className="button-div">
               {/* <span id="title-div">{title}</span> */}
-
+              <Button onClick={scrollDown}>
+                채팅창다운
+              </Button>
               <Button
                 className="user-session-button"
                 variant="contained"
@@ -622,13 +640,7 @@ const ScreenShare = (props) => {
               >
                 {audioEnabled ? '음소거 하기' : '마이크 켜기'}
               </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
-                onClick={handsUp}
-              >
-                손들기
-              </Button>
+             
               {/* <Button
                 className="user-session-button"
                 variant="contained"
@@ -636,15 +648,36 @@ const ScreenShare = (props) => {
               >
                 채팅창 보기
               </Button> */}
-              {owner ? (
+              {owner ? 
+                <>
+                  <Button
+                    className="user-session-button"
+                    variant="contained"
+                    onClick={screenToggle}
+                  >
+                    {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
+                  </Button>
+                  <Button
+                    className="user-session-button"
+                    variant="contained"
+                    onClick={recordingToggle}
+                    sx={{
+                      backgroundColor: recordingStatus ? '#e53e3e' : '#4249df',
+                      "&:hover":{
+                        backgroundColor: recordingStatus ? '#e53e3e' : '#4249df'
+                      },
+                    }}
+                  >
+                    {recordingStatus ? '녹화 중단' : '녹화 시작'}
+                  </Button>
+                </> : 
                 <Button
                   className="user-session-button"
                   variant="contained"
-                  onClick={screenToggle}
+                  onClick={handsUp}
                 >
-                  {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
-                </Button>
-              ) : null}
+                  손들기
+                </Button> }
               </div>
             </div>
           </Box>
