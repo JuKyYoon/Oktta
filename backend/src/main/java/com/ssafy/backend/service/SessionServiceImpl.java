@@ -69,8 +69,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public void createSession(String userId, long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
         // 검증 과정을 먼저 해줘야, 강제로 세션을 만들고, 입장하려는 시도를 막을 수 있다.
-        room.updateRoomState(true);
-        roomRepository.save(room);
+
         // 만약 세션이 없다면 세션을 만든다.
         if(searchSession(sessionIdx) == null) {
             // 세션 만든다.
@@ -140,6 +139,16 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    public void increaseRoomPeople(Room room, boolean isOwner) {
+        if(isOwner) {
+            room.createRoomLive();
+        } else {
+            room.enterRoomLive();
+        }
+        roomRepository.save(room);
+    }
+
+    @Override
     public void leaveSession(long sessionIdx, String token, String nickname) {
         // 나갈 세션을 찾는다.
         System.out.println(sessionIdx);
@@ -154,22 +163,20 @@ public class SessionServiceImpl implements SessionService {
         if (this.mapSessionNamesTokens.get(sessionIdx).remove(token) != null) {
             // redis 에서도 토큰 제거
             redisService.deleteKey(session.getSessionId(), nickname);
-
+            Room room = roomRepository.findById(sessionIdx).orElseThrow(
+                    () -> new RoomNotFoundException("Room Not Found in Session Create")
+            );
             // 만약 토큰이 있었다면 ( 제거에 성공 ) 세션에 남은 사람들 체크
             if (this.mapSessionNamesTokens.get(sessionIdx).isEmpty()) {
                 // 만약 다 나갔으면 세션도 제거해준다.
                 this.mapSessions.remove(sessionIdx);
                 this.mapSessionNamesTokens.remove(sessionIdx);
                 redisService.deleteKey(session.getSessionId());
-
-                Room room = roomRepository.findById(sessionIdx).orElseThrow(
-                        () -> new RoomNotFoundException("Room Not Found in Session Create")
-                );
-                room.updateRoomState(false);
+                room.closeRoomLive();
             } else {
-
-
+                room.leaveRoomLive();
             }
+            roomRepository.save(room);
         } else {
             // 토큰이 유효하지 않음.
             throw new SessionTokenNotValid("Leave Session Error");
@@ -242,9 +249,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void closeSession(long sessionIdx) throws OpenViduJavaClientException, OpenViduHttpException {
+    public void closeSession(long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
         // 세션을 찾는다.
         Session session = this.searchSession(sessionIdx);
+        room.closeRoomLive();
+        roomRepository.save(room);
 
         if(session != null) {
             String sessionId = session.getSessionId();
