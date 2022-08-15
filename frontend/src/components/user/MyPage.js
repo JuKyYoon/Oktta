@@ -167,12 +167,12 @@ const MyPage = () => {
             </div>
           </div>
           <div className='mypage-top'>
-            <div className='mypage-left'>              
+            <div className='mypage-left'>
               <div id='mypage-image-profile' className='mypage-left-item'>
                 <img src={profile.profileImg} width={250} />
               </div>
               <Button onClick={handleClickOpenProfile} className='mypage-left-item'>
-                <FlipCameraIosIcon fontSize='large' sx={{color: "black"}} />
+                <FlipCameraIosIcon fontSize='large' sx={{ color: "black" }} />
               </Button>
               <Dialog open={open_profile} onClose={handleClose} className='mypage-left-item'>
                 <div className={`${pending ? 'profile-modal' : null}`}>
@@ -206,7 +206,7 @@ const MyPage = () => {
                     </div>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={handleClose} className="cancel">취소</Button>
+                    <Button onClick={handleClose} sx={{ color: 'black' }}>취소</Button>
                     <Button onClick={handleSetProfile}>등록</Button>
                   </DialogActions>
                 </div>
@@ -224,19 +224,19 @@ const MyPage = () => {
                 <span
                   onClick={() => setMode('info')}
                   className={`mypage-mode mypage-mode-start ${mode === 'info' ? 'mypage-selected' : null
-                }`}>
+                    }`}>
                   내 정보
                 </span>
                 <span
                   onClick={roomClick}
                   className={`mypage-mode ${mode === 'room' ? 'mypage-selected' : null
-                }`}>
+                    }`}>
                   옥상에서 한판 한 목록
                 </span>
                 <span
                   onClick={boardClick}
                   className={`mypage-mode mypage-mode-end ${mode === 'board' ? 'mypage-selected' : null
-                }`}>
+                    }`}>
                   작성한 글 목록
                 </span>
               </div>
@@ -264,7 +264,7 @@ const MyPage = () => {
                     </div>
                     {roomList.slice((page - 1) * 7, page * 7).map((room, idx) => (
                       <Link to={`../../room/${room.idx}`} className='mypage-contents-item'
-                      key={idx} >
+                        key={idx} >
                         <div>
                           {room.title}
                         </div>
@@ -281,22 +281,22 @@ const MyPage = () => {
                     {boardList.slice((page - 1) * 7, page * 7).map((board, idx) => (
                       <Link to={`../../board/${board.idx}`
                       } className='mypage-contents-item'
-                      key={idx} >
+                        key={idx} >
                         <div>
                           {board.title}
                         </div>
                       </Link>
                     ))}
                     <div className="pagination">
-                    <Pagination count={Math.ceil(boardList.length / 7)} page={page}
-                      color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
+                      <Pagination count={Math.ceil(boardList.length / 7)} page={page}
+                        color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
                     </div>
                   </>
-                : <div>404 불러오기 실패!</div> : null}
+                  : <div>404 불러오기 실패!</div> : null}
               </div>
             </div>
           </div >
-       </>}
+        </>}
     </div >
   );
 };
