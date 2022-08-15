@@ -12,6 +12,7 @@ import com.ssafy.backend.util.SetCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -102,7 +103,7 @@ public class AuthController {
                 Map<String, String> result = authService.refresh(request, refreshToken);
                 if("timeover".equals(result.get(failMsg))) {
                     LOGGER.debug("Token Expired");
-                    return ResponseEntity.status(200).body(MessageResponse.of(401, failMsg, "time expired"));
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(MessageResponse.of(401, failMsg, "time expired"));
                 } else if(failMsg.equals(result.get(failMsg))) {
                     LOGGER.debug("Token Validate Fail");
                     return ResponseEntity.status(200).body(MessageResponse.of(200, failMsg, "token not validate"));

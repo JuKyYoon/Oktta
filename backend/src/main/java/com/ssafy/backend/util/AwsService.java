@@ -26,16 +26,11 @@ public class AwsService {
     }
 
     /**
-     * 프로필 이미지라면 separator가 id
-     * 게시글에 등록되는 이미지 혹은 비디오의 경우 게시글의 idx
-     *
      * s3에 올라간 주소값 return
      */
     public String imageUpload(MultipartFile multipartFile) {
         String originalName = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
         long fileSize = multipartFile.getSize();
-
-
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         String contentType = multipartFile.getContentType().split("/")[0].toLowerCase();
@@ -55,9 +50,6 @@ public class AwsService {
         return amazonS3Client.getResourceUrl(bucket, originalName);
     }
 
-    /**
-     *
-     */
     public void fileDelete(String oldFileName) {
         amazonS3Client.deleteObject(bucket, oldFileName);
     }
