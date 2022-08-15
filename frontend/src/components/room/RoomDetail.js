@@ -18,9 +18,7 @@ import {
   RadioGroup,
 } from '@mui/material';
 import { lolPosition, position } from '@/const/position';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faScaleUnbalanced } from '@fortawesome/free-solid-svg-icons';
-import '../../styles/room.scss';
+import '@/styles/room.scss';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -162,7 +160,8 @@ const RoomDetail = () => {
                           aria-labelledby='demo-controlled-radio-buttons-group'
                           name='controlled-radio-buttons-group'
                           value={vote}
-                          onChange={handleVoteChanged}>
+                          onChange={handleVoteChanged}
+                        >
                           {position.map((el, index) => (
                             <FormControlLabel
                               key={index}
@@ -179,7 +178,8 @@ const RoomDetail = () => {
                         variant='outlined'
                         color='veryperi'
                         onClick={onVoteButtonClicked}
-                        disabled={vote >= 1 && vote <= 5 ? false : true}>
+                        disabled={vote >= 1 && vote <= 5 ? false : true}
+                      >
                         투표하기
                       </Button>
                       <Button
@@ -187,7 +187,8 @@ const RoomDetail = () => {
                         size='small'
                         variant='outlined'
                         color='veryperi'
-                        onClick={onVoteCancelButtonClicked}>
+                        onClick={onVoteCancelButtonClicked}
+                      >
                         투표철회
                       </Button>
                     </div>
@@ -202,18 +203,21 @@ const RoomDetail = () => {
               <Button
                 className='detail-button'
                 variant='outlined'
-                color='veryperi'>
+                color='veryperi'
+              >
                 목록으로
               </Button>
             </Link>
             {room.nickname === user.nickname ? (
               <Link
                 to={`../edit/${room.idx}`}
-                style={{ textDecoration: 'none' }}>
+                style={{ textDecoration: 'none' }}
+              >
                 <Button
                   className='detail-button'
                   variant='outlined'
-                  color='veryperi'>
+                  color='veryperi'
+                >
                   수정하기
                 </Button>
               </Link>
@@ -224,7 +228,8 @@ const RoomDetail = () => {
                 className='detail-button'
                 variant='contained'
                 color='veryperi'
-                onClick={() => setShowDeleteModal(true)}>
+                onClick={() => setShowDeleteModal(true)}
+              >
                 방 삭제하기
               </Button>
             ) : null}
@@ -233,7 +238,8 @@ const RoomDetail = () => {
                 className='detail-button'
                 variant='contained'
                 color='veryperi'
-                onClick={onVoteEndButtonClicked}>
+                onClick={onVoteEndButtonClicked}
+              >
                 투표 종료하기
               </Button>
             ) : null}
@@ -244,7 +250,8 @@ const RoomDetail = () => {
             <DialogContent style={{ position: 'relative' }}>
               <IconButton
                 style={{ position: 'absolute', top: '0', right: '0' }}
-                onClick={() => setShowDeleteModal(false)}>
+                onClick={() => setShowDeleteModal(false)}
+              >
                 <DisabledByDefaultOutlinedIcon />
               </IconButton>
               <div className='modal'>
@@ -253,7 +260,8 @@ const RoomDetail = () => {
                   <Button
                     variant='outlined'
                     color='error'
-                    onClick={onDeleteButtonClicked}>
+                    onClick={onDeleteButtonClicked}
+                  >
                     예
                   </Button>
                   <Button
@@ -261,7 +269,8 @@ const RoomDetail = () => {
                     color='primary'
                     onClick={() => {
                       setShowDeleteModal(false);
-                    }}>
+                    }}
+                  >
                     아니오
                   </Button>
                 </div>

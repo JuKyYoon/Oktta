@@ -51,28 +51,24 @@ const BoardCreate = () => {
       <span>자유롭게 소통해요!</span>
       <hr className='hrLine'></hr>
 
-      <div className='board-title-form'>
-        <FormControl>
-          <InputLabel htmlFor='title' color='veryperi'>
-            제목
-          </InputLabel>
-          <Input
-            id='title'
-            type='text'
-            aria-describedby='title-helper-text'
-            color='veryperi'
-            value={title}
-            onChange={onTitleChanged}
-          />
-          <FormHelperText id='title-helper-text'>
-            제목을 입력해주세요.
-          </FormHelperText>
-        </FormControl>
-      </div>
+      <FormControl className='board-title-form'>
+        <InputLabel htmlFor='title' color='veryperi'>
+          제목
+        </InputLabel>
+        <Input
+          id='title'
+          type='text'
+          aria-describedby='title-helper-text'
+          color='veryperi'
+          value={title}
+          onChange={onTitleChanged}
+        />
+        <FormHelperText id='title-helper-text'>
+          제목을 입력해주세요.
+        </FormHelperText>
+      </FormControl>
+
       <div className='board-editor'>
-        <label htmlFor='title' className='create-board-label'>
-          내용
-        </label>
         <div>
           <CKEditor
             editor={ClassicEditor}
@@ -91,7 +87,8 @@ const BoardCreate = () => {
         variant='outlined'
         color='veryperi'
         onClick={onSubmitClicked}
-        disabled={!isValid}>
+        disabled={!isValid}
+      >
         등록하기
       </Button>
     </div>

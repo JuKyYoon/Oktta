@@ -7,9 +7,7 @@ import {
   FormHelperText,
   Button,
 } from '@mui/material';
-import { updateBoard, detailBoard } from '../../services/boardService';
-import '../../styles/room.scss';
-
+import { updateBoard, detailBoard } from '@/services/boardService';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
@@ -108,7 +106,8 @@ const BoardEdit = () => {
           variant='outlined'
           color='veryperi'
           onClick={onSubmitClicked}
-          disabled={!isValid}>
+          disabled={!isValid}
+        >
           수정하기
         </Button>
         <Link to={`../${idx}`}>
@@ -116,7 +115,8 @@ const BoardEdit = () => {
             className='board-button'
             sx={{ mr: 2, ml: 2 }}
             variant='outlined'
-            color='veryperi'>
+            color='veryperi'
+          >
             취소
           </Button>
         </Link>

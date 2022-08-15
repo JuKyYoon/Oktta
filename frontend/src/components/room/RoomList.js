@@ -32,9 +32,6 @@ const RoomList = () => {
     if (result?.data?.message === 'success') {
       setRooms(result.data.list);
       setLastPage(result.data.lastPage);
-    } else {
-      alert('게시물 불러오기 실패');
-      navigate('/');
     }
   };
 
@@ -59,7 +56,8 @@ const RoomList = () => {
           <Link
             className='create-button'
             to={`../create`}
-            style={{ textDecoration: 'none' }}>
+            style={{ textDecoration: 'none' }}
+          >
             <Button variant='contained' color='veryperi'>
               방 만들기
             </Button>
@@ -77,7 +75,7 @@ const RoomList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rooms.map((room) => (
+                  {rooms.reverse().map((room) => (
                     <TableRow key={room.idx}>
                       <TableCell align='center'>
                         {room.live ? (
@@ -90,7 +88,8 @@ const RoomList = () => {
                         <Link
                           onClick={() => roomHit(`${room.idx}`)}
                           to={`../${room.idx}`}
-                          style={{ textDecoration: 'none' }}>
+                          style={{ textDecoration: 'none' }}
+                        >
                           {room.title}
                         </Link>
                       </TableCell>
@@ -111,7 +110,8 @@ const RoomList = () => {
                       <TableCell align='center'>
                         <Link
                           to={`../${room.idx}`}
-                          style={{ textDecoration: 'none' }}>
+                          style={{ textDecoration: 'none' }}
+                        >
                           입장하기
                           <FontAwesomeIcon
                             icon={faArrowRightToBracket}

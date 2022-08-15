@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
-import Loading from '../layout/Loading';
 import { getBoardList, boardHitRequest } from '@/services/boardService';
 import '@/styles/board.scss';
 import {
@@ -23,13 +22,9 @@ const BoardList = () => {
 
   const createBoardList = async (currentPage) => {
     const result = await getBoardList(currentPage);
-    console.log(result);
     if (result?.data?.message === 'success') {
       setBoards(result.data.boardList);
       setLastPage(result.data.lastPage);
-    } else {
-      alert('게시물 불러오기 실패');
-      navigate('/');
     }
   };
 
@@ -54,7 +49,8 @@ const BoardList = () => {
         <Link
           className='create-button'
           to={`../create`}
-          style={{ textDecoration: 'none' }}>
+          style={{ textDecoration: 'none' }}
+        >
           <Button variant='contained' color='veryperi'>
             방 만들기
           </Button>
@@ -71,13 +67,14 @@ const BoardList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {boards.map((board) => (
+                {boards.reverse().map((board) => (
                   <TableRow key={board.idx}>
                     <TableCell align='center'>
                       <Link
                         onClick={() => boardHit(`${board.idx}`)}
                         to={`../${board.idx}`}
-                        style={{ textDecoration: 'none' }}>
+                        style={{ textDecoration: 'none' }}
+                      >
                         {board.title}
                       </Link>
                     </TableCell>

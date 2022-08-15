@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, TextField, Pagination } from '@mui/material';
 import {
-  getBoardCommentList,
   createBoardComment,
   deleteBoardComment,
   editBoardComment,
@@ -158,7 +157,8 @@ const BoardComment = ({ idx }) => {
             onClick={commentSubmit}
             disabled={content.trim().length < 2}
             size='large'
-            color='veryperi'>
+            color='veryperi'
+          >
             등록하기
           </Button>
         </div>
@@ -191,14 +191,16 @@ const BoardComment = ({ idx }) => {
                         variant='outlined'
                         onClick={commentEdit}
                         disabled={editInput.trim().length < 2}
-                        color='veryperi'>
+                        color='veryperi'
+                      >
                         수정하기
                       </Button>
                       <Button
                         sx={{ ml: 1, mr: 1 }}
                         variant='outlined'
                         onClick={cancel}
-                        color='veryperi'>
+                        color='veryperi'
+                      >
                         취소
                       </Button>
                       <hr></hr>
@@ -213,7 +215,8 @@ const BoardComment = ({ idx }) => {
                               sx={{ m: 1 }}
                               variant='outlined'
                               onClick={() => handleDeleteButton(comment.idx)}
-                              color='veryperi'>
+                              color='veryperi'
+                            >
                               삭제
                             </Button>
                             <Button
@@ -222,7 +225,8 @@ const BoardComment = ({ idx }) => {
                               onClick={() =>
                                 handleToggleEdit(comment.idx, comment.content)
                               }
-                              color='veryperi'>
+                              color='veryperi'
+                            >
                               수정
                             </Button>
                           </>
