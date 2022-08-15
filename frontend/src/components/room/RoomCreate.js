@@ -261,8 +261,11 @@ const RoomCreate = () => {
       <span>갈등상황에 대해 제목과 간략한 설명을 적어주세요!</span>
       <hr className='hrLine'></hr>
 
+      <div className="">
+
+      </div>
       <div className='room-title-form'>
-        <FormControl>
+        <FormControl sx={{ width:"50%"}}>
           <InputLabel htmlFor='title' color='veryperi'>
             제목
           </InputLabel>
@@ -297,19 +300,20 @@ const RoomCreate = () => {
               </div>
             </div>
             <div className="team-select-box">
+              <div className="team-select-box-top">
+                <h4>팀 선택</h4>
+              </div>
               <div className="team-select-box-bottom">
               <FormControl sx={{width: "50px", margin: "0"}}>
               <RadioGroup
                 defaultValue={hostTeamId}
                 className="team-select-radio-group"
                 value={hostTeamId}
-                    onChange={handleTeamChanged}
-                    
-              >
-                    <FormControlLabel value="100" control={<Radio />}
-                      sx={{ margin: 0, justifyContent: "center" }} />
-                    <FormControlLabel value="200" control={<Radio color="red" />}
-                     sx={{ margin: 0, justifyContent: "center" }}/>
+                    onChange={handleTeamChanged}>
+                <FormControlLabel value="100" control={<Radio />}
+                  sx={{ margin: 0, justifyContent: "center" }} />
+                <FormControlLabel value="200" control={<Radio color="red" />}
+                  sx={{ margin: 0, justifyContent: "center" }}/>
               </RadioGroup>
               </FormControl>
               <div>

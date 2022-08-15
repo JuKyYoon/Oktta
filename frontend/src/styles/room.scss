@@ -45,10 +45,10 @@ $lose: #ff968d;
 
 // RoomCreate, RoomEdit관련
 .room-title-form{
-  margin-bottom: 10px;
-  margin-top: 5px;
-  width: 40%;
+  width: 991px;
+  margin-top: 20px;
 }
+
 .room-button{
   margin: 10px;
 }
@@ -58,6 +58,9 @@ $lose: #ff968d;
 }
 
 @media (max-width: 991px) {
+  .room-title-form{
+    width: 100%;
+  }
   .room-editor{
     width: 100%;
   }
@@ -78,6 +81,14 @@ $lose: #ff968d;
 
 
 // RoomDetail 관련
+
+
+.room-detail-button-list {
+  button {
+    margin: 5px;
+  }
+}
+
 .detail-component {
   margin-bottom: 20px;
 }
@@ -89,13 +100,32 @@ $lose: #ff968d;
 .radio-button {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  button {
+    margin: 5px;
+  }
 }
 .detail-editor {
   width: 50%;
 }
+
 .detail-button {
-  margin: 5px !important;
+  margin: 5px;
 }
+
+.vote-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.vote-box-bottom {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
 .vote-body {
   width: 50%;
   display: flex;
@@ -106,19 +136,37 @@ $lose: #ff968d;
     text-align: center;
   }
 }
+
 .vote-component {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
 }
+
+.vote-component-left {
+  width: 50%;
+}
+
+.vote-component-right {
+  width: 50%;
+  text-align: left;
+}
+
 .donut-chart {
-  width: 40%;
-  height: 40%;
+  align-items: center;
+  width: 200px;
+  height: 200px;
   aspect-ratio: 1;
   margin: 5%;
 }
 
+
+
+.vote-candidate-box {
+  display: flex;
+  align-items: center;
+}
 
 // RoomComment 관련
 .comments-wrapper {
@@ -303,21 +351,26 @@ $lose: #ff968d;
   align-items: center;
   padding: 1%;
   height: 30px;
-
+  // width: 100px;
   p {
     white-space: nowrap;
     color: white;
     margin: 0;
+  }
+  div {
+    padding : 10px;
   }
 }
 
 .team-select-box {
   display: flex;
   flex-direction: column;
+  padding: 10px;
 }
 
 .team-select-box-top {
-  
+  display: flex;
+  justify-content: center;
 }
 
 .team-select-box-bottom {

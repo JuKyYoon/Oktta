@@ -3,14 +3,21 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router';
 import { deleteRoom, detailRoom } from '../../services/roomService';
 import { createVote, deleteVote, quitVote } from '../../services/voteService';
-import { Button } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
-import '../../styles/room.scss';
+import '@/styles/room.scss';
 import { useSelector } from 'react-redux';
 import VoteChart from './VoteChart';
 import RoomComment from './RoomComment';
+import { championKorean } from '@/const/champion';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -20,6 +27,8 @@ const RoomDetail = () => {
   const [room, setRoom] = useState({});
   const [vote, setVote] = useState('');
   const [voteDto, setVoteDto] = useState(null);
+  const [candidates, setCandidates] = useState([]);
+  const [candidate, setCandidate] = useState('');
 
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx)
@@ -28,15 +37,20 @@ const RoomDetail = () => {
       alert('잘못된 접근입니다.')
       navigate('../list');
     }
-    if (result?.data?.result?.voteDto) {
-      setVoteDto(result.data.result.voteDto);
+    const rawData = result?.data?.result;
+    if (rawData.voteDto) {
+      setVoteDto(rawData.voteDto);
     } 
-    setRoom(result?.data?.result);
+    setRoom(rawData);
+    const participants = rawData.matchDto.participants;
+    setCandidates([...participants.filter((participant) => participant.teamId === parseInt(rawData.hostTeamId))]);
+    
   };
+  
 
   useEffect(() => {
     getDetailRoom(idx);
-  }, [vote]);
+  }, []);
 
   const onDeleteButtonClicked = async () => {
     const result = await deleteRoom(idx);
@@ -67,7 +81,7 @@ const RoomDetail = () => {
     };
   };
   const handleVoteChanged = (event) => {
-    setVote(event.target.value);
+    setVote(parseInt(event.target.value));
   };
 
   const onVoteButtonClicked = async () => {
@@ -118,68 +132,41 @@ const RoomDetail = () => {
               supporter={voteDto.fifth}
             />
           ) : (
-            <div>
-              <h3>투표가 진행중입니다!</h3>
-              <div className='vote-component'>
-                <img
-                  src='../assets/donut_chart.png'
-                  className='donut-chart'
-                  id='donutChart'
-                  alt='도넛차트'
-                />
-                <div className='radio-button'>
-                  <h3>범인 고르기</h3>
-                  <label>
-                    <input
-                      type='radio'
-                      name='top'
-                      value='1'
-                      checked={vote === '1'}
-                      onChange={handleVoteChanged}
+              <div className="vote-box">
+              <div>
+                <h3>투표가 진행중입니다!</h3>
+              </div>              
+                <div className='vote-component'>
+                  <div className="vote-component-left">
+                    <img
+                      src='../assets/donut_chart.png'
+                      className="donut-chart"
+                      alt='도넛차트'
                     />
-                    탑
-                  </label>
-
-                  <label>
-                    <input
-                      type='radio'
-                      name='jungle'
-                      value='2'
-                      checked={vote === '2'}
-                      onChange={handleVoteChanged}
-                    />
-                    정글
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='mid'
-                      value='3'
-                      checked={vote === '3'}
-                      onChange={handleVoteChanged}
-                    />
-                    미드
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='adc'
-                      value='4'
-                      checked={vote === '4'}
-                      onChange={handleVoteChanged}
-                    />
-                    원딜
-                  </label>
-                  <label>
-                    <input
-                      type='radio'
-                      name='supporter'
-                      value='5'
-                      checked={vote === '5'}
-                      onChange={handleVoteChanged}
-                    />
-                    서포터
-                  </label>
+                  </div>
+                  <div className="vote-component-right">
+                    <h3>범인 고르기</h3>
+                      <FormControl sx={{ width: "50px", margin: "0" }}>
+                      <RadioGroup
+                        className="team-select-radio-group"
+                        onChange={handleVoteChanged}
+                      >
+                        {candidates.map((candidate, idx) => (<FormControlLabel value={idx+1} key={idx} control={<Radio />}
+                            label={
+                              <>
+                                <div className="vote-candidate-box">
+                                  <img src= {`/assets/champion/${candidate.championName}.png`} width="40px" height="auto" style={{ marginRight: "5px" }} />
+                                  <p style={{ whiteSpace: "nowrap", height: "auto" }}>
+                                    {championKorean[candidate.championName]}
+                                  </p>                              
+                                </div>
+                              </>}
+                          />))}
+                          </RadioGroup>
+                      </FormControl>
+                  </div>                             
+                </div>
+                <div className="vote-box-bottom">
                   <Button
                     className='detail-button'
                     size='small'
@@ -197,14 +184,13 @@ const RoomDetail = () => {
                     onClick={onVoteCancelButtonClicked}>
                     투표철회
                   </Button>
-                </div>
-              </div>
+                  </div>
             </div>
           )}
         </div>
       </div>
 
-      <div>
+      <div className="room-detail-button-list">        
         <Link to={`../list`} style={{ textDecoration: 'none' }}>
           <Button className='detail-button' variant='outlined' color='veryperi'>
             목록으로
@@ -223,22 +209,22 @@ const RoomDetail = () => {
 
         {room.nickname === user.nickname ? (
           <Button
-            className='detail-button'
-            variant='contained'
-            color='veryperi'
-            onClick={onDeleteButtonClicked}>
+          className='detail-button'
+          variant='contained'
+          color='veryperi'
+          onClick={onDeleteButtonClicked}>
             방 삭제하기
           </Button>
         ) : null}
         {room.nickname === user.nickname && !voteDto ? (
           <Button
-            className='detail-button'
-            variant='contained'
-            color='veryperi'
-            onClick={onVoteEndButtonClicked}>
+          className='detail-button'
+          variant='contained'
+          color='veryperi'
+          onClick={onVoteEndButtonClicked}>
             투표 종료하기
           </Button>
-        ) : null}
+        ) : null}       
       </div>
       <hr className='hrLine'></hr>
       <RoomComment idx={idx} />

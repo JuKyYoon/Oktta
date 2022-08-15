@@ -60,11 +60,6 @@ $shadow-color: rgba(0, 0, 0, 0.322);
   border-bottom: 2px $veryperi solid;
 }
 
- /* 회원 탈퇴 버튼 */
-// .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-//   color: black !important;
-// }
-
 #delete-btn {
   color: rgb(219, 219, 219) !important;
 }
@@ -130,10 +125,6 @@ $shadow-color: rgba(0, 0, 0, 0.322);
   vertical-align: middle;
 }
 
-/* 회원가입 버튼 색상 */
-// .css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
-//   background-color: $veryperi !important;
-// }
 
 .social-login-form {
   display: flex;
@@ -217,11 +208,6 @@ $shadow-color: rgba(0, 0, 0, 0.322);
     min-height: 350px;
     // width: 85%;
   }
-
-
-  // .css-e53awj-MuiStack-root {
-  //   flex-direction: column !important;
-  // }
 
   .social-login-form {
     flex-direction: column;

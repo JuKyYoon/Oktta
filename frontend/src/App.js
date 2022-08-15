@@ -9,6 +9,7 @@ import Room from "./routes/Room";
 import EmailAuth from "./components/user/EmailAuth";
 import SocialAuth from "./components/user/SocialAuth";
 import ServerError from "./components/error/ServerError";
+import ElectronSocialLogin from "./components/user/ElectronSocialLogin";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       </Route>
       <Route path="/user/auth/:token" element={<EmailAuth />} />
       <Route path="/oauth/*" element={<SocialAuth />} />
+      <Route path="/electron/social/auth" element={< ElectronSocialLogin/>} />
     </Routes>
   );
 }
