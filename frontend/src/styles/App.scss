@@ -11,9 +11,10 @@ body {
 }
 
 main {
-  padding-top: 3%;
+  // padding-top: 3%;
   height: 85vh;
   background-color: $background-color;
+  // background-color: red;
 }
 
 a {
@@ -51,8 +52,10 @@ h2 {
 }
 
 .header-main-div {
-  height: 110px;
-  min-height: 110px;
+  height: 15vh;
+  // height: 13vh;
+  min-height: 140px;
+  max-height: 150px;
   // background-color:blue;
 }
 
