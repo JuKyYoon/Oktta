@@ -25,7 +25,7 @@ const RoomList = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
-  const [rooms, setRooms] = useState(false);
+  const [rooms, setRooms] = useState([]);
 
   const createRoomList = async (currentPage) => {
     const result = await getRoomList(currentPage);
@@ -75,7 +75,7 @@ const RoomList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rooms.reverse().map((room) => (
+                  {rooms.map((room) => (
                     <TableRow key={room.idx}>
                       <TableCell align='center'>
                         {room.live ? (

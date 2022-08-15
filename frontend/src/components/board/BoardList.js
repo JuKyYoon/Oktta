@@ -67,33 +67,36 @@ const BoardList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {boards.reverse().map((board) => (
-                  <TableRow key={board.idx}>
-                    <TableCell align='center'>
-                      <Link
-                        onClick={() => boardHit(`${board.idx}`)}
-                        to={`../${board.idx}`}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        {board.title}
-                      </Link>
-                    </TableCell>
-                    <TableCell align='center'>
-                      {board.createDate.substr(0, 10)}
-                    </TableCell>
-                    <TableCell align='center'>{board.nickname}</TableCell>
-                    <TableCell align='center'>
-                      {board.hit > 5 ? (
-                        <span>
-                          {board.hit + ' '}
-                          <FontAwesomeIcon icon={faFire} color='red' />
-                        </span>
-                      ) : (
-                        board.hit
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {boards
+                  .slice(0)
+                  .reverse()
+                  .map((board) => (
+                    <TableRow key={board.idx}>
+                      <TableCell align='center'>
+                        <Link
+                          onClick={() => boardHit(`${board.idx}`)}
+                          to={`../${board.idx}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          {board.title}
+                        </Link>
+                      </TableCell>
+                      <TableCell align='center'>
+                        {board.createDate.substr(0, 10)}
+                      </TableCell>
+                      <TableCell align='center'>{board.nickname}</TableCell>
+                      <TableCell align='center'>
+                        {board.hit > 5 ? (
+                          <span>
+                            {board.hit + ' '}
+                            <FontAwesomeIcon icon={faFire} color='red' />
+                          </span>
+                        ) : (
+                          board.hit
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

@@ -227,7 +227,6 @@ const RoomCreate = () => {
       console.log('노토큰입니다.화이팅');
     } else {
       alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
-      console.log(result);
       navigate('/room/list');
     }
   };
