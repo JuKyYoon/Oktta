@@ -1,6 +1,7 @@
 package com.ssafy.backend.model.repository;
 
 import com.ssafy.backend.model.entity.Board;
+import com.ssafy.backend.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Modifying
     @Query("UPDATE Board board SET board.title = :title, board.content = :content, board.modifyDate = :now WHERE board.idx = :idx")
     int updateBoard(Long idx, String title, String content, LocalDateTime now);
+
+    List<Board> findAllByUser(User user);
 }

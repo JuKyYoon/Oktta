@@ -10,12 +10,11 @@ export const joinSessionRequest = async (id) => {
   return res.data.result
 }
 
-// 세션 생성
+// 세션 생성 후 참가
 export const createSessionRequest = async (id) => {
   try {
     const res = await axiosAuth.post(`${SESSION_URL}/${id}`)
-    console.log(res)
-    return res.data.result
+    return res.data;
   } catch (err) {
     console.log(err.response)
     return err.response.data;
@@ -23,8 +22,12 @@ export const createSessionRequest = async (id) => {
 
 }
 
-// 세션 종료
-export const deleteSessionRequest = async (id) => {
-  const res = await axiosAuth.delete(`${SESSION_URL}/${id}`)
-  return res.data.result
+
+export const closeSessionRequest = async (idx) => {
+  try {
+    const res = await axiosAuth.delete(`${SESSION_URL}/${idx}`)
+    return res.data;
+  } catch (err) {
+    return err.response.data;
+  }
 }

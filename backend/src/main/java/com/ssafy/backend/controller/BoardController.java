@@ -26,7 +26,10 @@ public class BoardController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
 
     @Value("${pagingLimit}")
-    private int limit;
+    private int pagingLimit;
+
+    @Value("${myLimit}")
+    private int myLimit;
 
     @Value("${response.success}")
     private String successMsg;
@@ -34,14 +37,11 @@ public class BoardController {
     @Value("${response.fail}")
     private String failMsg;
 
-    private final UserRepository userRepository;
-
     private final BoardService boardService;
 
     private final BoardCommentService boardCommentService;
 
-    public BoardController(UserRepository userRepository, BoardService boardService, BoardCommentService boardCommentService) {
-        this.userRepository = userRepository;
+    public BoardController(BoardService boardService, BoardCommentService boardCommentService) {
         this.boardService = boardService;
         this.boardCommentService = boardCommentService;
     }
@@ -52,11 +52,21 @@ public class BoardController {
     @GetMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> detailBoard(@PathVariable("idx") Long boardIdx){
         BoardDto board = boardService.detailBoard(boardIdx);
-        boardService.updateHit(board.getIdx());
 
         List<BoardCommentDto> list = boardCommentService.getBoardCommentList(boardIdx);
-        int lastPage = list.size() / limit + 1;
+        int temp = list.size() / pagingLimit;
+        int lastPage = (list.size() % pagingLimit == 0) ? temp : temp + 1;
+
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, board, list, lastPage));
+    }
+
+    /**
+     * 게시글 조회수 +1
+     */
+    @PutMapping("/hit/{idx}")
+    public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long boardIdx) {
+        boardService.updateHit(boardIdx);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
     /**
@@ -64,11 +74,8 @@ public class BoardController {
      */
     @PostMapping("")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto boardDto){
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        boardService.createBoard(user, boardDto);
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boardService.createBoard(principal.getUsername(), boardDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -79,8 +86,8 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
-        List<BoardDto> list = boardService.getBoardList(category, page, limit);
-        int lastPage = boardService.getLastPage(category, limit);
+        List<BoardDto> list = boardService.getBoardList(category, page, pagingLimit);
+        int lastPage = boardService.getLastPage(category, pagingLimit);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
     }
 
@@ -89,7 +96,7 @@ public class BoardController {
      */
     @DeleteMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> deleteBoard(@PathVariable("idx") Long idx) {
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = boardService.deleteBoard(principal.getUsername(), idx);
         if(result){
             return ResponseEntity.status(200).body(BoardResponse.of(200,successMsg));
@@ -103,12 +110,22 @@ public class BoardController {
      */
     @PutMapping("/{idx}")
     public ResponseEntity<? extends BaseResponseBody> updateBoard(@PathVariable("idx") Long idx, @RequestBody BoardDto boardDto) {
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean result = boardService.updateBoard(principal.getUsername(), idx, boardDto);
         if(result){
             return ResponseEntity.status(200).body(BoardResponse.of(200,successMsg));
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<? extends BaseResponseBody> myBoards() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<BoardDto> list = boardService.myBoards(principal.getUsername());
+
+        int temp = list.size() / myLimit;
+        int lastPage = (list.size() % myLimit == 0) ? temp : temp + 1;
+        return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
     }
 }

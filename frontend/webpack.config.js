@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require('path');
 const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require('webpack');
 const dotenv = require('dotenv');
@@ -7,18 +7,21 @@ const dotenv = require('dotenv');
 // const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
   // 엔트리 포인트
-  entry: "./src/index.js",
+  entry: './src/index.js',
 
   output: {
-    filename: "main.js",
-    path: path.join(__dirname, "/dist"),
+    filename: 'main.js',
+    path: path.join(__dirname, '/dist'),
   },
 
   resolve: {
   // 파일 확장자 처리
-    extensions: [".js", ".jsx"],
+    extensions: ['.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, 'src/')
+    }
   },
 
   plugins: [
@@ -30,34 +33,34 @@ module.exports = {
 
     // new Dotenv()
   ],
-  
+
   devServer: {
     static: {
       directory: path.join(__dirname, '/public'),
     },
-    port: 5500,
+    port: 3000,
     compress: true,
     hot: true,
     historyApiFallback: true,
   },
-  
+
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /nodeModules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", 'css-loader', 'sass-loader'],
-      }
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
     ],
   },
 };

@@ -14,9 +14,10 @@ public class UserDto {
     private String createDate;
     private String modifyDate;
     private int snsType;
-    private int profileImg;
+    private String profileImg;
     private String role;
-
+    private int tier;
+    private String summonerName;
     public UserDto() {
     }
 
@@ -24,6 +25,15 @@ public class UserDto {
         this.id = id;
         this.nickname = nickname;
         this.password = password;
+    }
+
+    public UserDto(String nickname, String createDate, String modifyDate, String profileImg, int snsType, String role){
+        this.nickname = nickname;
+        this.createDate = createDate;
+        this.modifyDate = modifyDate;
+        this.profileImg = profileImg;
+        this.snsType = snsType;
+        this.role = role;
     }
 
     public String getId() {
@@ -74,11 +84,11 @@ public class UserDto {
         this.snsType = snsType;
     }
 
-    public int getProfileImg() {
+    public String getProfileImg() {
         return profileImg;
     }
 
-    public void setProfileImg(int profileImg) {
+    public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
 
@@ -90,4 +100,19 @@ public class UserDto {
         this.role = role;
     }
 
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public String getSummonerName() {
+        return summonerName;
+    }
+
+    public void setSummonerName(String summonerName) {
+        this.summonerName = summonerName;
+    }
 }

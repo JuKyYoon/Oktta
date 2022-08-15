@@ -1,10 +1,11 @@
-import React from 'react';
+import React from "react";
+import RoomThumbnail from "./room/RoomThumbnail";
 
 const Home = () => {
   return (
     <div>
-      <h2>최근 HOT한 방</h2>
-      <h2>몇대몇</h2>
+      <h2>ON AIR</h2>
+      <h2>옥상</h2>
       <h2>자유게시판</h2>
     </div>
   );

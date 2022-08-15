@@ -1,5 +1,7 @@
 package com.ssafy.backend.model.dto;
 
+import com.ssafy.backend.model.dto.lol.MatchDto;
+
 import java.time.LocalDateTime;
 
 public class RoomDto {
@@ -7,12 +9,17 @@ public class RoomDto {
     private Long idx;
     private String title;
     private String nickname;
+    private String profileImage;
+    private int tier;
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
     private boolean live;
     private int people;
     private int hit;
+    private int myVote;
+    private VoteDto voteDto;
+    private MatchDto matchDto;
 
     public RoomDto() {
     }
@@ -25,6 +32,17 @@ public class RoomDto {
         this.live = live;
         this.people = people;
         this.hit = hit;
+    }
+
+    public RoomDto(String nickname, Long idx, String title, LocalDateTime createDate, boolean live, int people, int hit, MatchDto matchDto){
+        this.nickname = nickname;
+        this.idx = idx;
+        this.title = title;
+        this.createDate = createDate;
+        this.live = live;
+        this.people = people;
+        this.hit = hit;
+        this.matchDto = matchDto;
     }
 
     public Long getIdx() {
@@ -75,6 +93,14 @@ public class RoomDto {
         this.nickname = nickname;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public boolean isLive() {
         return live;
     }
@@ -97,5 +123,37 @@ public class RoomDto {
 
     public void setHit(int hit) {
         this.hit = hit;
+    }
+
+    public VoteDto getVoteDto() {
+        return voteDto;
+    }
+
+    public void setVoteDto(VoteDto voteDto) {
+        this.voteDto = voteDto;
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
+
+    public MatchDto getMatchDto() {
+        return matchDto;
+    }
+
+    public void setMatchDto(MatchDto matchDto) {
+        this.matchDto = matchDto;
+    }
+
+    public int getMyVote() {
+        return myVote;
+    }
+
+    public void setMyVote(int myVote) {
+        this.myVote = myVote;
     }
 }

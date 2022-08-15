@@ -95,10 +95,20 @@ public class RedisService {
      * Delete Value With Key from Redis
      * @param key
      */
-    public void deleteValue(String key) {
-        if(redisTemplate.opsForValue().get(key) != null){
-            redisTemplate.delete(key);
-        }
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+//        if(redisTemplate.opsForValue().get(key) != null){
+//            redisTemplate.delete(key);
+//        }
+    }
+
+    /**
+     * Delete Hash
+     * @param hashKey
+     * @param key
+     */
+    public void deleteKey(String hashKey, String key) {
+        redisTemplate.opsForHash().delete(hashKey, key);
     }
 
     /**
@@ -111,13 +121,4 @@ public class RedisService {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(token, value, expireTime, TimeUnit.MILLISECONDS);
     }
-
-    /**
-     * Delete By Key
-     * @param key
-     */
-    public void deleteKey(String key) {
-        redisTemplate.delete(key);
-    }
-
 }
