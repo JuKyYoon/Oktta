@@ -4,11 +4,11 @@ import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
+import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,25 +28,31 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardDto detailBoard(Long idx) {
-        BoardDto boardDto = new BoardDto();
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public BoardDto detailBoard(Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
         String nickname = userRepository.findNicknameByIdx(board.getUser().getIdx());
-        boardDto = new BoardDto(nickname, board);
+        BoardDto boardDto = new BoardDto(nickname, board);
 
         return boardDto;
     }
 
     @Override
-    public void createBoard(User user, BoardDto boardDto) {
+    public void createBoard(String id, BoardDto boardDto) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
         boardRepository.save(new Board.Builder(user, boardDto.getTitle(), boardDto.getContent(), boardDto.getCategory()).build());
     }
 
     @Override
-    public int updateHit(Long idx) {
-        return boardRepository.updateHit(idx);
+    public int updateHit(Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
+                () -> new BoardNotFoundException("Board Not Found")
+        );
+
+        return boardRepository.updateHit(boardIdx);
     }
 
     @Override
@@ -63,17 +69,13 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int getLastPage(int category, int limit) {
-        int lastPage = boardRepository.findLastPage(category) / limit;
-        if(boardRepository.findLastPage(category) % limit == 0) {
-            return lastPage;
-        } else {
-            return lastPage + 1;
-        }
+        int temp = boardRepository.findLastPage(category);
+        return (temp % limit == 0) ? temp / limit : temp / limit + 1;
     }
 
     @Override
-    public boolean deleteBoard(String id, Long idx) {
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public boolean deleteBoard(String id, Long boardIdx) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
@@ -87,8 +89,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean updateBoard(String id, Long idx, BoardDto boardDto) {
-        Board board = boardRepository.findByIdx(idx).orElseThrow(
+    public boolean updateBoard(String id, Long boardIdx, BoardDto boardDto) {
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
@@ -96,8 +98,24 @@ public class BoardServiceImpl implements BoardService {
             return false;
         } else {
             System.out.println(LocalDateTime.now());
-            boardRepository.updateBoard(idx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
+            boardRepository.updateBoard(boardIdx, boardDto.getTitle(), boardDto.getContent(), LocalDateTime.now());
             return true;
         }
+    }
+
+    @Override
+    public List<BoardDto> myBoards(String id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+        List<Board> boardList = boardRepository.findAllByUser(user);
+        List<BoardDto> list = new ArrayList<>();
+
+        String nickname = userRepository.findNicknameByIdx(user.getIdx());
+        for(Board b : boardList) {
+            list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getCreateDate(), b.getHit()));
+        }
+
+        return list;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "room")
@@ -23,12 +24,13 @@ public class Room {
     private Long idx;
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
+    @JoinColumn(name = "user_idx")
     private User user;
 
     @Column(name="title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name="content", nullable = false)
     private String content;
 
@@ -48,6 +50,13 @@ public class Room {
 
     @Column(name = "people", columnDefinition = "integer default 0")
     private int people;
+
+    @ManyToOne(targetEntity = Match.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id")
+    private Match match;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<RoomComment> comments;
 
     public Long getIdx() {
         return idx;
@@ -85,8 +94,26 @@ public class Room {
         return people;
     }
 
-    public void updateRoomState(boolean state) {
-        this.live = state;
+    public void createRoomLive() {
+        this.live = true;
+        this.people = 1;
+    }
+
+    public void enterRoomLive() {
+        this.people += 1;
+    }
+
+    public void leaveRoomLive() {
+        this.people -= 1;
+    }
+
+    public void closeRoomLive() {
+        this.live = false;
+        this.people = 0;
+    }
+
+    public Match getMatch(){
+        return match;
     }
 
     protected Room() {
@@ -96,6 +123,7 @@ public class Room {
         this.user = builder.user;
         this.title = builder.title;
         this.content = builder.content;
+        this.match = builder.match;
     }
 
     public static Room.Builder builder() {
@@ -107,6 +135,7 @@ public class Room {
         private User user;
         private String title;
         private String content;
+        private Match match;
 
         public Room.Builder idx(long idx) {
             this.idx = idx;
@@ -115,10 +144,11 @@ public class Room {
 
         public Builder() {}
 
-        public Builder(User user, String title, String content) {
+        public Builder(User user, String title, String content, Match match) {
             this.user = user;
             this.title = title;
             this.content = content;
+            this.match = match;
         }
 
         public Room build() {

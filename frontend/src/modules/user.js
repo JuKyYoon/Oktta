@@ -1,42 +1,65 @@
-import { GET_TOKEN, SIGNUP, LOGIN, GOOGLE_LOGIN, KAKAO_LOGIN, NAVER_LOGIN, LOGOUT, CHECK_EMAIL, CHECK_NICKNAME, PW_INQUIRY, EDIT_ACCOUNT, DELETE_ACCOUNT, UPDATE_PROFILE } from "../modules/types.js";
+import {
+  EMAIL_AUTH,
+  SET_TOKEN,
+  LOGIN,
+  SOCIAL_LOGIN,
+  LOGOUT,
+  UPDATE_NICKNAME,
+  TOKEN_DELETE
+} from "../modules/types.js";
 
-const initState = {
+export const initState = {
   isLogin: false,
-  userId: "",
+  nickname: "",
+  auth: "",
   token: "",
-}
+  snsType: "",
+};
 
 export default function (state = initState, action) {
   switch (action.type) {
-    case GET_TOKEN:
-      return { ...state };
-    case SIGNUP:
-      return { ...state };
-    case LOGIN:
-      if (action.payload.data.message === "success") {
-        return { ...state, isLogin: true, userId: action.payload.data.result.userId, token: action.payload.data.result.accessToken };
+    case EMAIL_AUTH:
+      return {
+        ...state,
+        auth: "1"
       }
-      return { ...state };
-    case GOOGLE_LOGIN:
-      return { ...state, data: action.payload };
-    case KAKAO_LOGIN:
-      return { ...state, data: action.payload };
-    case NAVER_LOGIN:
-      return { ...state, data: action.payload };
+    case SET_TOKEN:
+      return {
+        ...state,
+        token: action.payload.accessToken,
+      }
+    case LOGIN:
+      return {
+        ...state,
+        isLogin: true,
+        nickname: action.payload.data.result.nickname,
+        auth: action.payload.data.result.auth,
+        token: action.payload.data.result.accessToken,
+      }
+    case SOCIAL_LOGIN:
+      return {
+        isLogin: action.payload.isLogin,
+        nickname: action.payload.nickname,
+        auth: action.payload.auth,
+        token: action.payload.token,
+        snsType: action.payload.snsType,
+      }
     case LOGOUT:
-      return initState;
-    case CHECK_EMAIL:
-      return { ...state, data: action.payload };
-    case CHECK_NICKNAME:
-      return { ...state, data: action.payload };
-    case PW_INQUIRY:
-      return { ...state, data: action.payload };
-    case EDIT_ACCOUNT:
-      return { ...state, data: action.payload };
-    case DELETE_ACCOUNT:
-      return { ...state, data: action.payload };
-    case UPDATE_PROFILE:
-      return { ...state, userId: action.payload.userId };
+      // return initState;
+      return {
+        ...state,
+        isLogin: false,
+        nickname: "",
+        auth: "",
+        snsType: "",
+      }
+    case UPDATE_NICKNAME:
+      return {
+        ...state,
+        nickname: action.payload.nickname,
+      };
+    case TOKEN_DELETE:
+      return initState;    
     default:
       return state;
   }

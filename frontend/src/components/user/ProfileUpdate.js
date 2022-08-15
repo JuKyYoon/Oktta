@@ -6,43 +6,47 @@ import {
   InputLabel,
   Input,
   FormHelperText,
-  Container,
   Button,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   updateNicknameRequest,
   updatePasswordRequest,
   checkNicknameRequest,
+  delAccount,
 } from '../../services/userService';
 import { debounce } from 'lodash';
+import { LOGOUT } from '../../modules/types';
 
-const debounceFunc = debounce((value, func, save) => {
-  save(func(value));
+const debounceFunc = debounce(async (value, request, setState) => {
+  const result = await request(value)
+  if (result?.data?.message) {
+    setState(result?.data?.message)
+  } else {
+    alert('올바르지 않은 접근입니다.')
+  };
 }, 500);
 
 const ProfileUpdate = () => {
-  // 테마색 설정
-  const theme = createTheme({
-    palette: {
-      veryperi: {
-        main: '#6667AB',
-        contrastText: '#fff',
-      },
-    },
-  });
 
   const [mode, setMode] = useState('nickname');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useSelector((state) => state.user)
+
   // 닉네임 관련
-  const currentNickname = useSelector((state) =>
-    state.user.userId ? state.user.userId : 'nickname'
-  );
+  const currentNickname = user.nickname;
+  const snsType = user.snsType;
   const [nickname, setNickname] = useState(currentNickname);
   const [isNicknameValid, setIsNicknameValid] = useState(true);
   const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [banned, setBanned] = useState(false);
 
   // 비밀번호 관련
   const [newPassword, setNewPassword] = useState('');
@@ -51,9 +55,16 @@ const ProfileUpdate = () => {
   const [isNewPasswordSame, setIsNewPasswordSame] = useState(false);
 
   const [password, setPassword] = useState('');
+  const [delPassword, setDelPassword] = useState('');
+
+  const [open_delbtn, setOpenDelBtn] = useState(false);
 
   const passwordChange = (event) => {
     setPassword(event.target.value);
+  };
+
+  const delPasswordChange = (event) => {
+    setDelPassword(event.target.value);
   };
 
   const nicknameChange = (event) => {
@@ -64,7 +75,10 @@ const ProfileUpdate = () => {
       const isNicknameValid = !regNickname.test(event.target.value);
       setIsNicknameValid(isNicknameValid);
 
-      if (isNicknameValid) {
+      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음' || event.target.value.length > 10;
+      setBanned(banned);
+
+      if (isNicknameValid && !banned) {
         setNicknameChecked(false);
         debounceFunc(
           event.target.value,
@@ -76,7 +90,7 @@ const ProfileUpdate = () => {
   };
 
   const newPasswordChange = (event) => {
-    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
     const isNewPasswordValid = regPassword.test(event.target.value);
 
     setNewPassword(event.target.value);
@@ -94,29 +108,27 @@ const ProfileUpdate = () => {
     setIsNewPasswordSame(newPassword === event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     switch (mode) {
       case 'nickname':
         if (nicknameChecked === 'fail') {
           alert('이미 사용중인 닉네임입니다.');
         } else {
-          updateNicknameRequest({
+          const result = await updateNicknameRequest({
             nickname,
             password,
           })
-            .then((res) => {
-              if (res.payload.data.message === 'success') {
-                dispatch(res);
-                alert('닉네임이 변경되었습니다.');
-                navigate('/user/mypage');
-              } else {
-                alert('비밀번호를 확인해주세요.');
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
+          if (result?.payload?.data?.message === 'success') {
+            dispatch(res);
+            alert('닉네임이 변경되었습니다.');
+            navigate('/user/mypage');
+          } else if (result?.payload?.data?.message === 'fail') {
+            alert('비밀번호를 확인해주세요.');
+            setPassword('');
+          } else {
+            alert('잘못된 접근입니다.')
+          };
+        };
         break;
       case 'password':
         if (!isNewPasswordValid) {
@@ -124,55 +136,78 @@ const ProfileUpdate = () => {
         } else if (!isNewPasswordSame) {
           alert('비밀번호 확인이 일치하지 않습니다.');
         } else {
-          updatePasswordRequest({
+          const result = await updatePasswordRequest({
             newPassword,
             oldPassword: password,
-          }).then((res) => {
-            if (res.payload.data.message === 'success') {
-              alert('비밀번호가 변경되었습니다.');
-              navigate('/user/mypage');
-            } else {
-              alert('비밀번호를 확인해주세요.');
-            }
-          });
-        }
-        break;
-      case 'profileImage':
-        navigate('/user/mypage');
+          })
+          if (result?.data?.message === 'success') {
+            alert('비밀번호가 변경되었습니다.');
+            navigate('/user/mypage');
+          } else if (result?.data?.message === 'fail') {
+            alert('비밀번호를 확인해주세요.');
+            setPassword('');
+            setNewPassword('');
+            setNewPasswordCheck('');
+          } else {
+            alert('잘못된 접근입니다.')
+          };
+        };
         break;
       default:
-        console.log('???');
+        alert('올바르지 않은 접근입니다.');
     }
   };
 
+  const handleClickOpenDelBtn = () => {
+    setPassword("");
+    setOpenDelBtn(true);
+  };
+
+  const handleClose = () => {
+    setOpenDelBtn(false);
+  };
+
+  const deleteUser = async () => {
+    const result = await delAccount({ data: { delPassword } });
+    if (result?.payload?.data?.message === "success") {
+      navigate('/');
+      alert("그동안 OKTTA를 이용해주셔서 감사합니다.");
+      dispatch({ type: LOGOUT });
+    }
+    else {
+      alert("비밀번호를 잘못 입력했습니다.");
+      handleClose();
+    };
+  };
+
   return (
-    <div>
-      <ThemeProvider theme={theme}>
-        <Container maxWidth='sm'>
-          <h2>회원정보 수정</h2>
-          <Button
-            variant={mode === 'nickname' ? 'contained' : 'text'}
-            onClick={() => setMode('nickname')}
-            color='veryperi'>
-            닉네임 변경
-          </Button>
+    <div className='form'>
+      <h2>회원정보 수정</h2>
+      <Stack direction="row" spacing={2}>
+        <Button
+          variant={mode === 'nickname' ? 'contained' : 'text'}
+          onClick={() => setMode('nickname')}
+          color='veryperi'>
+          닉네임 변경
+        </Button>
+        {snsType ?
+          null :
           <Button
             variant={mode === 'password' ? 'contained' : 'text'}
             onClick={() => setMode('password')}
             color='veryperi'>
             비밀번호 변경
           </Button>
-          <Button
-            variant={mode === 'profileImage' ? 'contained' : 'text'}
-            onClick={() => setMode('profileImage')}
-            color='veryperi'>
-            프로필 사진 변경
-          </Button>
-          <br />
-          <br />
+        }
+      </Stack>
+      <br />
+      <br />
+      {snsType ?
+        null :
+        <div>
           <FormControl>
             <InputLabel htmlFor='password' color='veryperi'>
-              비밀번호
+              기존 비밀번호
             </InputLabel>
             <Input
               id='password'
@@ -188,128 +223,144 @@ const ProfileUpdate = () => {
           </FormControl>
           <br />
           <br />
-          {mode === 'nickname' ? (
-            <div>
-              <br />
-              <div>
-                <FormControl>
-                  <InputLabel htmlFor='nickname' color='veryperi'>
-                    닉네임
-                  </InputLabel>
-                  <Input
-                    id='nickname'
-                    aria-describedby='nickNm-helper-text'
-                    color='veryperi'
-                    value={nickname}
-                    onChange={nicknameChange}
-                  />
-                  <FormHelperText
-                    id='nickname-helper-text'
-                    error={
-                      !!nickname &&
-                      (!isNicknameValid || nicknameChecked === 'fail')
-                    }>
-                    {nickname
-                      ? nickname === currentNickname
-                        ? '새로운 닉네임을 입력해주세요.'
-                        : isNicknameValid
-                        ? nicknameChecked
-                          ? nicknameChecked == 'fail'
-                            ? '이미 사용중인 닉네임입니다.'
-                            : '사용 가능한 닉네임입니다.'
-                          : '닉네임 중복 여부를 확인중입니다.'
-                        : '닉네임에 특수문자를 사용할 수 없습니다.'
-                      : '특수문자를 제외한 닉네임을 입력해주세요.'}
-                  </FormHelperText>
-                </FormControl>
-              </div>
-              <br />
-            </div>
-          ) : mode === 'password' ? (
-            <div>
-              <div>
-                <FormControl>
-                  <InputLabel htmlFor='new-password' color='veryperi'>
-                    새 비밀번호
-                  </InputLabel>
-                  <Input
-                    id='new-password'
-                    type='password'
-                    aria-describedby='password-helper-text'
-                    color='veryperi'
-                    value={newPassword}
-                    onChange={newPasswordChange}
-                  />
-                  <FormHelperText
-                    id='password-helper-text'
-                    error={!!newPassword && !isNewPasswordValid}>
-                    {isNewPasswordValid
-                      ? '안전한 비밀번호입니다.'
-                      : '영문 + 숫자 조합으로 8자 이상으로 설정해주세요.'}
-                  </FormHelperText>
-                </FormControl>
-              </div>
-              <br />
-              <div>
-                <FormControl>
-                  <InputLabel htmlFor='passwordCheck' color='veryperi'>
-                    비밀번호 확인
-                  </InputLabel>
-                  <Input
-                    id='passwordCheck'
-                    type='password'
-                    aria-describedby='passwordCheck-helper-text'
-                    color='veryperi'
-                    value={newPasswordCheck}
-                    onChange={newPasswordCheckChange}
-                  />
-                  <FormHelperText
-                    id='passwordCheck-helper-text'
-                    error={!!newPasswordCheck && !isNewPasswordSame}>
-                    {!newPasswordCheck || isNewPasswordSame
-                      ? ' '
-                      : '비밀번호가 일치하지 않습니다.'}
-                  </FormHelperText>
-                </FormControl>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <p>여기에 프로필 사진 미리보기 넣기</p>
-              <Button component='label'>
-                변경
-                <input
-                  style={{ display: 'none' }}
-                  type='file'
-                  accept='image/*'
-                />
-              </Button>
-            </div>
-          )}
-          <br />
+        </div>
+      }
+      {mode === 'nickname' ? (
+        <div>
           <br />
           <div>
-            <Button
-              variant='contained'
-              color='veryperi'
-              onClick={handleSubmit}
-              disabled={
-                (mode === 'nickname' &&
-                  (!nickname || !isNicknameValid || !nicknameChecked)) ||
-                (mode === 'password' &&
-                  (!password || !isNewPasswordSame || !isNewPasswordValid)) ||
-                (mode === 'profileImage' && true)
-              }>
-              저장
-            </Button>
-            <Link to='/user/myPage'>
-              <Button variant='outlined' color='veryperi'>
-                취소
-              </Button>
-            </Link>
+            <FormControl>
+              <InputLabel htmlFor='nickname' color='veryperi'>
+                닉네임
+              </InputLabel>
+              <Input
+                id='nickname'
+                aria-describedby='nickNm-helper-text'
+                color='veryperi'
+                value={nickname}
+                onChange={nicknameChange}
+              />
+              <FormHelperText
+                id='nickname-helper-text'
+                error={
+                  !!nickname &&
+                  (!isNicknameValid || nicknameChecked === 'fail' || banned)
+                }>
+                {nickname
+                  ? nickname === currentNickname
+                    ? '새로운 닉네임을 입력해주세요.'
+                    : isNicknameValid
+                      ? !banned
+                        ? nicknameChecked
+                          ? nicknameChecked == 'success'
+                            ? '사용 가능한 닉네임입니다.'
+                            : '이미 사용중인 닉네임입니다.'
+                          : '닉네임 중복 여부를 확인중입니다.'
+                        : '사용할 수 없는 닉네임입니다.'
+                      : '닉네임에 특수문자를 사용할 수 없습니다.'
+                  : '10글자 이하의 닉네임을 입력해주세요.'}
+              </FormHelperText>
+            </FormControl>
           </div>
-        </Container>
-      </ThemeProvider>
+          <br />
+        </div>
+      ) : (
+        <div>
+          <div>
+            <FormControl>
+              <InputLabel htmlFor='new-password' color='veryperi'>
+                새 비밀번호
+              </InputLabel>
+              <Input
+                id='new-password'
+                type='password'
+                aria-describedby='password-helper-text'
+                color='veryperi'
+                value={newPassword}
+                onChange={newPasswordChange}
+              />
+              <FormHelperText
+                id='password-helper-text'
+                error={!!newPassword && !isNewPasswordValid}>
+                {isNewPasswordValid
+                  ? '안전한 비밀번호입니다.'
+                  : '영문 + 숫자 조합으로 8~16자로 설정해주세요.'}
+              </FormHelperText>
+            </FormControl>
+          </div>
+          <br />
+          <div>
+            <FormControl>
+              <InputLabel htmlFor='passwordCheck' color='veryperi'>
+                비밀번호 확인
+              </InputLabel>
+              <Input
+                id='passwordCheck'
+                type='password'
+                aria-describedby='passwordCheck-helper-text'
+                color='veryperi'
+                value={newPasswordCheck}
+                onChange={newPasswordCheckChange}
+              />
+              <FormHelperText
+                id='passwordCheck-helper-text'
+                error={!!newPasswordCheck && !isNewPasswordSame}>
+                {!newPasswordCheck || isNewPasswordSame
+                  ? ' '
+                  : '비밀번호가 일치하지 않습니다.'}
+              </FormHelperText>
+            </FormControl>
+          </div>
+        </div>
+      )}
+      <br />
+      <br />
+      <div>
+        <Button
+          variant='contained'
+          color='veryperi'
+          onClick={handleSubmit}
+          disabled={
+            (mode === 'nickname' &&
+              (nicknameChecked !== 'success' || banned || !nickname)) ||
+            (mode === 'password' &&
+              (!password || !isNewPasswordSame || !isNewPasswordValid))
+          }>
+          저장
+        </Button>
+        <Link to='/user/myPage'>
+          <Button variant='outlined' color='veryperi'>
+            취소
+          </Button>
+        </Link>
+      </div>
+      <br /><br /><br /><br />
+      <div>
+        <Button onClick={handleClickOpenDelBtn} id='delete-btn'>
+          회원 탈퇴
+        </Button>
+        <Dialog open={open_delbtn} onClose={handleClose}>
+          <DialogTitle>정말로 탈퇴하시겠습니까? <br /> 탈퇴 이후 정보는 되돌릴 수 없습니다.</DialogTitle>
+          {user.snsType === "" ?
+            <DialogContent>
+              <TextField
+                label="비밀번호를 입력해주세요."
+                type="password"
+                fullWidth
+                variant="standard"
+                value={delPassword}
+                onChange={delPasswordChange}
+                color='veryperi'
+              />
+            </DialogContent> :
+            <></>
+          }
+          <DialogActions>
+            <Button onClick={handleClose} className="cancel">취소</Button>
+            <Button onClick={deleteUser}>탈퇴</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
   );
 };

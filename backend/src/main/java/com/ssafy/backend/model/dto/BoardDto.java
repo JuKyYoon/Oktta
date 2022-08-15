@@ -2,12 +2,9 @@ package com.ssafy.backend.model.dto;
 
 import com.ssafy.backend.model.entity.Board;
 import io.swagger.v3.oas.annotations.media.Schema;
-import net.bytebuddy.asm.Advice;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Schema
 public class BoardDto {
     private Long idx;
     private String nickname;

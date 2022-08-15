@@ -19,7 +19,7 @@ public class RoomComment {
     @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
-    @ManyToOne(targetEntity = Room.class)
+    @ManyToOne
     @JoinColumn(name = "room_idx", nullable = false)
     private Room room;
 

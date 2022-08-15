@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -28,7 +30,8 @@ public class Board {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "create_date", updatable = false)
@@ -45,6 +48,7 @@ public class Board {
     @Column(name = "hit")
     @ColumnDefault("0")
     private Long hit;
+
 
     public Long getIdx() {
         return idx;
@@ -78,6 +82,9 @@ public class Board {
         return hit;
     }
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<BoardComment> comments;
+
     protected Board() {
     }
 
@@ -95,6 +102,7 @@ public class Board {
         private final String title;
         private final String content;
         private final int category;
+        private Match match;
 
         // Optional Parameter
 

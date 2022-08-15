@@ -1,18 +1,8 @@
-
-export const GET_TOKEN = 'user/GET_TOKEN';
-export const SIGNUP = 'user/SIGNUP';
-export const LOGIN = 'user/LOGIN';
-export const GOOGLE_LOGIN = 'user/GOOGLE_LOGIN';
-export const KAKAO_LOGIN = 'user/KAKAO_LOGIN';
-export const NAVER_LOGIN = 'user/NAVER_LOGIN';
-export const LOGOUT = 'user/LOGOUT';
-export const CHECK_EMAIL = 'user/CHECK_EMAIL';
-export const CHECK_NICKNAME = 'user/CHECK_NICKNAME';
-export const PW_INQUIRY = 'user/PW_INQUIRY';
-export const EDIT_ACCOUNT = 'user/EDIT_ACCOUNT';
-export const DELETE_ACCOUNT = 'user/DELETE_ACCOUNT';
-export const UPDATE_PROFILE = "user/UPDATE_PROFILE";
-// 게시글 관련
-export const GET_ARTICLE = 'article/GET_ARTICLE';
-export const CREATE_ARTICLE = 'article/CREATE_ARTICLE';
-export const UPDATE_ARTICLE = 'article/UPDATE_ARTICLE';
+// 유저 관련
+export const EMAIL_AUTH = "user/EMAIL_AUTH";
+export const SET_TOKEN = "user/SET_TOKEN";
+export const LOGIN = "user/LOGIN";
+export const SOCIAL_LOGIN = "user/SOCIAL_LOGIN";
+export const LOGOUT = "user/LOGOUT";
+export const UPDATE_NICKNAME = "user/UPDATE_PROFILE";
+export const TOKEN_DELETE = "user/TOKEN_DELETE";

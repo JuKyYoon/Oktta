@@ -18,7 +18,7 @@ public class BoardComment {
     @Column(columnDefinition = "BIGINT(20) UNSIGNED")
     private Long idx;
 
-    @ManyToOne(targetEntity = Board.class)
+    @ManyToOne
     @JoinColumn(name = "board_idx", nullable = false)
     private Board board;
 

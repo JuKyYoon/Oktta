@@ -1,13 +1,12 @@
 package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.PasswordDto;
-import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
-import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.UserInfoResponse;
+import com.ssafy.backend.service.LOLService;
 import com.ssafy.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.mail.MessagingException;
 import java.util.Map;
 
@@ -30,31 +31,12 @@ public class UserController {
     @Value("${response.fail}")
     private String failMsg;
 
-    private final UserRepository userRepository;
-
     private final UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService){
-        this.userRepository = userRepository;
+    private final LOLService lolService;
+    public UserController(UserService userService, LOLService lolService){
         this.userService = userService;
-    }
-
-    /**
-     * ROLE_USER
-     * 테스트용 코드. 추후 삭제 예정
-     * @return
-     */
-    @GetMapping("/test")
-    public ResponseEntity<BaseResponseBody> test() {
-        UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElse(null);
-
-        if(user != null) {
-            LOGGER.debug(user.getRole().getValue());
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "null"));
-        } else {
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
-        }
+        this.lolService = lolService;
     }
 
     /**
@@ -62,9 +44,13 @@ public class UserController {
      * @param user { id, nickName, password }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> signup(@RequestBody UserDto user) throws MessagingException {
-        userService.registUser(user);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    public ResponseEntity<BaseResponseBody> signup(@RequestPart("user") UserDto user, @RequestPart(name = "profileImg", required = false) MultipartFile profileImage) throws MessagingException {
+        boolean result = userService.registUser(user, profileImage);
+        if(result){
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        }else{
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, failMsg));
+        }
     }
 
     /**
@@ -76,11 +62,7 @@ public class UserController {
     public ResponseEntity<BaseResponseBody> modifyPW(@RequestBody PasswordDto passwords) {
         // access token 에서 id 부분
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-
-        int result = userService.modifyPassword(user.getId(), passwords);
+        int result = userService.modifyPassword(principal.getUsername(), passwords);
         if(result == 1) {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else if (result == -1 ) {
@@ -108,10 +90,7 @@ public class UserController {
     @GetMapping("/reauth")
     public ResponseEntity<BaseResponseBody> resendAuthMail() throws MessagingException {
         UserDetails principal =  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.resendAuthMail(user.getId());
+        userService.resendAuthMail(principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -148,10 +127,7 @@ public class UserController {
     @DeleteMapping("")
     public ResponseEntity<BaseResponseBody> deleteUser(@RequestBody Map<String, String> password){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.deleteUser(user, password.get("password").trim());
+        userService.deleteUser(principal.getUsername(), password.get("password").trim());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -161,10 +137,7 @@ public class UserController {
     @PutMapping("")
     public ResponseEntity<BaseResponseBody> modifyUser(@RequestBody UserDto userDto){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-        userService.modifyUser(user, userDto);
+        userService.modifyUser(principal.getUsername(), userDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 
@@ -174,12 +147,12 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserInfoResponse> getMyInfo(){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findById(principal.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
-
-        UserDto userDto = userService.setUserInfo(user);
-
+        UserDto userDto = userService.setUserInfo(principal.getUsername());
+        LolAuth lolAuth = lolService.getUserLolAuth(principal.getUsername());
+        if(lolAuth != null){
+            userDto.setTier(lolAuth.getTier());
+            userDto.setSummonerName(lolAuth.getSummonerName());
+        }
         return ResponseEntity.status(200).body(UserInfoResponse.of(200, successMsg, userDto));
     }
 
@@ -216,5 +189,25 @@ public class UserController {
         } else {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
         }
+    }
+
+    /**
+     * 프로필 이미지 등록
+     */
+    @PostMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> registProfileImage(@RequestParam("profileImg") MultipartFile file){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.registProfileImage(principal.getUsername(), file);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 프로필 이미지 삭제
+     */
+    @DeleteMapping("/profile-img")
+    public ResponseEntity<BaseResponseBody> deleteProfileImage(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.deleteProfileImage(principal.getUsername());
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
     }
 }

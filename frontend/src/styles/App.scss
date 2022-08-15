@@ -1,16 +1,23 @@
-$veripery: #6667ab;
-
+$veryperi: #6667ab;
+$background-color: whitesmoke;
+$box-color: #d7d7fa;
 /* App css */
+html, body, #root, #root>div {
+  height: 100%
+}
+
 body {
-  margin: 0;
+  margin : 0;
 }
 
 main {
-  padding: 10px;
+  // padding-top: 3%;
+  height: 85vh;
+  background-color: $background-color;
+  // background-color: red;
 }
 
 a {
-  margin: 5px;
   text-decoration: none;
   cursor: pointer;
   color: black;
@@ -24,6 +31,51 @@ ul {
   list-style:none;
 }
 
+h2 {
+  margin: 0;
+}
+
+/* Header 관련 CSS */
+/* 버튼 */
+.css-1q39md6-MuiButtonBase-root-MuiButton-root {
+  color: black !important;
+}
+
+.logo {
+  width: 200px;
+}
+
+@media (max-width: 991px) {
+  .logo {
+    width: 150px;
+  }
+}
+
+.header-main-div {
+  height: 15vh;
+  // height: 13vh;
+  min-height: 140px;
+  max-height: 150px;
+  // background-color:blue;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // margin: 10px;
+}
+
+.header-right-btn {
+  display: flex;
+}
+
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 /* 에러 메시지 색상 */
 .error_message {
   display: none;
@@ -34,7 +86,11 @@ ul {
   vertical-align: middle;
 }
 
-
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
 
 
 
