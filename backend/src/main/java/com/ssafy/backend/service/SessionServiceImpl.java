@@ -261,7 +261,7 @@ public class SessionServiceImpl implements SessionService {
         );
 
         // 녹화 시간 검사
-        if(result.getDuration() < 300)
+        if(result.getDuration() < 60)
             return false;
 
         videoRepository.save(new Video.Builder(room, result.getUrl()).build());
