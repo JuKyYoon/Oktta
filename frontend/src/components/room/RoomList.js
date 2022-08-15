@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
 import Loading from '../layout/Loading';
 import { getRoomList, roomHitRequest } from '../../services/roomService';
@@ -18,11 +18,9 @@ import {
   faVolumeHigh,
   faVolumeXmark,
   faArrowRightToBracket,
-  faFire,
 } from '@fortawesome/free-solid-svg-icons';
 
 const RoomList = () => {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
   const [rooms, setRooms] = useState([]);
@@ -97,16 +95,7 @@ const RoomList = () => {
                         {room.createDate.substr(0, 10)}
                       </TableCell>
                       <TableCell align='center'>{room.nickname}</TableCell>
-                      <TableCell align='center'>
-                        {room.hit > 5 ? (
-                          <span>
-                            {room.hit + ' '}
-                            <FontAwesomeIcon icon={faFire} color='red' />
-                          </span>
-                        ) : (
-                          room.hit
-                        )}
-                      </TableCell>
+                      <TableCell align='center'>{room.hit}</TableCell>
                       <TableCell align='center'>
                         <Link
                           to={`../${room.idx}`}

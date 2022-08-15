@@ -20,6 +20,9 @@ const BoardDetail = () => {
   const [board, setBoard] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // 댓글 정보 저정
+  const [commentList, setCommentList] = useState([]);
+
   const getDetailBoard = async (idx) => {
     const result = await detailBoard(idx);
     if (result?.data?.message !== 'success') {
@@ -29,6 +32,9 @@ const BoardDetail = () => {
 
     // 방 정보 board에 저장
     setBoard(result?.data?.boardDto);
+
+    // 댓글 정보 저장
+    setCommentList([...result?.data?.list]);
   };
 
   useEffect(() => {
@@ -140,7 +146,7 @@ const BoardDetail = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <BoardComment idx={idx} />
+          <BoardComment idx={idx} list={commentList} />
         </div>
       ) : null}{' '}
     </>

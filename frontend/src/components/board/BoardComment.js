@@ -9,7 +9,7 @@ import {
 } from '@/services/boardService';
 import '@/styles/board.scss';
 
-const BoardComment = ({ idx }) => {
+const BoardComment = ({ idx, list }) => {
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
@@ -35,30 +35,20 @@ const BoardComment = ({ idx }) => {
   // 현재 로그인한 유저 정보
   const user = useSelector((state) => state.user);
 
-  const getDetailBoard = async (idx) => {
-    const result = await detailBoard(idx);
-    // console.log(result);
-    if (result?.data?.message === 'success') {
-      // 받은 data 중 lastpage는 의미 있는 거?
-      setCommentList(result.data.commentList);
-      if (result.data.commentList.length != 0) {
-        setLastIdx(
-          result.data.commentList[result.data.commentList.length - 1].idx
-        );
-      }
-      setLastPage(Math.ceil(result.data.commentList.length / 5));
-    }
-  };
-
   useEffect(() => {
-    getDetailBoard(idx);
-  }, []);
+    setCommentList([...list]);
+    if (commentList.length != 0) {
+      setLastIdx(commentList[commentList.length - 1].idx);
+      setLastPage(Math.ceil(commentList.length / 5));
+    }
+  }, [list]);
 
   const commentSubmit = async () => {
     const body = { content: content.trim() };
 
     const result = await createBoardComment(idx, body);
     if (result?.data?.message === 'success') {
+      console.log('??');
       const nickname = user.nickname;
       setLastIdx((curr) => curr + 1);
       const commentIdx = lastIdx + 1;

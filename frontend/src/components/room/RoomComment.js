@@ -9,7 +9,7 @@ import {
 } from '@/services/roomService';
 import '@/styles/room.scss';
 
-const RoomComment = ({ idx }) => {
+const RoomComment = ({ idx, list }) => {
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
@@ -37,21 +37,13 @@ const RoomComment = ({ idx }) => {
   // 현재 로그인한 유저 정보
   const user = useSelector((state) => state.user);
 
-  const getDetailRoom = async (idx) => {
-    const result = await getRoomCommentList(idx);
-    if (result?.data?.message === 'success') {
-      // 받은 data 중 lastpage는 의미 있는 거?
-      setCommentList(result.data.list);
-      if (result.data.list.length != 0) {
-        setLastIdx(result.data.list[result.data.list.length - 1].idx);
-      }
-      setLastPage(Math.ceil(result.data.list.length / 5));
-    }
-  };
-
   useEffect(() => {
-    getDetailRoom(idx);
-  }, []);
+    setCommentList([...list]);
+    if (commentList.length != 0) {
+      setLastIdx(commentList[commentList.length - 1].idx);
+      setLastPage(Math.ceil(commentList.length / 5));
+    }
+  }, [list]);
 
   const commentSubmit = async () => {
     const body = { content: content.trim() };

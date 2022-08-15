@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
 import { getBoardList, boardHitRequest } from '@/services/boardService';
 import '@/styles/board.scss';
@@ -11,11 +11,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFire } from '@fortawesome/free-solid-svg-icons';
 
 const BoardList = () => {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
   const [boards, setBoards] = useState([]);
@@ -67,36 +64,24 @@ const BoardList = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {boards
-                  .slice(0)
-                  .reverse()
-                  .map((board) => (
-                    <TableRow key={board.idx}>
-                      <TableCell align='center'>
-                        <Link
-                          onClick={() => boardHit(`${board.idx}`)}
-                          to={`../${board.idx}`}
-                          style={{ textDecoration: 'none' }}
-                        >
-                          {board.title}
-                        </Link>
-                      </TableCell>
-                      <TableCell align='center'>
-                        {board.createDate.substr(0, 10)}
-                      </TableCell>
-                      <TableCell align='center'>{board.nickname}</TableCell>
-                      <TableCell align='center'>
-                        {board.hit > 5 ? (
-                          <span>
-                            {board.hit + ' '}
-                            <FontAwesomeIcon icon={faFire} color='red' />
-                          </span>
-                        ) : (
-                          board.hit
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {boards.map((board) => (
+                  <TableRow key={board.idx}>
+                    <TableCell align='center'>
+                      <Link
+                        onClick={() => boardHit(`${board.idx}`)}
+                        to={`../${board.idx}`}
+                        style={{ textDecoration: 'none' }}
+                      >
+                        {board.title}
+                      </Link>
+                    </TableCell>
+                    <TableCell align='center'>
+                      {board.createDate.substr(0, 10)}
+                    </TableCell>
+                    <TableCell align='center'>{board.nickname}</TableCell>
+                    <TableCell align='center'>{board.hit}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>

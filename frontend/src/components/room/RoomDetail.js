@@ -31,9 +31,11 @@ const RoomDetail = () => {
   const [currentVote, setCurrentVote] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // 댓글 정보
+  const [commentList, setCommentList] = useState([]);
+
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
-    // console.log(result);
     if (result?.data?.message !== 'success') {
       alert('잘못된 접근입니다.');
       navigate('../list');
@@ -44,6 +46,9 @@ const RoomDetail = () => {
     }
     // 방 정보 room에 저장
     setRoom(result?.data?.result);
+
+    // 댓글 정보
+    setCommentList(result?.data?.list);
   };
 
   useEffect(() => {
@@ -277,7 +282,7 @@ const RoomDetail = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <RoomComment idx={idx} />
+          <RoomComment idx={idx} list={commentList} />
         </div>
       ) : null}{' '}
     </>
