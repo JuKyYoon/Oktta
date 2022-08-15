@@ -13,6 +13,14 @@ import {
   TableRow,
 } from '@mui/material';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faVolumeHigh,
+  faVolumeXmark,
+  faArrowRightToBracket,
+  faFire,
+} from '@fortawesome/free-solid-svg-icons';
+
 const RoomList = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +55,7 @@ const RoomList = () => {
     <div>
       {rooms ? (
         <div className='room'>
-          <h1>현재 방 목록</h1>
+          <h1>옥상 목록</h1>
           <Link
             className='create-button'
             to={`../create`}
@@ -72,7 +80,11 @@ const RoomList = () => {
                   {rooms.map((room) => (
                     <TableRow key={room.idx}>
                       <TableCell align='center'>
-                        {room.live ? '🔊' : '🔈'}
+                        {room.live ? (
+                          <FontAwesomeIcon icon={faVolumeHigh} />
+                        ) : (
+                          <FontAwesomeIcon icon={faVolumeXmark} />
+                        )}
                       </TableCell>
                       <TableCell align='center'>
                         <Link
@@ -86,12 +98,25 @@ const RoomList = () => {
                         {room.createDate.substr(0, 10)}
                       </TableCell>
                       <TableCell align='center'>{room.nickname}</TableCell>
-                      <TableCell align='center'>{room.hit}</TableCell>
+                      <TableCell align='center'>
+                        {room.hit > 5 ? (
+                          <span>
+                            {room.hit + ' '}
+                            <FontAwesomeIcon icon={faFire} color='red' />
+                          </span>
+                        ) : (
+                          room.hit
+                        )}
+                      </TableCell>
                       <TableCell align='center'>
                         <Link
                           to={`../${room.idx}`}
                           style={{ textDecoration: 'none' }}>
-                          입장하기🔥
+                          입장하기
+                          <FontAwesomeIcon
+                            icon={faArrowRightToBracket}
+                            size='lg'
+                          />
                         </Link>
                       </TableCell>
                     </TableRow>

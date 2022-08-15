@@ -105,6 +105,11 @@ $lose: #ff968d;
     }
   }
 }
+.edit-footer{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 
 // RoomComment 관련
 .comments-wrapper {
