@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, TextField, Pagination } from '@mui/material';
 import {
-  getRoomCommentList,
-  createRoomComment,
-  deleteRoomComment,
-  editRoomComment,
-} from '@/services/roomService';
-import '../../styles/room.scss';
+  getBoardCommentList,
+  createBoardComment,
+  deleteBoardComment,
+  editBoardComment,
+  detailBoard,
+} from '@/services/boardService';
+import '@/styles/board.scss';
 
-const RoomComment = ({ idx }) => {
+const BoardComment = ({ idx }) => {
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
@@ -32,31 +33,32 @@ const RoomComment = ({ idx }) => {
   // 댓글 토글 되게하는 값
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // 리렌더하기위함
-
   // 현재 로그인한 유저 정보
   const user = useSelector((state) => state.user);
 
-  const getDetailRoom = async (idx) => {
-    const result = await getRoomCommentList(idx);
+  const getDetailBoard = async (idx) => {
+    const result = await detailBoard(idx);
+    // console.log(result);
     if (result?.data?.message === 'success') {
       // 받은 data 중 lastpage는 의미 있는 거?
-      setCommentList(result.data.list);
-      if (result.data.list.length != 0) {
-        setLastIdx(result.data.list[result.data.list.length - 1].idx);
+      setCommentList(result.data.commentList);
+      if (result.data.commentList.length != 0) {
+        setLastIdx(
+          result.data.commentList[result.data.commentList.length - 1].idx
+        );
       }
-      setLastPage(Math.ceil(result.data.list.length / 5));
+      setLastPage(Math.ceil(result.data.commentList.length / 5));
     }
   };
 
   useEffect(() => {
-    getDetailRoom(idx);
+    getDetailBoard(idx);
   }, []);
 
   const commentSubmit = async () => {
     const body = { content: content.trim() };
 
-    const result = await createRoomComment(idx, body);
+    const result = await createBoardComment(idx, body);
     if (result?.data?.message === 'success') {
       const nickname = user.nickname;
       setLastIdx((curr) => curr + 1);
@@ -88,7 +90,7 @@ const RoomComment = ({ idx }) => {
     if (body.content.length < 2) {
       return;
     }
-    const result = await editRoomComment(currentIdx, body);
+    const result = await editBoardComment(currentIdx, body);
 
     setIsEditMode(false);
     setCurrentIdx(-1);
@@ -107,7 +109,7 @@ const RoomComment = ({ idx }) => {
   };
 
   const handleDeleteButton = async (commentIdx) => {
-    const result = await deleteRoomComment(commentIdx);
+    const result = await deleteBoardComment(commentIdx);
     if (result?.data?.message === 'success') {
       setCommentList(
         commentList.filter((comment) => comment.idx !== commentIdx)
@@ -247,4 +249,4 @@ const RoomComment = ({ idx }) => {
   );
 };
 
-export default RoomComment;
+export default BoardComment;

@@ -1,5 +1,5 @@
-import React from "react";
-import RoomThumbnail from "./room/RoomThumbnail";
+import React from 'react';
+import RoomThumbnail from './room/RoomThumbnail';
 
 const Home = () => {
   return (
