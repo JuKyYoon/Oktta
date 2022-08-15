@@ -106,8 +106,8 @@ public class BaseControllerAdvice {
         LOGGER.error(req.getRequestURI());
         LOGGER.error(e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(MessageResponse.of(200, failMsg, "SQL Integrity Error"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(MessageResponse.of(500, failMsg, "SQL Integrity Error"));
     }
 
     @ExceptionHandler(PasswordNotMatchException.class)
