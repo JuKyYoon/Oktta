@@ -87,13 +87,6 @@ public class RoomController {
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
-    @GetMapping("/comment/{idx}")
-    public ResponseEntity<BaseResponseBody> getCommentList(@PathVariable("idx") Long roomIdx) {
-        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
-        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
-    }
-
-
     @PutMapping("/hit/{idx}")
     public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long roomIdx) {
         roomService.updateHit(roomIdx);
