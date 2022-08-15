@@ -1,5 +1,6 @@
 $veryperi: #6667ab;
-
+$background-color: whitesmoke;
+$box-color: #d7d7fa;
 /* App css */
 html, body, #root, #root>div {
   height: 100%
@@ -10,8 +11,9 @@ body {
 }
 
 main {
-  padding: 0px;
+  // padding-top: 3%;
   height: 85vh;
+  background-color: $background-color;
   // background-color: red;
 }
 
@@ -51,7 +53,9 @@ h2 {
 
 .header-main-div {
   height: 15vh;
-  min-height: 110px;
+  // height: 13vh;
+  min-height: 140px;
+  max-height: 150px;
   // background-color:blue;
 }
 

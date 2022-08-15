@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -379,7 +380,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("USER NOT FOUND"));
         String path = awsService.imageUpload(file);
-        deleteOldFile(user);
+//        deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), path);
     }
 
@@ -391,7 +392,7 @@ public class UserServiceImpl implements UserService {
     public void deleteProfileImage(String userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("USER NOT FOUND"));
-        deleteOldFile(user);
+//        deleteOldFile(user);
         userRepository.updateProfileImage(user.getIdx(), defaultProfileImageUrl);
     }
 
@@ -399,7 +400,8 @@ public class UserServiceImpl implements UserService {
      * 예전 프로필 이미지 S3 서버에서 삭제
      * @param user
      */
-    private void deleteOldFile(User user){
+    @Async("awsExecutor")
+    void deleteOldFile(User user){
         String oldPath = user.getProfileImg();
         if(!oldPath.equals(defaultProfileImageUrl)){
             String oldFileName = oldPath.substring(oldPath.lastIndexOf('/') + 1);

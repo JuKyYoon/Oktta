@@ -6,7 +6,7 @@ import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.Match;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.exception.MatchNullException;
+import com.ssafy.backend.model.exception.InputDataNullException;
 import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.mapper.MatchMapper;
@@ -51,9 +51,6 @@ public class RoomServiceImpl implements RoomService {
         );
         // MatchDto to Match
         MatchDto matchDto = roomDto.getMatchDto();
-        if(matchDto == null){
-            throw new MatchNullException("Match Is Null");
-        }
         Match match = matchMapper.dtoToEntity(matchDto);
         matchRepository.save(match);
         Room room = roomRepository.save(
@@ -116,7 +113,7 @@ public class RoomServiceImpl implements RoomService {
         );
         MatchDto matchDto = roomDto.getMatchDto();
         if(matchDto == null){
-            throw new MatchNullException("Match Is Null");
+            throw new InputDataNullException("Match Is Null");
         }
         int result = roomRepository.updateRoom(roomDto.getTitle(), roomDto.getContent(), roomDto.getIdx(),
                 user, LocalDateTime.now(), matchMapper.dtoToEntity(matchDto));

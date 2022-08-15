@@ -3,7 +3,9 @@ import {
   LOGIN,
   LOGOUT,
   UPDATE_NICKNAME,
+  TOKEN_DELETE
 } from "../modules/types.js";
+import { store } from "..";
 
 /* 요청 URL*/
 export const USER_URL = "/api/v1/user";
@@ -90,11 +92,13 @@ export const loginRequest = async (dataToSubmit) => {
 export const logoutRequest = async () => {
   try {
     await axiosAuth.delete(`${AUTH_URL}`);
+
+  } catch(err) {
+
   }
   finally {
-    return {
-      type: LOGOUT
-    };
+    // 여기서 엑세스 토큰도 삭제
+    store.dispatch({ type: TOKEN_DELETE });
   }
 };
 
