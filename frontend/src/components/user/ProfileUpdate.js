@@ -201,7 +201,7 @@ const ProfileUpdate = () => {
       {snsType ?
         null :
         <div>
-          <FormControl>
+          <FormControl className="update-profile-form">
             <InputLabel htmlFor='password' color='veryperi'>
               기존 비밀번호
             </InputLabel>
@@ -225,7 +225,7 @@ const ProfileUpdate = () => {
         <div>
           <br />
           <div>
-            <FormControl>
+            <FormControl className="update-profile-form">
               <InputLabel htmlFor='nickname' color='veryperi'>
                 닉네임
               </InputLabel>
@@ -263,7 +263,7 @@ const ProfileUpdate = () => {
       ) : (
         <div>
           <div>
-            <FormControl>
+            <FormControl className="update-profile-form">
               <InputLabel htmlFor='new-password' color='veryperi'>
                 새 비밀번호
               </InputLabel>
@@ -286,7 +286,7 @@ const ProfileUpdate = () => {
           </div>
           <br />
           <div>
-            <FormControl>
+            <FormControl className="update-profile-form">
               <InputLabel htmlFor='passwordCheck' color='veryperi'>
                 비밀번호 확인
               </InputLabel>

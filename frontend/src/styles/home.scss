@@ -1,0 +1,41 @@
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  margin: 30px auto;
+  width: 80%;
+}
+
+
+.main-content-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-content-title {
+  width: 100%;
+}
+
+.main-content-bottom {
+  display: flex;
+  flex-direction: row;
+}
+
+.main-content-bottom-left {
+  width: 50%;
+}
+
+.main-content-bottom-right {
+  width: 50%;
+}
+
+.main-on-air-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.thumbnail {
+
+}

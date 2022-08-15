@@ -63,7 +63,8 @@ public class SecurityConfig {
             "/v3/api-docs",
             "/swagger*/**",
             "/user/password/**",
-            "/user/reset-token/**"
+            "/user/reset-token/**",
+            "/room/top"
     };
 
     private static final String[] POST_PUBLIC_URI = {

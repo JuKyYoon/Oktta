@@ -27,7 +27,7 @@ const Header = () => {
   }
 
   return (
-    <div className="header-main-div">
+    <div className="header-main-div" >
       <div className="header">
         <Link to="/" className="logo">
           <img src="/../assets/logo.png" className="logo-image" />
@@ -35,7 +35,9 @@ const Header = () => {
         {state.user.isLogin ? (
           <div className="header-right">
             {state.user.tier ?            
-              <Button sx={{color: "black !important", cursor: "default"}} disabled>
+              <Button sx={{"&:disabled":{
+                color: "black"
+              }, cursor: "default"}} disabled>
                 <img src={tierInfo} /> {state.user.summonerName}
               </Button> :
                 <Button

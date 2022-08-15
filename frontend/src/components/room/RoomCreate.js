@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import {
   FormControl,
+  FormLabel,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   InputLabel,
   Input,
   FormHelperText,
@@ -49,7 +53,10 @@ const RoomCreate = () => {
   const [matchSelected, setMatchSelected] = useState({});
   const [matchSelectedDetail, setMatchSelectedDetail] = useState(false);
   const [matchForSubmit, setMatchForSubmit] = useState({});
+  const [hostSummonerName, setHostSummonerName] = useState('');
+  const [hostTeamId, setHostTeamId] = useState('');
   
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
@@ -67,7 +74,6 @@ const RoomCreate = () => {
     setMatchSelectedDetail(
       matchListView.filter((match) => matchSelected === match.matchId)[0]
     );
-
     const getMatch = matchList.filter(
       (match) => matchSelected === match.metadata.matchId
     );
@@ -101,8 +107,14 @@ const RoomCreate = () => {
         participants,
       };
       setMatchForSubmit(matchForSubmit);
-    }
 
+      // 호스트 소환사명 및 팀 세팅 (검색한 소환사명 기준)
+      const hostSummoner = matchRawData.info.participants.filter(
+        (participant) => participant.summonerName.toLowerCase().replace(/ /g, "") === summonerName.toLowerCase().replace(/ /g, "")
+      )[0];
+      setHostSummonerName(hostSummoner.summonerName);
+      setHostTeamId(hostSummoner.teamId);
+    }  
     // 검색 내역 초기화
     setPageNum(0);
     setMatchList([]);
@@ -112,6 +124,11 @@ const RoomCreate = () => {
     setSummonerNameSearch('');
     setOpen(false);
   };
+
+  const handleTeamChanged = (event) => {
+    setHostTeamId(parseInt(event.target.value));
+  };
+
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
@@ -216,6 +233,8 @@ const RoomCreate = () => {
     const body = {
       title,
       content,
+      hostSummonerName,
+      hostTeamId,
       matchDto: matchForSubmit,
     };
 
@@ -266,7 +285,7 @@ const RoomCreate = () => {
           <div className='create-room-selected-box'>
             <div
               className={`create-room-selected ${
-                matchSelectedDetail.matchResult === '승리' ? 'win' : 'loss'
+                matchSelectedDetail.matchResult === '승리' ? 'win' : 'lose'
               }`}>
               <img
                 src={`/assets/champion/${matchSelectedDetail.championTarget}.png`}
@@ -276,6 +295,52 @@ const RoomCreate = () => {
                 <p>{summonerName}</p>
                 <p>{matchSelectedDetail.kda}</p>
               </div>
+            </div>
+            <div className="team-select-box">
+              <div className="team-select-box-bottom">
+              <FormControl sx={{width: "50px", margin: "0"}}>
+              <RadioGroup
+                defaultValue={hostTeamId}
+                className="team-select-radio-group"
+                value={hostTeamId}
+                    onChange={handleTeamChanged}
+                    
+              >
+                    <FormControlLabel value="100" control={<Radio />}
+                      sx={{ margin: 0, justifyContent: "center" }} />
+                    <FormControlLabel value="200" control={<Radio color="red" />}
+                     sx={{ margin: 0, justifyContent: "center" }}/>
+              </RadioGroup>
+              </FormControl>
+              <div>
+                <span className='result-champion-all'>
+                  <div className='result-champion-team'>
+                    {matchSelectedDetail.championTeam1.map((champion, idx) => (
+                      <img
+                        key={idx}
+                        src={`/assets/champion/${champion}.png`}
+                        className='team-select-champion-img'
+                        width={35}
+                        height={35}
+                      />
+                    ))}
+                  </div>
+                  <div className='result-champion-team'>
+                    {matchSelectedDetail.championTeam2.map((champion, idx) => (
+                      <img
+                        key={idx}
+                        src={`/assets/champion/${champion}.png`}
+                        className='team-select-champion-img'
+                        width={35}
+                        height={35}
+                      />
+                    ))}
+                  </div>
+                </span>
+              </div>
+            </div>
+              
+              
             </div>
             <Button onClick={handleOpen}>다시 불러오기</Button>
           </div>
@@ -321,7 +386,7 @@ const RoomCreate = () => {
                           ? 'modal-result-item-selected'
                           : null
                       }
-                            ${match.matchResult === '승리' ? 'win' : 'loss'}
+                            ${match.matchResult === '승리' ? 'win' : 'lose'}
                             modal-result-item`}
                       onClick={() => setMatchSelected(match.matchId)}>
                       <span>{match.matchResult}</span>

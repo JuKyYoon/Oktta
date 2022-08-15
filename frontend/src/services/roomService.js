@@ -129,3 +129,25 @@ export const roomHitRequest = (dataToSubmit) => {
     
   }
 };
+
+// 온에어
+export const onAirListRequest = async (dataToSubmit) => {
+  try {
+    const payload = await axiosAuth.get(`${ROOM_URL}/live?page=${dataToSubmit}`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+// 온에어 TOP3
+export const onAirTopListRequest = async () => {
+  try {
+    const payload = await axiosAuth.get(`${ROOM_URL}/top`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}

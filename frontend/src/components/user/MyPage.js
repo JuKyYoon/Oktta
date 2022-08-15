@@ -7,6 +7,8 @@ import { getProfileRequest, setDefaultImg, setProfileImg } from '../../services/
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
 import { getMyRoom } from '../../services/roomService';
 import Loading from '../layout/Loading';
+import "@/styles/mypage.scss"
+
 // import { getMyBoard } from '../../services/boardService';
 
 const MyPage = () => {
@@ -261,8 +263,9 @@ const MyPage = () => {
                       총 <b>{roomList.length}</b>개의 게시물을 작성하였습니다.
                     </div>
                     {roomList.slice((page - 1) * 7, page * 7).map((room, idx) => (
-                      <Link to={`../../room/${room.idx}`} className='mypage-contents-item'>
-                        <div key={idx} >
+                      <Link to={`../../room/${room.idx}`} className='mypage-contents-item'
+                      key={idx} >
+                        <div>
                           {room.title}
                         </div>
                       </Link>
@@ -271,13 +274,15 @@ const MyPage = () => {
                       color='veryperi' className={`${roomList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
                   </>
                 )}
-                {mode === 'board' && (
+                {mode === 'board' ? (boardList !== false) ?
                   <>
                     <div>
                       총 <b>{boardList.length}</b>개의 게시물을 작성하였습니다.</div>
                     {boardList.slice((page - 1) * 7, page * 7).map((board, idx) => (
-                      <Link to={`../../board/${board.idx}`} className='mypage-contents-item'>
-                        <div key={idx}>
+                      <Link to={`../../board/${board.idx}`
+                      } className='mypage-contents-item'
+                      key={idx} >
+                        <div>
                           {board.title}
                         </div>
                       </Link>
@@ -287,7 +292,7 @@ const MyPage = () => {
                       color='veryperi' className={`${boardList.length === 0 ? 'no-pagination' : 'pagination'}`} onChange={pageChange} />
                     </div>
                   </>
-                )}
+                : <div>404 불러오기 실패!</div> : null}
               </div>
             </div>
           </div >
