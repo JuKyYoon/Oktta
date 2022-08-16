@@ -164,10 +164,7 @@ export const pwInquiryNewPasswordRequest = async (dataToSubmit) => {
 export const delAccount = async (dataToSubmit) => {
   try {
     const payload = await axiosAuth.delete(USER_URL, dataToSubmit);
-    return {
-      type: LOGOUT,
-      payload
-    };
+    return payload;
   } catch (err) {
     return err;
   }

@@ -7,6 +7,7 @@ import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.BoardResponse;
+import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.service.BoardService;
 import com.ssafy.backend.service.BoardCommentService;
 import org.slf4j.Logger;
@@ -75,8 +76,8 @@ public class BoardController {
     @PostMapping("")
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto boardDto){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boardService.createBoard(principal.getUsername(), boardDto);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+        Long boardIdx = boardService.createBoard(principal.getUsername(), boardDto);
+        return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, boardIdx.toString()));
     }
 
     /**
@@ -85,7 +86,7 @@ public class BoardController {
      * List에 담아서 return
      */
     @GetMapping("")
-    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
+    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "0") int category, @RequestParam(defaultValue = "1") int page){
         List<BoardDto> list = boardService.getBoardList(category, page, pagingLimit);
         int lastPage = boardService.getLastPage(category, pagingLimit);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));

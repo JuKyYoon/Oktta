@@ -16,7 +16,7 @@ import Slide from '@mui/material/Slide';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import Typography from '@mui/material/Typography';
-import { createSessionRequest } from '@/services/sessionService';
+import { createSessionRequest, startRecording, stopRecording } from '@/services/sessionService';
 import { tier } from '@/const/tier';
 import '@/styles/session.scss';
 
@@ -74,6 +74,8 @@ const ScreenShare = (props) => {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
   const [recordingStatus, setRecordingStatus] = useState(false);
+
+  const [recordingId, setRecordingId] = useState('');
 
   const scrollRef = useRef();
 
@@ -494,11 +496,25 @@ const ScreenShare = (props) => {
     setRightDrawerOpen(!rightDrawerOpen);
   }
 
-  const recordingToggle = () => {
+  const recordingToggle = async () => {
+    // console.log(sessionRef.current)
     if(recordingStatus) {
+      console.log("---------------------recording start----------------------")
       // 레코딩 시작
+      const result = await startRecording(params.id, sessionRef.current.sessionId);
+      console.log(result);
+      if(result.message === "success") {
+        setRecordingId(result.recording.name);
+      }
     } else {
       // 레코딩 중단
+      console.log("---------------------recording stopppppppppp----------------------")
+
+      const result = await stopRecording(params.id, recordingId);
+      console.log(result);
+      if(result.message === "success") {
+
+      }
     }
     setRecordingStatus(!recordingStatus);
   }

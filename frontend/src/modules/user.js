@@ -14,6 +14,8 @@ export const initState = {
   auth: "",
   token: "",
   snsType: "",
+  tier: "",
+  summonerName: ""
 };
 
 export default function (state = initState, action) {
@@ -35,6 +37,8 @@ export default function (state = initState, action) {
         nickname: action.payload.data.result.nickname,
         auth: action.payload.data.result.auth,
         token: action.payload.data.result.accessToken,
+        tier: action.payload.data.result.tier,
+        summonerName: action.payload.data.result.summonerName,
       }
     case SOCIAL_LOGIN:
       return {
@@ -43,6 +47,8 @@ export default function (state = initState, action) {
         auth: action.payload.auth,
         token: action.payload.token,
         snsType: action.payload.snsType,
+        tier: action.payload.tier,
+        summonerName: action.payload.summonerName,
       }
     case LOGOUT:
       // return initState;
