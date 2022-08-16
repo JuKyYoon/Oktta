@@ -49,14 +49,14 @@ const Signup = () => {
   const emailChange = (event) => {
     const regEmail =
       /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    const isEmailValid = regEmail.test(event.target.value);
+    const isEmailValid = regEmail.test(event.target.value.trim());
 
-    setEmail(event.target.value);
+    setEmail(event.target.value.trim());
     setIsEmailValid(isEmailValid);
 
     if (isEmailValid) {
       debounceFunc(
-        event.target.value,
+        event.target.value.trim(),
         checkEmailRequest,
         setEmailChecked
       );
@@ -65,39 +65,39 @@ const Signup = () => {
 
   const passwordChange = (event) => {
     const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
-    const isPasswordValid = regPassword.test(event.target.value);
+    const isPasswordValid = regPassword.test(event.target.value.trim());
 
-    setPassword(event.target.value);
+    setPassword(event.target.value.trim());
     setIsPasswordValid(isPasswordValid);
 
-    if (event.target.value && isPasswordValid) {
+    if (event.target.value.trim() && isPasswordValid) {
       setIsPasswordSame(
-        event.target.value && event.target.value === passwordCheck
+        event.target.value.trim() && event.target.value.trim() === passwordCheck
       );
     }
   };
 
   const passwordCheckChange = (event) => {
-    setPasswordCheck(event.target.value);
-    setIsPasswordSame(password === event.target.value);
+    setPasswordCheck(event.target.value.trim());
+    setIsPasswordSame(password === event.target.value.trim());
   };
 
   const nicknameChange = (event) => {
-    setNickname(event.target.value);
+    setNickname(event.target.value.trim());
     setNicknameChecked(false);
 
-    if (event.target.value) {
+    if (event.target.value.trim()) {
       const regNickname = /[^\w\sㄱ-힣]|[\_]/g;
-      const isNicknameValid = !regNickname.test(event.target.value);
+      const isNicknameValid = !regNickname.test(event.target.value.trim());
       setIsNicknameValid(isNicknameValid);
 
-      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음' || event.target.value.length > 10;
+      const banned = event.target.value.trim().includes('deleteuser') || event.target.value.trim() === '알수없음' || event.target.value.trim().length > 10;
       setBanned(banned);
 
       if (isNicknameValid && !banned) {
         setNicknameChecked(false);
         debounceFunc(
-          event.target.value,
+          event.target.value.trim(),
           checkNicknameRequest,
           setNicknameChecked
         );

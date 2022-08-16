@@ -158,6 +158,10 @@ $lose: #ff968d;
   margin-top: 30px;
   display: flex;
   justify-content: center;
+
+  button {
+    margin: 0px 5px;
+  }
 }
 
 .vote-body {
@@ -244,6 +248,11 @@ $lose: #ff968d;
   align-items: center;
 }
 
+.room-detail-button-div {
+  button {
+    margin: 5px;
+  }
+}
 // RoomComment 관련
 .comments-wrapper {
   display: flex;

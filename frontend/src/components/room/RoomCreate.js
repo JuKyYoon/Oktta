@@ -33,7 +33,7 @@ const RoomCreate = () => {
   const navigate = useNavigate();
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value.trim());
+    setTitle(event.target.value);
   };
 
   // 게임 정보 불러오기 관련
@@ -234,8 +234,8 @@ const RoomCreate = () => {
 
     const body = {
       title: title.trim(),
-      content,
-      hostSummonerName,
+      content: content.trim(),
+      hostSummonerName: hostSummonerName.trim(),
       hostTeamId,
       matchDto: matchForSubmit,
     };

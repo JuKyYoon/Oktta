@@ -60,28 +60,28 @@ const ProfileUpdate = () => {
   const [open_delbtn, setOpenDelBtn] = useState(false);
 
   const passwordChange = (event) => {
-    setPassword(event.target.value);
+    setPassword(event.target.value.trim());
   };
 
   const delPasswordChange = (event) => {
-    setDelPassword(event.target.value);
+    setDelPassword(event.target.value.trim());
   };
 
   const nicknameChange = (event) => {
-    setNickname(event.target.value);
+    setNickname(event.target.value.trim());
 
-    if (event.target.value) {
+    if (event.target.value.trim()) {
       const regNickname = /[^\w\sㄱ-힣]|[\_]/g;
-      const isNicknameValid = !regNickname.test(event.target.value);
+      const isNicknameValid = !regNickname.test(event.target.value.trim());
       setIsNicknameValid(isNicknameValid);
 
-      const banned = event.target.value.includes('deleteuser') || event.target.value === '알수없음' || event.target.value.length > 10;
+      const banned = event.target.value.trim().includes('deleteuser') || event.target.value.trim() === '알수없음' || event.target.value.trim().length > 10;
       setBanned(banned);
 
       if (isNicknameValid && !banned) {
         setNicknameChecked(false);
         debounceFunc(
-          event.target.value,
+          event.target.value.trim(),
           checkNicknameRequest,
           setNicknameChecked
         );
@@ -91,21 +91,21 @@ const ProfileUpdate = () => {
 
   const newPasswordChange = (event) => {
     const regPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,16}$/;
-    const isNewPasswordValid = regPassword.test(event.target.value);
+    const isNewPasswordValid = regPassword.test(event.target.value.trim());
 
-    setNewPassword(event.target.value);
+    setNewPassword(event.target.value.trim());
     setIsNewPasswordValid(isNewPasswordValid);
 
-    if (event.target.value && isNewPasswordValid) {
+    if (event.target.value.trim() && isNewPasswordValid) {
       setIsNewPasswordSame(
-        event.target.value && event.target.value === newPasswordCheck
+        event.target.value.trim() && event.target.value.trim() === newPasswordCheck
       );
     }
   };
 
   const newPasswordCheckChange = (event) => {
-    setNewPasswordCheck(event.target.value);
-    setIsNewPasswordSame(newPassword === event.target.value);
+    setNewPasswordCheck(event.target.value.trim());
+    setIsNewPasswordSame(newPassword === event.target.value.trim());
   };
 
   const handleSubmit = async () => {

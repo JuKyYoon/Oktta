@@ -31,3 +31,26 @@ export const closeSessionRequest = async (idx) => {
     return err.response.data;
   }
 }
+
+export const startRecording = async (idx, sessionId) => {
+  try {
+    const res = await axiosAuth.post(`${SESSION_URL}/recording/start/${idx}`, {
+      sessionId: sessionId
+    })
+    return res.data;
+  } catch (err) {
+    return err.response.data;
+  }
+}
+
+
+export const stopRecording = async (idx, recordingId) => {
+  try {
+    const res = await axiosAuth.post(`${SESSION_URL}/recording/stop/${idx}`, {
+      recording: recordingId
+    })
+    return res.data;
+  } catch (err) {
+    return err.response.data;
+  }
+}

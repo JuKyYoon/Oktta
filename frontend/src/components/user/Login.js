@@ -14,11 +14,11 @@ const Login = () => {
 
 
   const onEmailHandler = (event) => {
-    setEmail(event.target.value);
+    setEmail(event.target.value.trim());
   };
 
   const onPasswordHandler = (event) => {
-    setPassword(event.target.value);
+    setPassword(event.target.value.trim());
   };
 
   const navigate = useNavigate();
