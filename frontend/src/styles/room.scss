@@ -28,6 +28,7 @@ $lose: #ff968d;
 }
 
 .hrLine {
+  margin: 10px;
   width: 80%;
 }
 
@@ -102,11 +103,34 @@ $lose: #ff968d;
 .detail-component {
   margin-bottom: 20px;
 }
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  p {
+    font-size: large;
+  }
+
+  span {
+    font-size: large;
+    margin-right: 10px;
+  }
+
+  img {
+    border-radius: 50%;
+    height: 20px;
+    transform: translateY(2px);
+  }
+}
+
 .detail-body {
   display: flex;
-  width: 80%;
   flex-direction: row;
+  width: 80%;
+  margin: 10px;
 }
+
 .radio-button {
   display: flex;
   flex-direction: column;
