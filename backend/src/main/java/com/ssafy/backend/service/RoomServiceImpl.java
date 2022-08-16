@@ -2,10 +2,7 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.RoomDto;
 import com.ssafy.backend.model.dto.lol.MatchDto;
-import com.ssafy.backend.model.entity.LolAuth;
-import com.ssafy.backend.model.entity.Match;
-import com.ssafy.backend.model.entity.Room;
-import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.*;
 import com.ssafy.backend.model.exception.InputDataNullException;
 import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
@@ -129,7 +126,9 @@ public class RoomServiceImpl implements RoomService {
                 () -> new RoomNotFoundException("Room Not Found in DeleteRoom")
         );
 
-        if(!room.getUser().getId().equals(userId)) {
+        User user = room.getUser();
+
+        if(user.getRole().equals(UserRole.ROLE_USER) && !room.getUser().getId().equals(userId)) {
             return false;
         } else {
             roomRepository.delete(room);
