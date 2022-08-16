@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router';
+import { Navigate, useNavigate, useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { OpenVidu } from 'openvidu-browser';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -18,10 +19,12 @@ import MicIcon from '@mui/icons-material/Mic';
 import Typography from '@mui/material/Typography';
 import { createSessionRequest, startRecording, stopRecording } from '@/services/sessionService';
 import { tier } from '@/const/tier';
+import SessionVote from '@/components/session/SessionVote';
 import '@/styles/session.scss';
 
 const ScreenShare = (props) => {
   const params = useParams();
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const sessionRef = useRef();
 
@@ -74,6 +77,7 @@ const ScreenShare = (props) => {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
   const [recordingStatus, setRecordingStatus] = useState(false);
+  const [openVote, setOpenVote] = useState(false);
 
   const [recordingId, setRecordingId] = useState('');
 
@@ -233,7 +237,7 @@ const ScreenShare = (props) => {
       if(event.type == 'signal:hands') {
         let from = event.data;
         let msgTime = new Date().toTimeString().substr(0,5);
-        let msg = { nickname: myName, content: `${from}가 손을 들었습니다.`, me: true, time: msgTime }
+        let msg = { nickname: myName, content: `${from}(이)가 손을 들었습니다.`, me: true, time: msgTime }
         setChat((chat) => [...chat, msg]);
 
       } else if (event.type == 'signal:chatting') {
@@ -244,7 +248,7 @@ const ScreenShare = (props) => {
         let msg = { nickname: msgNickname, content: event.data, me: msgNickname == myName, time: msgTime }
         setChat((chat) => [...chat, msg]);
       }
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
     });
 
     // --- 4) Connect to the session with a valid user token ---
@@ -433,7 +437,8 @@ const ScreenShare = (props) => {
       joinSession() 
     } else {
       console.log(result)
-      alert('Err');
+      alert('방 들어가기를 실패했습니다.');
+      navigate("/")
     }
   }
   
@@ -496,9 +501,17 @@ const ScreenShare = (props) => {
     setRightDrawerOpen(!rightDrawerOpen);
   }
 
+  const openVoteToggle = () => {
+    setOpenVote(!openVote);
+  }
+
+  const closeVote = () => {
+    setOpenVote(false)
+  }
+
   const recordingToggle = async () => {
     // console.log(sessionRef.current)
-    if(recordingStatus) {
+    if(!recordingStatus) {
       console.log("---------------------recording start----------------------")
       // 레코딩 시작
       const result = await startRecording(params.id, sessionRef.current.sessionId);
@@ -519,15 +532,6 @@ const ScreenShare = (props) => {
     setRecordingStatus(!recordingStatus);
   }
 
-  const scrollDown = () => {
-    console.log(scrollRef.current.scr)
-    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-
-  }
-  
-
-
-
   // 세션 상태 업데이트
   useEffect(() => {
     sessionRef.current = session;
@@ -544,10 +548,10 @@ const ScreenShare = (props) => {
           audioContext = new AudioContext();
 
           
-          if (!session) {
-            console.log("세션 입장");
-            creaetSession();
-          }
+          // if (!session) {
+          //   console.log("세션 입장");
+          //   creaetSession();
+          // }
       }).catch(e => {
         alert("소리 권한 허용해주세요")
           console.error(`Audio permissions denied: ${e}`);
@@ -639,15 +643,22 @@ const ScreenShare = (props) => {
           <div id="session-button-div">
             <div className="button-div">
               {/* <span id="title-div">{title}</span> */}
-              <Button onClick={scrollDown}>
+              {/* <Button onClick={scrollDown}>
                 채팅창다운
-              </Button>
+              </Button> */}
               <Button
                 className="user-session-button"
                 variant="contained"
                 onClick={showUserList}
               >
                 유저 목록 보기 (Debug)
+              </Button>
+              <Button
+                className="user-session-button"
+                variant="contained"
+                onClick={openVoteToggle}
+              >
+                튜표 하기
               </Button>
               <Button
                 className="user-session-button"
@@ -735,6 +746,13 @@ const ScreenShare = (props) => {
           </Box>
         </Grid>
       </Grid>
+
+      <Dialog open={openVote} onClose={closeVote} className='mypage-left-item' >
+        <div style={{padding: "10px"}}>
+          <DialogTitle>투표하기</DialogTitle>
+          <SessionVote idx={params.id} closeVote={closeVote}/>
+        </div>
+      </Dialog>
     </Box>
   );
 };

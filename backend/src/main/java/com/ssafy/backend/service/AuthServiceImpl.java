@@ -85,7 +85,8 @@ public class AuthServiceImpl implements AuthService {
             userRepository.findById(userId).orElseThrow(
                     () ->  new UserNotFoundException("Not Found User")
             );
-            redisService.deleteKey(refreshToken);
+            // 연속으로 접근 시, refresh 토큰을 찾지 못함
+//            redisService.deleteKey(refreshToken);
             return createToken(userId);
         } else {
             String exception = (String) req.getAttribute("exception");
@@ -108,17 +109,18 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void signOut(HttpServletRequest req, String userId, String refreshToken) {
+        // Redis에서 refreshToken 존재하면 삭제
+        redisService.deleteKey(refreshToken);
+
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-
-        // Redis에서 refreshToken 삭제
-        redisService.deleteKey(refreshToken);
-
         String accessToken = jwtProvider.resolveToken(req);
-        // accesstoken 블랙리스트로 redis 등록
-        long expireTime = jwtProvider.getAccessTokenExpireTime();
-        redisService.setTokenBlackList(accessToken, "logout", expireTime);
+        if(accessToken != null) {
+            // accesstoken 블랙리스트로 redis 등록
+            long expireTime = jwtProvider.getAccessTokenExpireTime();
+            redisService.setTokenBlackList(accessToken, "logout", expireTime);
+        }
     }
 
     /**

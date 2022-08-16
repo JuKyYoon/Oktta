@@ -1,9 +1,11 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.Video;
 import com.ssafy.backend.model.exception.*;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.repository.VideoRepository;
@@ -36,6 +38,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final VideoRepository videoRepository;
 
+    private final LolAuthRepository lolAuthRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -45,11 +49,12 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository, LolAuthRepository lolAuthRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
         this.redisService = redisService;
+        this.lolAuthRepository = lolAuthRepository;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
         this.userRepository = userRepository;
         this.videoRepository = videoRepository;
@@ -100,9 +105,12 @@ public class SessionServiceImpl implements SessionService {
                 () -> new UserNotFoundException("User Not Found")
         );
 
+        LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+        int tier = lolAuth != null ? lolAuth.getTier() : 0;
+
         try {
             // 연결 정보를 설정한다.
-            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"0\", \"idx\":\"%d\"}", user.getNickname(), sessionIdx);
+            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"%d\", \"idx\":\"%d\"}", user.getNickname(), tier,sessionIdx);
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                     .role(role).data(userData).build();
 

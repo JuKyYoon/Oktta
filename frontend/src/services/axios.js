@@ -98,7 +98,7 @@ axiosAuth.interceptors.response.use(
       error?.response?.data?.result === 'forbidden'
     ) {
       // 리프레시 토큰 재요청에서 오류가 나면, 무조건 다시 로그인 시킨다. ( 리프레시 토큰 시간 만료 혹은 유효성 검사 실패 )
-      alert('다시 로그인 후 시도해 주세요.');
+      alert('로그인 후 시도해 주세요.');
       store.dispatch({ type: LOGOUT });
       window.location.replace('/user/login');
     }
