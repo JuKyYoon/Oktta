@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { championKorean } from "@/const/champion";
+import { championKorean } from "@/const/lolKorean";
 import { useNavigate } from "react-router";
 
 const RoomThumbnail = ({ direction, room }) => {
