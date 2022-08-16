@@ -213,7 +213,7 @@ const RoomDetail = () => {
             </div>
           </div>
 
-          <div>
+          <div className="room-detail-button-div">
             <Link to={`../list`} style={{ textDecoration: 'none' }}>
               <Button
                 className='detail-button'

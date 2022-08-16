@@ -11,22 +11,39 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 const BoardList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
   const [boards, setBoards] = useState([]);
+  const nowTime = dayjs();
+  dayjs.extend(utc);
 
   const createBoardList = async (currentPage) => {
     const result = await getBoardList(currentPage);
     if (result?.data?.message === 'success') {
-      setBoards(result.data.boardList);
+      setBoards(result.data.list);
       setLastPage(result.data.lastPage);
     }
   };
 
   const boardHit = async (boardIdx) => {
     boardHitRequest(boardIdx);
+  };
+
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return "";
+    }
+    date = dayjs.utc(date).local();
+    let diffDate = nowTime.diff(date, "d");
+    if (diffDate == 0) {
+      return `${nowTime.diff(date, "h")}시간 전`;
+    } else {
+      return date.format("YYYY년 MM월 DD일");
+    }
   };
 
   useEffect(() => {
@@ -76,7 +93,7 @@ const BoardList = () => {
                       </Link>
                     </TableCell>
                     <TableCell align='center'>
-                      {board.createDate.substr(0, 10)}
+                      {dateFormat(board.createDate)}
                     </TableCell>
                     <TableCell align='center'>{board.nickname}</TableCell>
                     <TableCell align='center'>{board.hit}</TableCell>
