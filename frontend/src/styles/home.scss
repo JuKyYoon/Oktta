@@ -59,3 +59,13 @@ $veryperi: #6667ab;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.main-content-item:hover {
+  .main-content-item-title {
+    text-decoration: underline;
+  }
+
+  .main-content-item-info {
+    text-decoration: underline;
+  }
+}

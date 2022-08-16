@@ -9,12 +9,14 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   const user = useSelector(state => state.user);
-  const [onAirTopList, setOnAirTopList] = useState(false);
+  const [onAirTopList, setOnAirTopList] = useState([]);
+  const [onAirTopListStatus, setOnAirTopListStatus] = useState(false);
   const [roomList, setRoomList] = useState([]);
   const [boardList, setBoardList] = useState([]);
 
   const getOnAirTopList = async () => {
     const result = await onAirTopListRequest();
+    setOnAirTopListStatus(true);
     if (result?.data?.message === 'success') {
       setOnAirTopList(result.data.list);
     } else {
@@ -69,7 +71,7 @@ const Home = () => {
           </div>
         </div>
         <div className="main-on-air-list">
-          {onAirTopList ? onAirTopList.map((room, idx) =>
+          {onAirTopListStatus ? onAirTopList.map((room, idx) =>
             <RoomThumbnail key={idx} room={room} direction={'v'} />)
             : <Loading />}
         </div>
