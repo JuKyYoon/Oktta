@@ -16,11 +16,11 @@ function App() {
     <Routes>
       <Route element={<Main />}>
         <Route index element={<Home />} />
-        <Route path="/user/*" element={<User />} />
-        <Route path="/board/*" element={<Board />} />
-        <Route path="/room/*" element={<Room />} />
-        <Route path="/error" element={<ServerError />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path='/user/*' element={<User />} />
+        <Route path='/board/*' element={<Board />} />
+        <Route path='/room/*' element={<Room />} />
+        <Route path='/error' element={<ServerError />} />
+        <Route path='*' element={<NotFound />} />
       </Route>
       <Route path="/user/auth/:token" element={<EmailAuth />} />
       <Route path="/oauth/*" element={<SocialAuth />} />

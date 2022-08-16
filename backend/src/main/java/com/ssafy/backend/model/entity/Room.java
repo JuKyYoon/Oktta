@@ -100,8 +100,22 @@ public class Room {
         return people;
     }
 
-    public void updateRoomState(boolean state) {
-        this.live = state;
+    public void createRoomLive() {
+        this.live = true;
+        this.people = 1;
+    }
+
+    public void enterRoomLive() {
+        this.people += 1;
+    }
+
+    public void leaveRoomLive() {
+        this.people -= 1;
+    }
+
+    public void closeRoomLive() {
+        this.live = false;
+        this.people = 0;
     }
 
     public Match getMatch(){

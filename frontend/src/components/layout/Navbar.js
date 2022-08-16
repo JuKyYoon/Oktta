@@ -1,13 +1,13 @@
 import React from 'react';
-import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-    const pages = [
-        ["ON AIR", "/room/popular"],
-        ["옥상", "/room/list"],
-        ["자유게시판", "/board/general"],
-    ];
+  const pages = [
+    ['ON AIR', '/room/popular'],
+    ['옥상', '/room/list'],
+    ['자유게시판', '/board/list'],
+  ];
 
     return (
         <div className='nav-bar'>

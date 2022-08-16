@@ -14,6 +14,7 @@ const Header = () => {
 
   const onLogoutHandler = () => {
     logoutRequest();
+    // 엑세스 토큰 제외하고 로그아웃
     dispatch({
       type: LOGOUT,
     });

@@ -26,10 +26,10 @@ const ScreenShare = (props) => {
   const sessionRef = useRef();
 
   const [participants, setParticipants] = useState([
-    // { nickname: 'samsung', rank: 24, connectionId: 'conid1', audioActive: false },
-    // { nickname: 'apple', rank: 54, connectionId: 'conid2', audioActive: false },
-    // { nickname: '일이삼사일이삼사삼사', rank: 0, connectionId: 'conid3', audioActive: true },
-    // { nickname: 'sony', rank: 94, connectionId: 'conid4', audioActive: false },
+    // { nickname: 'samsung', rank: 24, connectionId: 'conid1', audioActive: false, isSpeaking: false},
+    // { nickname: 'apple', rank: 54, connectionId: 'conid2', audioActive: false, isSpeaking: false },
+    // { nickname: '일이삼사일이삼사삼사', rank: 0, connectionId: 'conid3', audioActive: true, isSpeaking: true },
+    // { nickname: 'sony', rank: 94, connectionId: 'conid4', audioActive: false, isSpeaking: true },
   ]);
 
   const [chat, setChat] = useState([
@@ -73,6 +73,7 @@ const ScreenShare = (props) => {
   const [title, setTitle] = useState('제목');
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
+  const [recordingStatus, setRecordingStatus] = useState(false);
 
   const scrollRef = useRef();
 
@@ -85,6 +86,7 @@ const ScreenShare = (props) => {
     console.log(token)
     // OpenVidu 객체 생성.
     const openVidu = new OpenVidu();
+    // openVidu.enableProdMode();
     setOpenVidu(openVidu);
 
     // 세션 초기화
@@ -99,6 +101,7 @@ const ScreenShare = (props) => {
       let user = JSON.parse(data[1]);
       console.log(user);
       user.audioActive = false;
+      user.isSpeaking = false;
       user.connectionId = event.connection.connectionId;
       user.role = event.connection.role ? event.connection.role : 'publisher';
       setParticipants( prevArr => [...prevArr, user]); 
@@ -147,6 +150,7 @@ const ScreenShare = (props) => {
         subscriber.on('videoElementCreated', event => {
           console.log('subscriber audioElementCreated')
           // event.element.play();
+          // var video = document.getElementById("hidden-video").play();
         });
   
         // 타인이 공유
@@ -180,6 +184,29 @@ const ScreenShare = (props) => {
         )
       }
     })
+
+    mySession.on("publisherStartSpeaking", (event) => {
+      // console.log("speaking Start-----------------------------------")
+      const spekingId = event.connection.connectionId;
+      setParticipants((participants) => 
+        participants.map(e => 
+          e.connectionId == spekingId ? {...e, isSpeaking : true } : e
+        )
+      )
+      // console.log("-----------------------------------")
+    })
+
+    mySession.on("publisherStopSpeaking", (event) => {
+      // console.log("-----------------------------speaking stop------")
+      const spekingId = event.connection.connectionId;
+      setParticipants((participants) => 
+        participants.map(e => 
+          e.connectionId == spekingId ? {...e, isSpeaking : false } : e
+        )
+      )
+      // console.log("-----------------------------------")
+    })
+
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
     // 스스로 통신을 중단할 수 없으며, 스스로 stream 교체 만 가능하다.
@@ -233,6 +260,8 @@ const ScreenShare = (props) => {
           insertMode: 'APPEND',
         });
         console.log('Audio Activated')
+
+        // 여기서 권한을 요청함. 그거에 따라서 
         mySession.publish(audioPublisher);
         setPublisher(audioPublisher);
       })
@@ -464,6 +493,21 @@ const ScreenShare = (props) => {
   const toggleChatList = () => {
     setRightDrawerOpen(!rightDrawerOpen);
   }
+
+  const recordingToggle = () => {
+    if(recordingStatus) {
+      // 레코딩 시작
+    } else {
+      // 레코딩 중단
+    }
+    setRecordingStatus(!recordingStatus);
+  }
+
+  const scrollDown = () => {
+    console.log(scrollRef.current.scr)
+    scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+
+  }
   
 
 
@@ -478,19 +522,22 @@ const ScreenShare = (props) => {
     window.addEventListener('beforeunload', closeWindow);
 
     window.onload = function() {
-      console.log('audio check');
+      console.log('audio check--------------------------------------------');
       navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
           AudioContext = window.AudioContext || window.webkitAudioContext;
           audioContext = new AudioContext();
+
+          
+          if (!session) {
+            console.log("세션 입장");
+            creaetSession();
+          }
       }).catch(e => {
+        alert("소리 권한 허용해주세요")
           console.error(`Audio permissions denied: ${e}`);
       });
     }
 
-    // if (!session) {
-    //   console.log("세션 입장");
-    //   creaetSession();
-    // }
 
     return () => {
       window.removeEventListener('beforeunload', closeWindow);
@@ -508,7 +555,7 @@ const ScreenShare = (props) => {
         zIndex: "1111",
         top: "15%"
       }}/> : null}
-      
+
       <Grid container direction='row' sx={{ width: 1, height: 1, flexGrow: 1}} spacing={0}>
         <Slide direction="right" in={leftDrawerOpen} mountOnEnter unmountOnExit>
           <Grid item xs={1.8} zeroMinWidth className={'user-div'}  sx={{
@@ -524,7 +571,9 @@ const ScreenShare = (props) => {
               </Button> */}
               <List>
                 {participants.map((user, index) => (
-                <ListItem key={user.connectionId} disablePadding>
+                <ListItem key={user.connectionId} disablePadding sx={{
+                  boxShadow: user.isSpeaking ? "0px 0px 0px 5px #3f50e7 inset" : ""
+                }}>
                   <ListItemButton>
                     <ListItemIcon>
                       {user.audioActive 
@@ -564,7 +613,7 @@ const ScreenShare = (props) => {
         }}> 
           <Box sx={{ height: '100%' }} style={{'backgroundColor' : 'none'}} >
           <div id="video-container">
-            {/* <video autoPlay loop>
+            {/* <video autoPlay muted>
               <source src="/flower.webm" type="video/webm" />
               Sorry, your browser doesn't support embedded videos.
             </video> */}
@@ -574,7 +623,9 @@ const ScreenShare = (props) => {
           <div id="session-button-div">
             <div className="button-div">
               {/* <span id="title-div">{title}</span> */}
-
+              <Button onClick={scrollDown}>
+                채팅창다운
+              </Button>
               <Button
                 className="user-session-button"
                 variant="contained"
@@ -589,13 +640,7 @@ const ScreenShare = (props) => {
               >
                 {audioEnabled ? '음소거 하기' : '마이크 켜기'}
               </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
-                onClick={handsUp}
-              >
-                손들기
-              </Button>
+             
               {/* <Button
                 className="user-session-button"
                 variant="contained"
@@ -603,15 +648,36 @@ const ScreenShare = (props) => {
               >
                 채팅창 보기
               </Button> */}
-              {owner ? (
+              {owner ? 
+                <>
+                  <Button
+                    className="user-session-button"
+                    variant="contained"
+                    onClick={screenToggle}
+                  >
+                    {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
+                  </Button>
+                  <Button
+                    className="user-session-button"
+                    variant="contained"
+                    onClick={recordingToggle}
+                    sx={{
+                      backgroundColor: recordingStatus ? '#e53e3e' : '#4249df',
+                      "&:hover":{
+                        backgroundColor: recordingStatus ? '#e53e3e' : '#4249df'
+                      },
+                    }}
+                  >
+                    {recordingStatus ? '녹화 중단' : '녹화 시작'}
+                  </Button>
+                </> : 
                 <Button
                   className="user-session-button"
                   variant="contained"
-                  onClick={screenToggle}
+                  onClick={handsUp}
                 >
-                  {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
-                </Button>
-              ) : null}
+                  손들기
+                </Button> }
               </div>
             </div>
           </Box>

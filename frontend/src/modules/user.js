@@ -4,7 +4,8 @@ import {
   LOGIN,
   SOCIAL_LOGIN,
   LOGOUT,
-  UPDATE_NICKNAME
+  UPDATE_NICKNAME,
+  TOKEN_DELETE
 } from "../modules/types.js";
 
 export const initState = {
@@ -50,12 +51,21 @@ export default function (state = initState, action) {
         summonerName: action.payload.summonerName,
       }
     case LOGOUT:
-      return initState;
+      // return initState;
+      return {
+        ...state,
+        isLogin: false,
+        nickname: "",
+        auth: "",
+        snsType: "",
+      }
     case UPDATE_NICKNAME:
       return {
         ...state,
         nickname: action.payload.nickname,
       };
+    case TOKEN_DELETE:
+      return initState;    
     default:
       return state;
   }
