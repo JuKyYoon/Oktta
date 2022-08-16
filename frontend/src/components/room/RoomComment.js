@@ -14,7 +14,7 @@ const RoomComment = ({ idx, list }) => {
   const [commentList, setCommentList] = useState([]);
 
   // 페이지네이션 마지막 페이지
-  const [lastPage, setLastPage] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
 
   // 현재 보고 있는 댓글 페이지
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,9 +39,9 @@ const RoomComment = ({ idx, list }) => {
 
   useEffect(() => {
     setCommentList([...list]);
-    if (commentList.length != 0) {
-      setLastIdx(commentList[commentList.length - 1].idx);
-      setLastPage(Math.ceil(commentList.length / 5));
+    if (list.length != 0) {
+      setLastIdx(list[list.length - 1].idx);
+      setLastPage(Math.ceil(list.length / 5));
     }
   }, [list]);
 
@@ -52,6 +52,9 @@ const RoomComment = ({ idx, list }) => {
     if (result?.data?.message === 'success') {
       const nickname = user.nickname;
       setLastIdx((curr) => curr + 1);
+      if (lastIdx === 0) {
+        location.reload();
+      }
       const commentIdx = lastIdx + 1;
       const createTime = new Date(+new Date() + 3240 * 10000)
         .toISOString()
@@ -67,7 +70,9 @@ const RoomComment = ({ idx, list }) => {
       setContent('');
       if (commentList.length / 5 >= lastPage) {
         setLastPage((curr) => curr + 1);
+        setCurrentPage((curr) => curr + 1);
       }
+      if (currentPage < lastPage) setCurrentPage(lastPage);
       alert('댓글 작성 완료!');
     } else {
       setContent('');
@@ -105,8 +110,9 @@ const RoomComment = ({ idx, list }) => {
         commentList.filter((comment) => comment.idx !== commentIdx)
       );
 
-      if (commentList.length / 5 < lastPage) {
+      if (lastPage != 1 && commentList.length / 5 < lastPage) {
         setLastPage((curr) => curr - 1);
+        setCurrentPage((curr) => curr - 1);
       }
       alert('댓글 삭제 완료');
     } else {
@@ -148,8 +154,7 @@ const RoomComment = ({ idx, list }) => {
             onClick={commentSubmit}
             disabled={content.trim().length < 2}
             size='large'
-            color='veryperi'
-          >
+            color='veryperi'>
             등록하기
           </Button>
         </div>
@@ -182,16 +187,14 @@ const RoomComment = ({ idx, list }) => {
                         variant='outlined'
                         onClick={commentEdit}
                         disabled={editInput.trim().length < 2}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         수정하기
                       </Button>
                       <Button
                         sx={{ ml: 1, mr: 1 }}
                         variant='outlined'
                         onClick={cancel}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         취소
                       </Button>
                       <hr></hr>
@@ -206,8 +209,7 @@ const RoomComment = ({ idx, list }) => {
                               sx={{ m: 1 }}
                               variant='outlined'
                               onClick={() => handleDeleteButton(comment.idx)}
-                              color='veryperi'
-                            >
+                              color='veryperi'>
                               삭제
                             </Button>
                             <Button
@@ -216,8 +218,7 @@ const RoomComment = ({ idx, list }) => {
                               onClick={() =>
                                 handleToggleEdit(comment.idx, comment.content)
                               }
-                              color='veryperi'
-                            >
+                              color='veryperi'>
                               수정
                             </Button>
                           </>
