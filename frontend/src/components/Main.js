@@ -5,7 +5,7 @@ import Header from './layout/Header';
 const Main = () => {
   return (
     <div>
-      <Header/>
+      <Header />
       <main>
         <Outlet />
       </main>

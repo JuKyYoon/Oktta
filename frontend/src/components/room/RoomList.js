@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
 import Loading from '../layout/Loading';
 import { getRoomList, roomHitRequest } from '../../services/roomService';
@@ -13,20 +13,23 @@ import {
   TableRow,
 } from '@mui/material';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faVolumeHigh,
+  faVolumeXmark,
+  faArrowRightToBracket,
+} from '@fortawesome/free-solid-svg-icons';
+
 const RoomList = () => {
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
-  const [rooms, setRooms] = useState(false);
+  const [rooms, setRooms] = useState([]);
 
   const createRoomList = async (currentPage) => {
     const result = await getRoomList(currentPage);
     if (result?.data?.message === 'success') {
       setRooms(result.data.list);
       setLastPage(result.data.lastPage);
-    } else {
-      alert('게시물 불러오기 실패');
-      navigate('/');
     }
   };
 
@@ -47,11 +50,12 @@ const RoomList = () => {
     <div>
       {rooms ? (
         <div className='room'>
-          <h1>현재 방 목록</h1>
+          <h1>옥상 목록</h1>
           <Link
             className='create-button'
             to={`../create`}
-            style={{ textDecoration: 'none' }}>
+            style={{ textDecoration: 'none' }}
+          >
             <Button variant='contained' color='veryperi'>
               방 만들기
             </Button>
@@ -72,13 +76,18 @@ const RoomList = () => {
                   {rooms.map((room) => (
                     <TableRow key={room.idx}>
                       <TableCell align='center'>
-                        {room.live ? '🔊' : '🔈'}
+                        {room.live ? (
+                          <FontAwesomeIcon icon={faVolumeHigh} />
+                        ) : (
+                          <FontAwesomeIcon icon={faVolumeXmark} />
+                        )}
                       </TableCell>
                       <TableCell align='center'>
                         <Link
                           onClick={() => roomHit(`${room.idx}`)}
                           to={`../${room.idx}`}
-                          style={{ textDecoration: 'none' }}>
+                          style={{ textDecoration: 'none' }}
+                        >
                           {room.title}
                         </Link>
                       </TableCell>
@@ -90,8 +99,13 @@ const RoomList = () => {
                       <TableCell align='center'>
                         <Link
                           to={`../${room.idx}`}
-                          style={{ textDecoration: 'none' }}>
-                          입장하기🔥
+                          style={{ textDecoration: 'none' }}
+                        >
+                          입장하기
+                          <FontAwesomeIcon
+                            icon={faArrowRightToBracket}
+                            size='lg'
+                          />
                         </Link>
                       </TableCell>
                     </TableRow>

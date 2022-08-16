@@ -14,11 +14,11 @@ import {
   createRoom,
   getMatchBySummoner,
   getMatchDetail,
-} from '../../services/roomService';
+} from '@/services/roomService';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '../../util/build/ckeditor';
+import ClassicEditor from '@/util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
-import '../../styles/room.scss';
+import '@/styles/room.scss';
 import Loading from '../layout/Loading';
 
 const positionKr = {
@@ -227,7 +227,6 @@ const RoomCreate = () => {
       console.log('노토큰입니다.화이팅');
     } else {
       alert('옥상 생성에 실패하였습니다. 옥상 목록으로 이동합니다.');
-      console.log(result);
       navigate('/room/list');
     }
   };
@@ -241,24 +240,22 @@ const RoomCreate = () => {
       <span>갈등상황에 대해 제목과 간략한 설명을 적어주세요!</span>
       <hr className='hrLine'></hr>
 
-      <div className='room-title-form'>
-        <FormControl>
-          <InputLabel htmlFor='title' color='veryperi'>
-            제목
-          </InputLabel>
-          <Input
-            id='title'
-            type='text'
-            aria-describedby='title-helper-text'
-            color='veryperi'
-            value={title}
-            onChange={onTitleChanged}
-          />
-          <FormHelperText id='title-helper-text'>
-            제목을 입력해주세요.
-          </FormHelperText>
-        </FormControl>
-      </div>
+      <FormControl className='room-title-form'>
+        <InputLabel htmlFor='title' color='veryperi'>
+          제목
+        </InputLabel>
+        <Input
+          id='title'
+          type='text'
+          aria-describedby='title-helper-text'
+          color='veryperi'
+          value={title}
+          onChange={onTitleChanged}
+        />
+        <FormHelperText id='title-helper-text'>
+          제목을 입력해주세요.
+        </FormHelperText>
+      </FormControl>
       <div className='room-editor'>
         {/* 게임 불러오기 부분 */}
         {matchSelectedDetail ? (
@@ -266,7 +263,8 @@ const RoomCreate = () => {
             <div
               className={`create-room-selected ${
                 matchSelectedDetail.matchResult === '승리' ? 'win' : 'loss'
-              }`}>
+              }`}
+            >
               <img
                 src={`/assets/champion/${matchSelectedDetail.championTarget}.png`}
                 className='create-room-champion-image'
@@ -297,7 +295,8 @@ const RoomCreate = () => {
                 variant='contained'
                 color='veryperi'
                 type='submit'
-                disabled={!summonerName}>
+                disabled={!summonerName}
+              >
                 검색
               </Button>
             </form>
@@ -320,7 +319,8 @@ const RoomCreate = () => {
                       }
                             ${match.matchResult === '승리' ? 'win' : 'loss'}
                             modal-result-item`}
-                      onClick={() => setMatchSelected(match.matchId)}>
+                      onClick={() => setMatchSelected(match.matchId)}
+                    >
                       <span>{match.matchResult}</span>
                       <img
                         src={`/assets/champion/${match.championTarget}.png`}
@@ -359,7 +359,8 @@ const RoomCreate = () => {
                       color='veryperi'
                       variant='outlined'
                       onClick={onHandlePage}
-                      disabled={pageNum === 0}>
+                      disabled={pageNum === 0}
+                    >
                       이전 10개
                     </Button>
                     <Button
@@ -367,7 +368,8 @@ const RoomCreate = () => {
                       color='veryperi'
                       variant='outlined'
                       onClick={onHandlePage}
-                      disabled={matchList.length < 10}>
+                      disabled={matchList.length < 10}
+                    >
                       다음 10개
                     </Button>
                   </div>
@@ -377,7 +379,8 @@ const RoomCreate = () => {
             <div className='modal-button-div'>
               <Button
                 onClick={handleSelect}
-                disabled={matchSelected.length === 0}>
+                disabled={matchSelected.length === 0}
+              >
                 선택
               </Button>
               <Button onClick={handleClose}>닫기</Button>
@@ -386,9 +389,6 @@ const RoomCreate = () => {
         </Modal>
         {/* 게임 정보 -------------- */}
 
-        <label htmlFor='title' className='create-room-label'>
-          내용
-        </label>
         <div>
           <CKEditor
             editor={ClassicEditor}
@@ -401,16 +401,16 @@ const RoomCreate = () => {
             }}
           />
         </div>
-
-        <Button
-          className='room-button'
-          variant='outlined'
-          color='veryperi'
-          onClick={onSubmitClicked}
-          disabled={!isValid}>
-          등록하기
-        </Button>
       </div>
+      <Button
+        className='room-button'
+        variant='outlined'
+        color='veryperi'
+        onClick={onSubmitClicked}
+        disabled={!isValid}
+      >
+        등록하기
+      </Button>
     </div>
   );
 };

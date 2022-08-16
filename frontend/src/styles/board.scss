@@ -1,0 +1,119 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.hrLine {
+  width: 80%;
+}
+
+// RoomList 관련
+.create-button {
+  align-self: end;
+  margin-right: 10%;
+}
+.table-container {
+  width: 80%;
+}
+
+// RoomCreate, RoomEdit관련
+.board-title-form {
+  margin-bottom: 10px;
+  margin-top: 5px;
+  width: 30%;
+}
+.board-button {
+  margin: 10px;
+}
+.board-editor {
+  margin: 20px auto;
+}
+.ck-editor__editable {
+  min-height: 400px;
+}
+
+.myBtn {
+  font-size: 28px;
+}
+
+// RoomDetail 관련
+.detail-editor {
+  width: 50%;
+}
+
+.detail-button {
+  margin: 5px !important;
+}
+
+.modal {
+  .modal-title {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 2rem 0;
+  }
+  .modal-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    button {
+      font-size: 1.4rem;
+    }
+  }
+}
+.edit-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+// RoomComment 관련
+.comments-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+}
+.comment-title {
+  margin-right: auto;
+}
+.comments-header {
+  width: 100%;
+}
+.comments-header-textarea {
+  width: 70%;
+}
+
+.comments-body {
+  margin-top: 20px;
+}
+.comment-date {
+  color: gray;
+}
+
+.comment-content {
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: 10px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 18px;
+}
+
+.comment-username {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: baseline;
+  font-weight: 600;
+}
+.comments-edit-textarea {
+  width: 70%;
+}
+.comments-footer {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+}
