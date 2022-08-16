@@ -28,7 +28,6 @@ const RoomDetail = () => {
   const [vote, setVote] = useState('');
   const [voteDto, setVoteDto] = useState(null);
   const [candidates, setCandidates] = useState([]);
-  const [candidate, setCandidate] = useState('');
 
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx)
@@ -130,6 +129,7 @@ const RoomDetail = () => {
               mid={voteDto.third}
               adc={voteDto.fourth}
               supporter={voteDto.fifth}
+              cadidates={candidates}
             />
           ) : (
               <div className="vote-box">
