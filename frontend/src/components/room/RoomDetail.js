@@ -20,7 +20,6 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { lolPosition, position } from '@/const/position';
 import '@/styles/room.scss';
 import { championKorean } from '@/const/champion';
 
@@ -56,19 +55,16 @@ const RoomDetail = () => {
     // 댓글 정보
     setCommentList(result?.data?.list);
     const participants = rawData.matchDto.participants;
-    setCandidates([...participants.filter((participant) => participant.teamId === parseInt(rawData.hostTeamId))]);
+    const candidateList = participants.filter((participant) => participant.teamId === parseInt(rawData.hostTeamId));
+    setCandidates([...candidateList]);
+    if(rawData.myVote !== 0){
+      setCurrentVote(championKorean[candidateList[rawData.myVote-1].championName]);
+    }
   };
   
-
   useEffect(() => {
     getDetailRoom(idx);
   }, []);
-
-  useEffect(() => {
-    if (room !== null) {
-      setCurrentVote(lolPosition[parseInt(room.myVote)]);
-    }
-  }, [room]);
 
   const onDeleteButtonClicked = async () => {
     const result = await deleteRoom(idx);
@@ -80,7 +76,6 @@ const RoomDetail = () => {
       alert('잘못된 요청입니다.');
     } else {
       alert('잘못된 요청입니다.');
-      // console.log(result?.response?.status);
       navigate('../list');
     }
   };
@@ -102,9 +97,8 @@ const RoomDetail = () => {
 
   const onVoteButtonClicked = async () => {
     const result = await createVote(idx, vote);
-    // setVote(vote);
     if (result?.data?.message === 'success') {
-      setCurrentVote(lolPosition[parseInt(vote)]);
+      setCurrentVote(championKorean[candidates[parseInt(vote)-1].championName]);
       alert('투표하였습니다.');
     } else {
       alert('투표에 실패하였습니다...');
@@ -145,19 +139,24 @@ const RoomDetail = () => {
               />
             </div>
             <div className='vote-body'>
-              {voteDto ? (
+              {voteDto && candidates.length ? (
                 <VoteChart
                   top={voteDto.first}
                   jungle={voteDto.second}
                   mid={voteDto.third}
                   adc={voteDto.fourth}
                   supporter={voteDto.fifth}
-                  cadidates={candidates}
+                  candidates={candidates}
                 />
               ) : (
                 <div className="vote-box">
                   <div>
-                    <h3>투표가 진행중입니다!</h3>
+                      <h3>투표가 진행중입니다!</h3>
+                      <div className='current-vote'>
+                      {currentVote === ''
+                      ? '투표를 진행해주세요'
+                      : `현재 투표한 챔피언: ${currentVote}`}
+                    </div>
                   </div>
                   <div className='vote-component'>
                     <div className="vote-component-left">
@@ -170,7 +169,8 @@ const RoomDetail = () => {
                     <div className="vote-component-right">
                       <h3>범인 고르기</h3>
                       <FormControl sx={{ width: "50px", margin: "0" }}>
-                        <RadioGroup
+                          <RadioGroup
+                          value={vote}
                           className="team-select-radio-group"
                           onChange={handleVoteChanged}
                         >
@@ -196,7 +196,7 @@ const RoomDetail = () => {
                       variant='outlined'
                       color='veryperi'
                       onClick={onVoteButtonClicked}
-                      disabled={vote === '' ? true : false}>
+                      disabled={vote === 0 ? true : false}>
                       투표하기
                     </Button>
                     <Button

@@ -6,6 +6,7 @@ import '../../styles/user.scss';
 import { getProfileRequest, setDefaultImg, setProfileImg } from '../../services/userService';
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
 import { getMyRoom } from '../../services/roomService';
+import { getMyBoard } from '../../services/boardService';
 import Loading from '../layout/Loading';
 import "@/styles/mypage.scss"
 
@@ -140,12 +141,12 @@ const MyPage = () => {
 
   const boardClick = async () => {
     if (boardList === false) {
-      // const result3 = await getMyBoard();
-      // if(result3?.data?.message === "success") {
-      //   setBoardList(result3?.data?.list)
-      // } else {
-      //   console.log("게시물 불러오기 실패");
-      // };
+      const result3 = await getMyBoard();
+      if(result3?.data?.message === "success") {
+        setBoardList(result3?.data?.list)
+      } else {
+        console.log("게시물 불러오기 실패");
+      };
     }
     setMode('board');
   }

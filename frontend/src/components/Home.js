@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { onAirTopListRequest, getRoomList, roomHitRequest } from "@/services/roomService"
+import { getBoardList } from "@/services/boardService"
 import Loading from "@/components/layout/Loading";
 import RoomThumbnail from "@/components/room/RoomThumbnail";
 import "@/styles/home.scss"
@@ -24,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     getOnAirTopList();
     getRooms(1);
-    // getBoards(1);
+    getBoards(1);
   }, []);
 
 
@@ -38,12 +39,12 @@ const Home = () => {
   };
 
   const getBoards = async (pageNum) => {
-    // const result = await getBoardList(pageNum);
-    // if (result?.data?.message === 'success') {
-    //   setBoardList(result.data.list.slice(0, 5));
-    // } else {
-    //   console.log(result);
-    // };
+    const result = await getBoardList(pageNum);
+    if (result?.data?.message === 'success') {
+      setBoardList(result.data.list.slice(0, 5));
+    } else {
+      console.log(result);
+    };
   };
 
   const roomHit = async (roomIdx) => {

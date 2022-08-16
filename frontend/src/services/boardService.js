@@ -115,9 +115,9 @@ export const deleteBoardComment = async (idx) => {
 /////////////////////////////////////////////////////////////////////
 
 // 내가 작성한 글 불러오기
-export const getMyRoom = async () => {
+export const getMyBoard = async () => {
   try {
-    const payload = await axiosAuth.get(`${ROOM_URL}/mine`);
+    const payload = await axiosAuth.get(`${BOARD_URL}/mine`);
     return payload;
   } catch (err) {
     console.log(err);
