@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   FormControl,
@@ -8,13 +8,12 @@ import {
   FormHelperText,
   Button,
 } from '@mui/material';
-import { updateRoom, detailRoom } from '../../services/roomService';
-import '../../styles/room.scss';
+import { updateRoom, detailRoom } from '@/services/roomService';
+import '@/styles/room.scss';
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '../../util/build/ckeditor';
+import ClassicEditor from '@/util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
-import '../../styles/room.scss';
 
 const RoomEdit = () => {
   const { idx } = useParams();
@@ -38,7 +37,7 @@ const RoomEdit = () => {
   }, []);
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value.trim());
+    setTitle(event.target.value);
   };
 
   const onSubmitClicked = async (event) => {
@@ -54,7 +53,8 @@ const RoomEdit = () => {
       } else if (result?.data?.message === 'fail') {
         alert('잘못된 요청입니다.');
         navigate('../list');
-      } else {
+      } else if (result?.reponse?.data.message === 'fail') {
+        alert('매치정보를 확인해주세요.');
         navigate('/error');
       }
     }
@@ -101,15 +101,26 @@ const RoomEdit = () => {
           }}
         />
       </div>
-
-      <Button
-        className='room-button'
-        variant='outlined'
-        color='veryperi'
-        onClick={onSubmitClicked}
-        disabled={!isValid}>
-        수정하기
-      </Button>
+      <div className='edit-footer'>
+        <Button
+          sx={{ mr: 2, ml: 2 }}
+          className='room-button'
+          variant='outlined'
+          color='veryperi'
+          onClick={onSubmitClicked}
+          disabled={!isValid}>
+          수정하기
+        </Button>
+        <Link to={`../${idx}`}>
+          <Button
+            className='room-button'
+            sx={{ mr: 2, ml: 2 }}
+            variant='outlined'
+            color='veryperi'>
+            취소
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

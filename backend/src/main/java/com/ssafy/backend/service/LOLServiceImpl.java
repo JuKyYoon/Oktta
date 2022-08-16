@@ -65,9 +65,6 @@ public class LOLServiceImpl implements LOLService {
 
     @Override
     public boolean createLolAuth(String userId, String summonerName) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
 
         LOGGER.info("getUserInfo start");
         try{

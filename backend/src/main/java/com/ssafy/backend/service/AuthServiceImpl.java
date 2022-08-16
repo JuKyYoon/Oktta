@@ -1,12 +1,13 @@
 package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.UserDto;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
 import com.ssafy.backend.util.RedisService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,11 +30,14 @@ public class AuthServiceImpl implements AuthService {
 
     private final RedisService redisService;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository, RedisService redisService) {
+    private final LolAuthRepository lolAuthRepository;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserRepository userRepository, RedisService redisService, LolAuthRepository lolAuthRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
         this.redisService = redisService;
+        this.lolAuthRepository = lolAuthRepository;
     }
 
     /**
@@ -54,6 +58,15 @@ public class AuthServiceImpl implements AuthService {
         );
         result.put("nickname", user.getNickname());
         result.put("auth", user.getRole().getValue().equals("ROLE_USER") ? "1": "0");
+
+        result.put("tier", "");
+        result.put("summonerName", "");
+        LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+        if(lolAuth != null){
+            result.put("tier", String.valueOf(lolAuth.getTier()));
+            result.put("summonerName", lolAuth.getSummonerName());
+        }
+
         return result;
     }
 

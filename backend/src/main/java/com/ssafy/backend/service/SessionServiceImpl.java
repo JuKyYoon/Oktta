@@ -2,9 +2,11 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.Video;
 import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.model.repository.VideoRepository;
 import com.ssafy.backend.util.RedisService;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONArray;
@@ -12,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final UserRepository userRepository;
 
+    private final VideoRepository videoRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -38,13 +43,16 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<Long, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository) {
+    private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
+
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
         this.redisService = redisService;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
         this.userRepository = userRepository;
+        this.videoRepository = videoRepository;
     }
 
     @Override
@@ -64,7 +72,6 @@ public class SessionServiceImpl implements SessionService {
         }
 
     }
-
 
     @Override
     public void createSession(String userId, long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
@@ -208,6 +215,75 @@ public class SessionServiceImpl implements SessionService {
         this.mapSessionNamesTokens.clear();
     }
 
+    @Override
+    public Map<Boolean, Recording> recordingStart(String userId, Long roomIdx, Map<String, Object> params) {
+        Map<Boolean, Recording> result = new HashMap<>();
+
+        // 403 -> throw
+        if(!check(userId, roomIdx)) {
+            result.put(false, null);
+            return result;
+        }
+
+        RecordingProperties properties = new RecordingProperties.Builder().build();
+
+        String sessionId = (String) params.get("sessionId");
+        try {
+            Recording recording = this.openVidu.startRecording(sessionId, properties);
+            this.sessionRecordings.put(sessionId, true);
+            result.put(true, recording);
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            result.put(true, null);
+        } finally {
+            return result;
+        }
+    }
+
+    @Override
+    public Map<Boolean, Recording> recordingStop(String userId, Long roomIdx, Map<String, Object> params) {
+        Map<Boolean, Recording> result = new HashMap<>();
+
+        // 403 -> throw
+        if(!check(userId, roomIdx)) {
+            result.put(false, null);
+            return result;
+        }
+
+        String recordingId = (String) params.get("recording");
+        try {
+            Recording recording = this.openVidu.stopRecording(recordingId);
+            this.sessionRecordings.remove(recording.getSessionId());
+            result.put(true, recording);
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            result.put(true, null);
+        } finally {
+            return result;
+        }
+    }
+
+    @Override
+    public boolean saveRecordUrl(Long roomIdx, Recording result) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found Exception")
+        );
+
+        // 녹화 시간 검사
+        if(result.getDuration() < 60)
+            return false;
+
+        videoRepository.save(new Video.Builder(room, result.getUrl()).build());
+        return true;
+    }
+
+    @Override
+    public List<String> getVideos(Long roomIdx) {
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found Exception")
+        );
+
+        return videoRepository.findRecordUrlByRoom(room);
+    }
+
     /**
      * Openvidu의 세션 리스트 불러오기
      * @return
@@ -262,6 +338,30 @@ public class SessionServiceImpl implements SessionService {
             this.mapSessionNamesTokens.remove(sessionIdx);
             redisService.deleteKey(sessionId);
         }
+    }
 
+    private boolean check(String userId, Long roomIdx){
+
+        // 유저 없음
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        // 글 없음
+        Room room = roomRepository.findById(roomIdx).orElseThrow(
+                () -> new RoomNotFoundException("Room Not Found")
+        );
+
+        // 세션 없음
+        if(searchSession(roomIdx) == null) {
+            throw new SessionNotFoundException("Session Not Found");
+        }
+
+        // 글 작성자 아님. -> 권한 없음. -> 403 처리 해야하는데...
+        if(user.getIdx() != room.getUser().getIdx()) {
+            return false;
+        }
+
+        return true;
     }
 }

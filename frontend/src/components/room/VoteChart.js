@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { championKorean } from '@/const/champion';
+import { range } from "lodash";
 
 const VoteChart = (props) => {
+
+    const candidates = [...props.candidates];
+    const labels = candidates.map((candidate) => championKorean[candidate.championName]);
+
   const donutData = {
     series: [props.top, props.jungle, props.mid, props.adc, props.supporter],
     options: {
@@ -34,9 +40,9 @@ const VoteChart = (props) => {
           },
         },
       },
-      labels: ['탑', '정글', '미드', '원딜', '서포터'],
+      labels,
       title: {
-        text: '과실 비율👊',
+        text: '과실 비율',
         align: 'center',
       },
     },
