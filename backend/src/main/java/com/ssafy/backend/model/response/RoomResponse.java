@@ -54,6 +54,4 @@ public class RoomResponse extends BaseResponseBody {
         res.setList(list);
         return res;
     }
-
-
 }

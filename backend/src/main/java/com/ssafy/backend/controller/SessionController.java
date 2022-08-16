@@ -5,13 +5,12 @@ import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
-import com.ssafy.backend.model.response.BaseResponseBody;
-import com.ssafy.backend.model.response.MessageResponse;
-import com.ssafy.backend.model.response.SessionEnterResponse;
+import com.ssafy.backend.model.response.*;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.Recording;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/session")
@@ -196,5 +197,67 @@ public class SessionController {
         }
 
         return new ResponseEntity<>("200", HttpStatus.OK);
+    }
+
+    /**
+     * @param roomIdx
+     * JSON 형식: "sessionId" : sessionId
+     * @return
+     */
+    @PostMapping("/recording/start/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> startRecording(@PathVariable("idx") Long roomIdx, @RequestBody Map<String, Object> params) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("<------------ 녹화 시작 ------------>");
+
+        Map<Boolean, Recording> map = sessionService.recordingStart(principal.getUsername(), roomIdx, params);
+        if(map.containsKey(false)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
+        }
+
+        Recording result = map.get(true);
+        if(result != null) {
+            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, result));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
+        }
+    }
+
+    /**
+     * @param roomIdx
+     * JSON 형식: "recording" : recordingId
+     * recordingId는 start에서 return받은 JSON 중 recordingProperties의 name 값.
+     * @return
+     */
+    @PostMapping("/recording/stop/{idx}")
+    public ResponseEntity<? extends BaseResponseBody> stopRecording(@PathVariable("idx") Long roomIdx, @RequestBody Map<String, Object> params){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("<------------ 녹화 중단 ------------>");
+        
+        Map<Boolean, Recording> map = sessionService.recordingStop(principal.getUsername(), roomIdx, params);
+        if(map.containsKey(false)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
+        }
+
+        Recording recordingResult = map.get(true);
+        if(recordingResult != null) {
+            
+            // 최소 5분 이상의 녹화만 저장
+            if(!sessionService.saveRecordUrl(roomIdx, recordingResult))
+                return ResponseEntity.status(200).body(RecordingResponse.of(200,"Not Enough Recording Time"));
+
+            return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, recordingResult));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
+        }
+    }
+
+    /**
+     * @param roomIdx
+     * 해당 room에 대하여 녹화된 영상들의 url
+     */
+    @GetMapping("/recording/get/{idx}")
+    public ResponseEntity<? extends  BaseResponseBody> getRecording(@PathVariable("idx") Long roomIdx) {
+        List<String> videos = sessionService.getVideos(roomIdx);
+        return ResponseEntity.status(200).body(VideoResponse.of(200, successMsg, videos));
     }
 }

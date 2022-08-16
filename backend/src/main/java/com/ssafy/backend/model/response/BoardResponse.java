@@ -7,8 +7,7 @@ import java.util.List;
 
 public class BoardResponse extends BaseResponseBody {
     BoardDto boardDto;
-    List<BoardDto> boardList;
-    List<BoardCommentDto> commentList;
+    List<?> list;
     int lastPage;
 
     public BoardDto getBoardDto() {
@@ -19,20 +18,12 @@ public class BoardResponse extends BaseResponseBody {
         this.boardDto = boardDto;
     }
 
-    public List<BoardDto> getBoardList() {
-        return boardList;
+    public List<?> getList() {
+        return list;
     }
 
-    public void setBoardList(List<BoardDto> boardList) {
-        this.boardList = boardList;
-    }
-
-    public List<BoardCommentDto> getCommentList() {
-        return commentList;
-    }
-
-    public void setCommentList(List<BoardCommentDto> commentList) {
-        this.commentList = commentList;
+    public void setList(List<?> list) {
+        this.list = list;
     }
 
     public int getLastPage() {
@@ -48,7 +39,7 @@ public class BoardResponse extends BaseResponseBody {
         res.setStatusCode(statusCode);
         res.setMessage(message);
         res.setBoardDto(boardDto);
-        res.setCommentList(list);
+        res.setList(list);
         res.setLastPage(lastPage);
         return res;
     }
@@ -57,7 +48,7 @@ public class BoardResponse extends BaseResponseBody {
         BoardResponse res = new BoardResponse();
         res.setStatusCode(statusCode);
         res.setMessage(message);
-        res.setBoardList(list);
+        res.setList(list);
         res.setLastPage(lastPage);
         return res;
     }
