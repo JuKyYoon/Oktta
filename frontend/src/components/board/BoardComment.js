@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, TextField, Pagination } from '@mui/material';
 import {
-  getRoomCommentList,
-  createRoomComment,
-  deleteRoomComment,
-  editRoomComment,
-} from '@/services/roomService';
-import '@/styles/room.scss';
+  createBoardComment,
+  deleteBoardComment,
+  editBoardComment,
+  detailBoard,
+} from '@/services/boardService';
+import '@/styles/board.scss';
 
-const RoomComment = ({ idx, list }) => {
+const BoardComment = ({ idx, list }) => {
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
@@ -32,8 +32,6 @@ const RoomComment = ({ idx, list }) => {
   // 댓글 토글 되게하는 값
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // 리렌더하기위함
-
   // 현재 로그인한 유저 정보
   const user = useSelector((state) => state.user);
 
@@ -48,8 +46,9 @@ const RoomComment = ({ idx, list }) => {
   const commentSubmit = async () => {
     const body = { content: content.trim() };
 
-    const result = await createRoomComment(idx, body);
+    const result = await createBoardComment(idx, body);
     if (result?.data?.message === 'success') {
+      console.log('??');
       const nickname = user.nickname;
       setLastIdx((curr) => curr + 1);
       const commentIdx = lastIdx + 1;
@@ -80,7 +79,7 @@ const RoomComment = ({ idx, list }) => {
     if (body.content.length < 2) {
       return;
     }
-    const result = await editRoomComment(currentIdx, body);
+    const result = await editBoardComment(currentIdx, body);
 
     setIsEditMode(false);
     setCurrentIdx(-1);
@@ -99,7 +98,7 @@ const RoomComment = ({ idx, list }) => {
   };
 
   const handleDeleteButton = async (commentIdx) => {
-    const result = await deleteRoomComment(commentIdx);
+    const result = await deleteBoardComment(commentIdx);
     if (result?.data?.message === 'success') {
       setCommentList(
         commentList.filter((comment) => comment.idx !== commentIdx)
@@ -244,4 +243,4 @@ const RoomComment = ({ idx, list }) => {
   );
 };
 
-export default RoomComment;
+export default BoardComment;

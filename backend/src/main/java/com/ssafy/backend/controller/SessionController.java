@@ -54,6 +54,7 @@ public class SessionController {
         boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         synchronized (SessionController.class) {
+            sessionService.increaseRoomPeople(room, isOwner);
             if(isOwner) {
                 sessionService.createSession(principal.getUsername(), sessionIdx, room);
                 String token = sessionService.enterSession(principal.getUsername(), sessionIdx, OpenViduRole.MODERATOR);
@@ -64,23 +65,6 @@ public class SessionController {
             }
         }
     }
-
-    /**
-     * 방 퇴장
-     */
-//    @DeleteMapping("/{idx}")
-//    public ResponseEntity<MessageResponse> leaveSession(@PathVariable("idx") String boardIdx, @RequestBody Map<String, String> body){
-//
-//        long sessionIdx = Long.parseLong(boardIdx);
-//        System.out.println("asdf");
-//        String token = body.get("token");
-//        System.out.println(token);
-//        synchronized (SessionController.class) {
-////            sessionService.leaveSession(sessionIdx, token);
-//            System.out.println("delete session");
-//            return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, token));
-//        }
-//    }
 
     /**
      * 세션 입장
@@ -107,7 +91,7 @@ public class SessionController {
         boolean isOwner = sessionService.checkSessionOwner(principal.getUsername(), room);
 
         if(isOwner) {
-            sessionService.closeSession(sessionIdx);
+            sessionService.closeSession(sessionIdx, room);
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else {
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, failMsg));
