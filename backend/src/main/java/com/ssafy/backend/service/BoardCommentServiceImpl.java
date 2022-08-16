@@ -4,6 +4,7 @@ import com.ssafy.backend.model.dto.BoardCommentDto;
 import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.BoardComment;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
 import com.ssafy.backend.model.exception.CommentNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
@@ -88,7 +89,11 @@ public class BoardCommentServiceImpl implements BoardCommentService {
                 () -> new CommentNotFoundException("Comment Not Found")
         );
 
-        if(!boardComment.getUser().getId().equals(id)){
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User Not Found")
+        );
+
+        if(user.getRole().equals(UserRole.ROLE_USER) && !boardComment.getUser().getId().equals(id)){
             return false;
         } else {
             boardCommentRepository.delete(boardComment);

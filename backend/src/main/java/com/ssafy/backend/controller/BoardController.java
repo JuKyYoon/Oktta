@@ -77,7 +77,12 @@ public class BoardController {
     public ResponseEntity<? extends BaseResponseBody> createBoard(@RequestBody BoardDto boardDto){
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long boardIdx = boardService.createBoard(principal.getUsername(), boardDto);
-        return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, boardIdx.toString()));
+
+        if(boardIdx != -1) {
+            return ResponseEntity.status(200).body(MessageResponse.of(200, successMsg, boardIdx.toString()));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403,failMsg));
+        }
     }
 
     /**
