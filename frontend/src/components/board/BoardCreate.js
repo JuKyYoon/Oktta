@@ -19,7 +19,7 @@ const BoardCreate = () => {
   const navigate = useNavigate();
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value.trim());
+    setTitle(event.target.value);
   };
 
   const onSubmitClicked = async (event) => {
