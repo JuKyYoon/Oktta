@@ -160,14 +160,3 @@ export const onAirTopListRequest = async () => {
     return err;
   }
 };
-
-// 온에어
-export const onAirListRequest = async (dataToSubmit) => {
-  try {
-    const payload = await axiosAuth.get(`${ROOM_URL}/live?page=${dataToSubmit}`);
-    return payload;
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
-};

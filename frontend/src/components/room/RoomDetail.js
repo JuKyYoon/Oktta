@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router';
 import { deleteRoom, detailRoom } from '../../services/roomService';
 import { createVote, deleteVote, quitVote } from '../../services/voteService';
-import { Button, Dialog, DialogContent, IconButton } from '@mui/material';
 import DisabledByDefaultOutlinedIcon from '@mui/icons-material/DisabledByDefaultOutlined';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '../../util/build/ckeditor';
@@ -13,6 +12,9 @@ import VoteChart from './VoteChart';
 import RoomComment from './RoomComment';
 import {
   Button,
+  Dialog,
+  DialogContent,
+  IconButton,
   FormControl,
   FormControlLabel,
   Radio,
