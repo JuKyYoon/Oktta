@@ -32,6 +32,7 @@ $lose: #ff968d;
   width: 80%;
 }
 
+
 // RoomList 관련
 .create-button {
   align-self: end;
@@ -508,6 +509,13 @@ $lose: #ff968d;
 
 .create-room-notice {
   color: red;
+}
+
+.no-on-air {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 270px;
 }
 
 .on-air-list {

@@ -58,7 +58,7 @@ const PwInquiryNewPassword = () => {
   const getTokenCheck = async (token) => {
     const result = await pwInquiryTokenCheckRequest(token);
     if (result?.data?.message === 'success') {
-      const timeLimit = Date.parse(data.result);
+      const timeLimit = Date.parse(result.data.result);
       setTimeLimit(timeLimit);
     } else if (result?.data?.message === 'fail') {
       alert('인증 제한시간이 초과되었습니다. 메일을 다시 전송해 주세요.')

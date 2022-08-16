@@ -12,7 +12,7 @@ const RoomThumbnail = ({ direction, room }) => {
   return (
     <div
       className={`${direction === 'v' ? 'thumbnail-vertical' : 'thumbnail-horizontal'}`}
-      onClick={() => navigate(`/room/${room.idx}/share`)}
+      onClick={() => window.location.replace(`/room/${room.idx}/share`)}
     >
       <div className='thumbnail-box'>
         <div

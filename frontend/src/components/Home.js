@@ -71,8 +71,11 @@ const Home = () => {
           </div>
         </div>
         <div className="main-on-air-list">
-          {onAirTopListStatus ? onAirTopList.map((room, idx) =>
+          {onAirTopListStatus ? onAirTopList.length > 0 ? onAirTopList.map((room, idx) =>
             <RoomThumbnail key={idx} room={room} direction={'v'} />)
+              : <div className='no-on-air'>
+                  진행중인 라이브가 없습니다.
+                </div>
             : <Loading />}
         </div>
       </div>

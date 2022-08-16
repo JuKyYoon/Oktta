@@ -42,7 +42,9 @@ const RoomDetail = () => {
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
     if (result?.data?.message !== 'success') {
-      alert('잘못된 접근입니다.');
+      if (result.response.status !== 403) {
+        alert('잘못된 접근입니다.');
+      }
       navigate('../list');
     }
    
