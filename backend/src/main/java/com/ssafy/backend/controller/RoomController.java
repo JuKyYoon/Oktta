@@ -109,11 +109,30 @@ public class RoomController {
     }
 
     @PutMapping("/{idx}")
-    public ResponseEntity<BaseResponseBody> updateRoom(@PathVariable("idx") Long roomIdx, @RequestBody RoomDto roomDto) {
-
-        LOGGER.info("Update Room Title or Content");
-        roomDto.setIdx(roomIdx);
+    public ResponseEntity<BaseResponseBody> updateRoom(@PathVariable("idx") Long roomIdx, @RequestBody Map<String, Object> map) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoomDto roomDto = new RoomDto();
+        String title = map.get("title").toString();
+        String content = map.get("content").toString();
+        Object matchObj = map.get("matchDto");
+        String hostSummonerName = map.get("hostSummonerName").toString();
+        String hostTeamId = map.get("hostTeamId").toString();
+        if(title == null
+                || content == null
+                || hostSummonerName == null
+                || hostTeamId == null
+                || matchObj == null
+                || "{}".equals(matchObj.toString())){
+            throw new InputDataNullException("INPUT DATA IS NULL");
+        }
+        roomDto.setTitle(title);
+        roomDto.setContent(content);
+        roomDto.setHostSummonerName(hostSummonerName);
+        roomDto.setHostTeamId(Integer.parseInt(hostTeamId));
+        MatchDto matchDto = new ObjectMapper().convertValue(matchObj, MatchDto.class);
+        roomDto.setMatchDto(matchDto);
+        roomDto.setIdx(roomIdx);
+        LOGGER.info("Update Room");
         boolean result = roomService.updateRoom(roomDto, principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, result ? successMsg : failMsg));
     }
