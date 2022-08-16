@@ -34,6 +34,7 @@ const BoardDetail = () => {
     setBoard(result?.data?.boardDto);
 
     // 댓글 정보 저장
+    // console.log(result.data.list);
     setCommentList([...result?.data?.list]);
   };
 
@@ -82,21 +83,18 @@ const BoardDetail = () => {
               <Button
                 className='detail-button'
                 variant='outlined'
-                color='veryperi'
-              >
+                color='veryperi'>
                 목록으로
               </Button>
             </Link>
             {board.nickname === user.nickname ? (
               <Link
                 to={`../edit/${board.idx}`}
-                style={{ textDecoration: 'none' }}
-              >
+                style={{ textDecoration: 'none' }}>
                 <Button
                   className='detail-button'
                   variant='outlined'
-                  color='veryperi'
-                >
+                  color='veryperi'>
                   수정하기
                 </Button>
               </Link>
@@ -107,8 +105,7 @@ const BoardDetail = () => {
                 className='detail-button'
                 variant='contained'
                 color='veryperi'
-                onClick={() => setShowDeleteModal(true)}
-              >
+                onClick={() => setShowDeleteModal(true)}>
                 방 삭제하기
               </Button>
             ) : null}
@@ -119,8 +116,7 @@ const BoardDetail = () => {
             <DialogContent style={{ position: 'relative' }}>
               <IconButton
                 style={{ position: 'absolute', top: '0', right: '0' }}
-                onClick={() => setShowDeleteModal(false)}
-              >
+                onClick={() => setShowDeleteModal(false)}>
                 <DisabledByDefaultOutlinedIcon />
               </IconButton>
               <div className='modal'>
@@ -129,8 +125,7 @@ const BoardDetail = () => {
                   <Button
                     variant='outlined'
                     color='error'
-                    onClick={onDeleteButtonClicked}
-                  >
+                    onClick={onDeleteButtonClicked}>
                     예
                   </Button>
                   <Button
@@ -138,14 +133,14 @@ const BoardDetail = () => {
                     color='primary'
                     onClick={() => {
                       setShowDeleteModal(false);
-                    }}
-                  >
+                    }}>
                     아니오
                   </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
+
           <BoardComment idx={idx} list={commentList} />
         </div>
       ) : null}{' '}
