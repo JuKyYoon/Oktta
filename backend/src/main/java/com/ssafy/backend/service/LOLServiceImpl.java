@@ -100,6 +100,11 @@ public class LOLServiceImpl implements LOLService {
                 .retrieve().bodyToMono(ArrayList.class);
     }
 
+    @Override
+    public LolAuth getUserLolAuth(String userId) {
+        return lolAuthRepository.findByUserId(userId).orElse(null);
+    }
+
 //    @Override
 //    public MatchDto getGameDetails(String matchId, MatchDto matchDto) {
 //        JSONObject jsonObject = asiaWebClinet.get().uri(uriBuilder -> uriBuilder

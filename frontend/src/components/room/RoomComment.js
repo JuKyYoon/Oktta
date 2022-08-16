@@ -24,9 +24,10 @@ const RoomComment = ({ idx }) => {
     const result = await detailRoom(idx);
 
     if (result?.data?.message === 'success') {
-      setTotalComments(result.data.commentList.length);
-      setCommentList([...result.data.commentList.slice(0, currentPage * 5)]);
-      setTotalPage(Math.ceil(result.data.commentList.length / 5));
+      console.log(result.data.list);
+      setTotalComments(result.data.list.length);
+      setCommentList([...result.data.list.slice(0, currentPage * 5)]);
+      setTotalPage(Math.ceil(result.data.list.length / 5));
     };
   };
 

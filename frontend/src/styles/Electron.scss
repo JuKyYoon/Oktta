@@ -1,0 +1,45 @@
+$veryperi: #6667ab;
+$background-color: white;
+$box-color: #d7d7fa;
+$hover-color:#d7d7fa71;
+$font-size-large: 20px;
+$font-size-medium: 15px;
+$font-size-small: 10px;
+$shadow-color: rgba(0, 0, 0, 0.322);
+
+.electron {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.electron-logo-image {
+  width: 450px;
+  height: auto;
+  margin-bottom: 50px;
+}
+
+.electron-social-login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  > a {
+    margin: 8px 5px;
+    
+  }
+  > a > img {
+    border-radius: 7px;
+    box-shadow: 2px 2px 5px 0px $shadow-color;
+  }
+  > a > img:hover {
+    border-radius: 7px;
+    box-shadow: 2px 2px 10px 0px $shadow-color;
+  }
+}
+
+.electron-social-login-button {
+  width: 450px;
+  height: 125px;
+}

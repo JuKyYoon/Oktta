@@ -9,6 +9,8 @@ const SocialAuth = () => {
   const token = param.get("token")
   const nickname = param.get("nickName")
   const snsType = param.get("snsType")
+  const tier = param.get("tier")
+  const summonerName = param.get("summonerName")
 
   const dispatch = useDispatch();
   const user = {
@@ -17,6 +19,8 @@ const SocialAuth = () => {
     auth: "1",
     token: token,
     snsType: snsType,
+    tier: tier,
+    summonerName: summonerName,
   }
   dispatch({
     type: SOCIAL_LOGIN,

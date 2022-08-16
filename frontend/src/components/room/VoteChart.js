@@ -2,6 +2,7 @@ import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const VoteChart = (props) => {
+  const candidates = props.candidates;
   const donutData = {
     series: [props.top, props.jungle, props.mid, props.adc, props.supporter],
     options: {

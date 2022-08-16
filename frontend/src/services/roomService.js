@@ -1,4 +1,4 @@
-import { axiosAuth, riotRequest } from './axios.js';
+import { axiosAuth, riotRequest, request } from './axios.js';
 
 const ROOM_URL = 'api/v1/room';
 
@@ -51,7 +51,7 @@ export const updateRoom = async (idx, dataToSubmit) => {
 // room 목록 조회
 export const getRoomList = async (pageNum) => {
   try {
-    const payload = await axiosAuth.get(`${ROOM_URL}?page=${pageNum}`);
+    const payload = await request.get(`${ROOM_URL}?page=${pageNum}`);
     return payload;
   } catch (err) {
     return err;
@@ -121,3 +121,33 @@ export const getMatchDetail = async (dataToSubmit) => {
     return err;
   };
 };
+
+export const roomHitRequest = (dataToSubmit) => {
+  try {
+    axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+  } catch (err) {
+
+  }
+};
+
+// 온에어
+export const onAirListRequest = async (dataToSubmit) => {
+  try {
+    const payload = await axiosAuth.get(`${ROOM_URL}/live?page=${dataToSubmit}`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+// 온에어 TOP3
+export const onAirTopListRequest = async () => {
+  try {
+    const payload = await request.get(`${ROOM_URL}/top`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}

@@ -6,7 +6,7 @@ import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.Match;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.exception.MatchNullException;
+import com.ssafy.backend.model.exception.InputDataNullException;
 import com.ssafy.backend.model.exception.RoomNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.mapper.MatchMapper;
@@ -51,13 +51,10 @@ public class RoomServiceImpl implements RoomService {
         );
         // MatchDto to Match
         MatchDto matchDto = roomDto.getMatchDto();
-        if(matchDto == null){
-            throw new MatchNullException("Match Is Null");
-        }
         Match match = matchMapper.dtoToEntity(matchDto);
         matchRepository.save(match);
         Room room = roomRepository.save(
-                new Room.Builder(user, roomDto.getTitle(), roomDto.getContent(), match).build()
+                new Room.Builder(user, roomDto.getTitle(), roomDto.getContent(), match, roomDto.getHostSummonerName(), roomDto.getHostTeamId()).build()
         );
         return room.getIdx();
     }
@@ -102,7 +99,7 @@ public class RoomServiceImpl implements RoomService {
 
         String nickname = deleteUserService.checkNickName(userRepository.findNicknameByIdx(user.getIdx()));
         for(Room r : roomList){
-            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchMapper.entityToDto(r.getMatch())));
+            list.add(new RoomDto(nickname, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchMapper.entityToDto(r.getMatch()), r.getHostSummonerName(), r.getHostTeamId()));
         }
 
         return list;
@@ -116,10 +113,10 @@ public class RoomServiceImpl implements RoomService {
         );
         MatchDto matchDto = roomDto.getMatchDto();
         if(matchDto == null){
-            throw new MatchNullException("Match Is Null");
+            throw new InputDataNullException("Match Is Null");
         }
         int result = roomRepository.updateRoom(roomDto.getTitle(), roomDto.getContent(), roomDto.getIdx(),
-                user, LocalDateTime.now(), matchMapper.dtoToEntity(matchDto));
+                user, LocalDateTime.now(), matchMapper.dtoToEntity(matchDto), roomDto.getHostSummonerName(), roomDto.getHostTeamId());
 
         return result == 1;
     }
@@ -150,7 +147,7 @@ public class RoomServiceImpl implements RoomService {
             String nickName = deleteUserService.checkNickName(user.getNickname());
             //Match to MatchDto
             MatchDto matchDto = matchMapper.entityToDto(r.getMatch());
-            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto));
+            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto, r.getHostSummonerName(), r.getHostTeamId()));
         }
         return list;
     }
