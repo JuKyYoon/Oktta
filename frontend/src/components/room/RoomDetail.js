@@ -23,6 +23,7 @@ import {
 import { lolPosition, position } from '@/const/position';
 import '@/styles/room.scss';
 import { championKorean } from '@/const/lolKorean';
+import { result } from 'lodash';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -35,12 +36,14 @@ const RoomDetail = () => {
   const [currentVote, setCurrentVote] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [candidates, setCandidates] = useState([]);
+  const [isLive, setIsLive] = useState(false);
   // 댓글 정보
   const [commentList, setCommentList] = useState([]);
 
 
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
+    console.log(result)
     if (result?.data?.message !== 'success') {
       alert('잘못된 접근입니다.');
       navigate('../list');
@@ -57,6 +60,9 @@ const RoomDetail = () => {
     setCommentList(result?.data?.list);
     const participants = rawData.matchDto.participants;
     setCandidates([...participants.filter((participant) => participant.teamId === parseInt(rawData.hostTeamId))]);
+
+    // 라이브 여부
+    setIsLive(result.data.result.live);
   };
   
 
@@ -259,6 +265,11 @@ const RoomDetail = () => {
               </Button>
             ) : null}
           </div>
+          {isLive ?
+            <Button variant='contained' color='error' onClick={() => navigate('share')}>
+              라이브 입장하기
+            </Button>
+            : null}
           <hr className='hrLine'></hr>
           {/* 삭제확인모달 */}
           <Dialog open={showDeleteModal}>
