@@ -140,15 +140,11 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomDto> getRoomList(int page, int limit) {
         List<Room> roomList = roomRepository.findRooms(limit, (page - 1) * limit);
         List<RoomDto> list = new ArrayList<>();
-
-        System.out.println(roomList.size());
-
         for(Room r : roomList){
             User user = r.getUser();
             String nickName = deleteUserService.checkNickName(user.getNickname());
             //Match to MatchDto
-            MatchDto matchDto = matchMapper.entityToDto(r.getMatch());
-            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), matchDto, r.getHostSummonerName(), r.getHostTeamId()));
+            list.add(new RoomDto(nickName, r.getIdx(), r.getTitle(), r.getCreateDate(), r.isLive(), r.getPeople(), r.getHit(), null, r.getHostSummonerName(), r.getHostTeamId()));
         }
         return list;
     }
