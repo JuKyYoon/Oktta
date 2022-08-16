@@ -100,7 +100,9 @@ public class MatchMapper {
         summonerName.setLength(summonerName.length()-1);
         championId.setLength(championId.length()-1);
         championName.setLength(championName.length()-1);
-        teamPosition.setLength(teamPosition.length()-1);
+        if(teamPosition.length() > 0){
+            teamPosition.setLength(teamPosition.length()-1);
+        }
         kill.setLength(kill.length()-1);
         assist.setLength(assist.length()-1);
         death.setLength(death.length()-1);
