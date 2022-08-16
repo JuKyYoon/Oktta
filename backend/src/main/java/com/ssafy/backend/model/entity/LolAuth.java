@@ -19,7 +19,7 @@ public class LolAuth {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String puuid;
 
     @Column(nullable = false)

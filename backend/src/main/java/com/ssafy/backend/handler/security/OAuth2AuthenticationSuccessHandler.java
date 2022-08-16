@@ -5,7 +5,9 @@ import com.ssafy.backend.info.OAuth2UserInfo;
 import com.ssafy.backend.info.OAuth2UserInfoFactory;
 import com.ssafy.backend.model.entity.ProviderType;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.exception.UserNotFoundException;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.security.JwtProvider;
@@ -40,12 +42,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AppProperties appProperties;
     private final UserRepository userRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+    private final LolAuthRepository lolAuthRepository;
 
-    public OAuth2AuthenticationSuccessHandler(JwtProvider jwtProvider, AppProperties appProperties, UserRepository userRepository, OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository) {
+    public OAuth2AuthenticationSuccessHandler(JwtProvider jwtProvider, AppProperties appProperties, UserRepository userRepository, OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository, LolAuthRepository lolAuthRepository) {
         this.jwtProvider = jwtProvider;
         this.appProperties = appProperties;
         this.userRepository = userRepository;
         this.authorizationRequestRepository = authorizationRequestRepository;
+        this.lolAuthRepository = lolAuthRepository;
     }
 
     @Override
@@ -83,10 +87,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         User loginUser = userRepository.findById(userInfo.getId()).orElseThrow(
                 () -> new UserNotFoundException("user not found")
         );
+
+        LolAuth lolAuth = lolAuthRepository.findByUserId(loginUser.getId()).orElse(null);
+        String tier = lolAuth != null ? String.valueOf(lolAuth.getTier()) : "";
+        String summonerName = lolAuth != null ? lolAuth.getSummonerName() : "";
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken)
                 .queryParam("nickName", loginUser.getNickname())
-                .queryParam("snsType", SnsType.getSnsType(loginUser.getSnsType()).toString()).encode(StandardCharsets.UTF_8)
+                .queryParam("snsType", SnsType.getSnsType(loginUser.getSnsType()).toString())
+                .queryParam("tier", tier)
+                .queryParam("summonerName", summonerName).encode(StandardCharsets.UTF_8)
                 .build().toUriString();
     }
 

@@ -86,7 +86,7 @@ public class BoardController {
      * List에 담아서 return
      */
     @GetMapping("")
-    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "1") int category, @RequestParam(defaultValue = "1") int page){
+    public ResponseEntity<? extends BaseResponseBody> listBoard(@RequestParam(defaultValue = "0") int category, @RequestParam(defaultValue = "1") int page){
         List<BoardDto> list = boardService.getBoardList(category, page, pagingLimit);
         int lastPage = boardService.getLastPage(category, pagingLimit);
         return ResponseEntity.status(200).body(BoardResponse.of(200, successMsg, list, lastPage));
