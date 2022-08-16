@@ -115,8 +115,10 @@ public class RoomServiceImpl implements RoomService {
         if(matchDto == null){
             throw new InputDataNullException("Match Is Null");
         }
+        Match match = matchMapper.dtoToEntity(matchDto);
+        matchRepository.save(match);
         int result = roomRepository.updateRoom(roomDto.getTitle(), roomDto.getContent(), roomDto.getIdx(),
-                user, LocalDateTime.now(), matchMapper.dtoToEntity(matchDto), roomDto.getHostSummonerName(), roomDto.getHostTeamId());
+                user, LocalDateTime.now(), match, roomDto.getHostSummonerName(), roomDto.getHostTeamId());
 
         return result == 1;
     }
