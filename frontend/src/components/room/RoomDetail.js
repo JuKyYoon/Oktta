@@ -21,7 +21,7 @@ import {
   RadioGroup,
 } from '@mui/material';
 import '@/styles/room.scss';
-import { championKorean } from '@/const/champion';
+import { championKorean } from '@/const/lolKorean';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -41,7 +41,9 @@ const RoomDetail = () => {
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
     if (result?.data?.message !== 'success') {
-      alert('잘못된 접근입니다.');
+      if (result.response.status !== 403) {
+        alert('잘못된 접근입니다.');
+      }
       navigate('../list');
     }
    

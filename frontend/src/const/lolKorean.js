@@ -162,6 +162,15 @@ const championKorean = {
   Zyra: '자이라'
 };
 
+const positionKorean = {
+  TOP: '탑',
+  JUNGLE: '정글',
+  MIDDLE: '미드',
+  BOTTOM: '원딜',
+  UTILITY: '서폿',
+};
+
 export {
   championKorean,
+  positionKorean,
 };

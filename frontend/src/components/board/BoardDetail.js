@@ -9,7 +9,6 @@ import ClassicEditor from '../../util/build/ckeditor';
 import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import { useSelector } from 'react-redux';
 import BoardComment from './BoardComment.js';
-
 import '@/styles/board.scss';
 
 const BoardDetail = () => {
@@ -26,13 +25,14 @@ const BoardDetail = () => {
   const getDetailBoard = async (idx) => {
     const result = await detailBoard(idx);
     if (result?.data?.message !== 'success') {
-      alert('잘못된 접근입니다.');
+      if (result.response.status !== 403) {
+        alert('잘못된 접근입니다.');
+      }
       navigate('../list');
     }
 
     // 방 정보 board에 저장
     setBoard(result?.data?.boardDto);
-
     // 댓글 정보 저장
     setCommentList([...result?.data?.list]);
   };
@@ -62,8 +62,20 @@ const BoardDetail = () => {
         <div className='board'>
           <h1>{board.title}</h1>
           <hr className='hrLine'></hr>
-
-          <div className='detail-editor'>
+          <div className='detail-header'>
+            <div className='detail-header-left'>
+              <p><img src={board.profileImage} /> {board.nickname}</p>
+            </div>
+            <div className='detail-header-right'>
+              <p>조회수: {board.hit}</p>
+              {board.createDate === board.modifyDate ?
+                <p>작성일: {board.createDate.substr(0, 10)}</p>
+                : <p>수정일: {board.modifyDate.substr(0, 10)}</p>
+              }
+            </div>
+          </div>
+          <hr className='hrLine'></hr>
+          <div className='board-detail-editor'>
             <CKEditor
               editor={ClassicEditor}
               config={{

@@ -131,11 +131,12 @@ export const getMatchDetail = async (dataToSubmit) => {
   };
 };
 
-export const roomHitRequest = (dataToSubmit) => {
+export const roomHitRequest = async (dataToSubmit) => {
   try {
-    axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+    const payload = await axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+    return payload;
   } catch (err) {
-
+    return err;
   }
 };
 

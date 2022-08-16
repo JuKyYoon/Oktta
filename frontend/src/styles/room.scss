@@ -28,8 +28,10 @@ $lose: #ff968d;
 }
 
 .hrLine {
+  margin: 10px;
   width: 80%;
 }
+
 
 // RoomList 관련
 .create-button {
@@ -64,10 +66,6 @@ $lose: #ff968d;
   }
   .room-editor{
     width: 100%;
-  }
-
-  .create-room-selected {
-
   }
 }
 
@@ -423,6 +421,13 @@ $lose: #ff968d;
 
 .create-room-notice {
   color: red;
+}
+
+.no-on-air {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 270px;
 }
 
 .on-air-list {
