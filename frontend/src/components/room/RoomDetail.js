@@ -20,8 +20,9 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
+import { lolPosition } from '@/const/position';
 import '@/styles/room.scss';
-import { championKorean } from '@/const/champion';
+import { championKorean } from '@/const/lolKorean';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const RoomDetail = () => {
     } 
     // 방 정보 room에 저장
     setRoom(rawData);
+    console.log(rawData)
     // 댓글 정보
     setCommentList(result?.data?.list);
     const participants = rawData.matchDto.participants;
@@ -123,6 +125,31 @@ const RoomDetail = () => {
       {room !== null ? (
         <div className='room'>
           <h1>{room.title}</h1>
+          <hr className='hrLine'></hr>
+          <div className='detail-header'>
+            <div className='detail-header-left'>
+              <p><img src={room.profileImage} /> {room.nickname}</p>
+              {room.live ?
+                <div>
+                  <span>라이브 참여인원: {room.people}명</span>
+                  <Button
+                    variant='contained'
+                    color='error'
+                    onClick={() => navigate('share')}
+                  >
+                    입장하기
+                  </Button>
+                </div>
+              : null}
+            </div>
+            <div className='detail-header-right'>
+              <p>조회수: {room.hit}</p>
+              {room.createDate === room.modifyDate ?
+                <p>작성일: {room.createDate.substr(0, 10)}</p>
+                : <p>수정일: {room.modifyDate.substr(0, 10)}</p>
+              }
+            </div>
+          </div>
           <hr className='hrLine'></hr>
           <div className='detail-body'>
             <div className='detail-editor'>
