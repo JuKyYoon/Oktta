@@ -1,113 +1,39 @@
-@import './App.scss';
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900");
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 
-.mypage {
-  position: relative;
-  margin-top: 5%;
-}
+$veryperi: #6667ab;
+$background-color: white;
+$box-color: #d7d7fa;
+$hover-color:#d7d7fa71;
+$font-size-large: 20px;
+$font-size-medium: 15px;
+$font-size-small: 10px;
+$shadow-color: rgba(0, 0, 0, 0.322);
 
-// 마이페이지
-.mypage-top {
-    display: flex;
-    justify-content: center;
-  }
-  
-.mypage-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 2.5%;
-  width: 30%;
-}
 
-// .mypage-image-profile {
-//   border: $veryperi 3px solid;
-//   border-radius: 100%;
-//   width: 80%;
-//   aspect-ratio: 1;
-// }
-
-.mypage-left-item {
-  margin: 15px;
-}
-
-.mypage-image-tier {
-  align-self: center;
-}
-
-.mypage-summoner {
-  align-self: center;
-}
-
-.mypage-lol-info {
-  display: flex;
-  flex-direction: column;
-  background-color: $box-color;
-  border-radius: 10px;
-  border-top-left-radius: 0px;
-  padding: 1%;
-  height: 350px;
-  justify-content: center;
-}
-
-.mypage-right {
-  margin: 2.5%;
-  width: 40%;
-}
-
-.mypage-contents-box {
-  display: flex;
-  flex-direction: column;
-  background-color: $box-color;
-  border-radius: 10px;
-  border-top-left-radius: 0px;
-  padding: 1%;
-  height: 350px;
-  justify-content: start;
-}
-
-.mypage-contents-item {
-  // white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  background-color: white;
-  border-radius: 10px;
-  padding: 1%;
-  margin: 2%;
-  height: 25px;
-}
-
-.mypage-mode {
-  border: $box-color 1px solid;
-  border-top: $box-color 2px solid;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.mypage-mode-start {
-  border-left: $box-color 2px solid;
-  border-top-left-radius: 10px;
-}
-
-.mypage-mode-end {
-  border-right: $box-color 2px solid;
-  border-top-right-radius: 10px;
-}
-
-.mypage-selected {
-  background-color: $box-color;
-  color: black;
-}
-
-.mypage-bottom {
+.signup-profile-image {
   text-align: center;
+  > img {
+    width: 100%;
+    object-fit: cover;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 50%;
+  }
 }
 
-.new-profile-img {
-  border-bottom: 1px dashed;
-}
+
+
+
 
 .default-profile-img {
   text-align: center;
+}
+
+.pagination {
+  position: absolute;
+  bottom: 10px;
 }
 
 .no-pagination {
@@ -115,21 +41,27 @@
 }
 
  /* pagination*/
-.css-wjh20t-MuiPagination-ul {
-  justify-content: center;
+// .css-wjh20t-MuiPagination-ul {
+//   justify-content: center;
+// }
+
+/* 회원정보 수정 */
+.update-menu {
+  display: flex;
 }
 
- /* 회원 탈퇴 버튼 */
-.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-  color: black !important;
+.update-menu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-selected {
+  color: $veryperi;
+  border-bottom: 2px $veryperi solid;
 }
 
 #delete-btn {
-  color: rgb(219, 219, 219) !important;
-}
-
-.cancel {
-  color: black !important;
+  color: rgb(219, 219, 219);
 }
 
 .form {
@@ -142,22 +74,30 @@
   // margin-top: 2%;
 }
 
-.login {
+.login, .signup {
   display: flex;
   justify-content: center;
+  margin: 0;
+  padding: 0;
 }
   /* 입력 폼 정렬 */
-.login-form {
-  radius: 10px;
+.login-form, .signup-form, .user-edit-form {
   display: flex;
+  min-width: 550px;
+  height: 80%;
+  margin-top: 5%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2%;
-  width: auto;
-  background-color: white;
-  // padding-top: 10px;
+  padding: 20px;
+  background-color: $background-color;
+  box-shadow: 2px 2px 5px 0px $shadow-color;
+  border-radius: 10px;
   // margin-top: 2%;
+}
+
+.update-profile-form {
+  width: 285px;
 }
 
 /* 로그인 폼 정렬 */
@@ -169,9 +109,9 @@
 }
 
 // 회원가입 폼
-.css-1nrlq1o-MuiFormControl-root {
-  width: 315px;
-}
+// .css-1nrlq1o-MuiFormControl-root {
+//   width: 315px;
+// }
 
 // 회원가입 경고문
 .css-1wc848c-MuiFormHelperText-root.Mui-error {
@@ -181,26 +121,31 @@
   vertical-align: middle;
 }
 
-/* 회원가입 버튼 색상 */
-.css-1fu7jd5-MuiButtonBase-root-MuiButton-root {
-  background-color: $veryperi !important;
+
+.social-login-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  > a {
+    margin: 0px 5px;
+    
+  }
+  > a > img {
+    border-radius: 7px;
+    box-shadow: 2px 2px 5px 0px $shadow-color;
+  }
+  > a > img:hover {
+    border-radius: 7px;
+    box-shadow: 2px 2px 10px 0px $shadow-color;
+  }
 }
 
-#naverIdLogin {
-  padding-top: 8px;
+.social-login-button {
   width: 200px;
+  height: 50px;
 }
 
-#kakaoIdLogin {
-  padding-top: 8px;
-  width: 200px;
-  height: 55px;
-}
-
-#googleIdLogin {
-  width: 205px;
-  height: 60px;
-}
 
 .login_or {
   position: relative;
@@ -220,6 +165,16 @@
   padding: 10px;
 }
 
+.signup-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-left {
+  display: flex;
+  justify-content: center;
+}
+
 /* 이메일 인증 메시지 */
 .email-auth-notice {
   display: flex;
@@ -227,6 +182,8 @@
 }
 
 @media (max-width: 991px) {
+
+
   .mypage-top {
     flex-direction: column;
     align-items: center;
@@ -237,23 +194,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2.5%;
-    width: 50%;
+    margin: 17px;
+    // width: 50%;
   }
 
   .mypage-right {
-    margin: 2.5%;
-    width: 85%;
+    margin: 17px;
+    min-width: 400px;
+    min-height: 350px;
+    // width: 85%;
   }
 
-  .css-e53awj-MuiStack-root {
-    flex-direction: column !important;
+  .social-login-form {
+    flex-direction: column;
   }
 
-  #googleIdLogin {
-    width: 205px;
-    height: 60px;
-    margin-left: 15px;
+  .social-login-button {
+    margin: 1px 0px;
   }
 
   .email-auth-notice {
@@ -264,7 +221,4 @@
     font-size: 13px;
   }
   
-  .pagination {
-    background-color: #ff003e;
-  }
 }

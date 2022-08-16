@@ -12,6 +12,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -23,7 +25,9 @@ import {
 const RoomList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState(false);
+  const nowTime = dayjs();
+  dayjs.extend(utc);
 
   const createRoomList = async (currentPage) => {
     const result = await getRoomList(currentPage);
@@ -35,7 +39,22 @@ const RoomList = () => {
 
   const roomHit = async (roomIdx) => {
     roomHitRequest(roomIdx);
+    navigate(`../${roomIdx}`);
+  }
+
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return "";
+    }
+    date = dayjs.utc(date).local();
+    let diffDate = nowTime.diff(date, "d");
+    if (diffDate == 0) {
+      return `${nowTime.diff(date, "h")}시간 전`;
+    } else {
+      return date.format("YYYY년 MM월 DD일");
+    }
   };
+
 
   useEffect(() => {
     createRoomList(currentPage);
@@ -47,7 +66,7 @@ const RoomList = () => {
   };
 
   return (
-    <div>
+    <>
       {rooms ? (
         <div className='room'>
           <h1>옥상 목록</h1>
@@ -65,16 +84,16 @@ const RoomList = () => {
               <Table>
                 <TableHead sx={{ borderBottom: 'solid' }}>
                   <TableRow>
-                    <TableCell align='center'>라이브 상태</TableCell>
-                    <TableCell align='center'>제목</TableCell>
-                    <TableCell align='center'>작성일</TableCell>
-                    <TableCell align='center'>작성자</TableCell>
-                    <TableCell align='center'>조회수</TableCell>
+                    <TableCell align='center' width="10%">라이브</TableCell>
+                    <TableCell align='center' width="42%">제목</TableCell>
+                    <TableCell align='center' width="16%">작성자</TableCell>
+                    <TableCell align='center' width="16%">작성일</TableCell>
+                    <TableCell align='center' width="10%">조회수</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rooms.map((room) => (
-                    <TableRow key={room.idx}>
+                    <TableRow key={room.idx} onClick={() => roomHit(`${room.idx}`)} hover>
                       <TableCell align='center'>
                         {room.live ? (
                           <FontAwesomeIcon icon={faVolumeHigh} />
@@ -82,21 +101,15 @@ const RoomList = () => {
                           <FontAwesomeIcon icon={faVolumeXmark} />
                         )}
                       </TableCell>
-                      <TableCell align='center'>
-                        <Link
-                          onClick={() => roomHit(`${room.idx}`)}
-                          to={`../${room.idx}`}
-                          style={{ textDecoration: 'none' }}
-                        >
-                          {room.title}
-                        </Link>
+                      <TableCell align='left'>
+                        {room.title.length > 50 ? room.title.slice(0, 50) + '...' : room.title}
                       </TableCell>
+                      <TableCell align='left'>{room.nickname}</TableCell>
                       <TableCell align='center'>
-                        {room.createDate.substr(0, 10)}
+                        {dateFormat(room.createDate)}
                       </TableCell>
-                      <TableCell align='center'>{room.nickname}</TableCell>
                       <TableCell align='center'>{room.hit}</TableCell>
-                      <TableCell align='center'>
+                      {/* <TableCell align='center'>
                         <Link
                           to={`../${room.idx}`}
                           style={{ textDecoration: 'none' }}
@@ -107,7 +120,7 @@ const RoomList = () => {
                             size='lg'
                           />
                         </Link>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -125,7 +138,7 @@ const RoomList = () => {
       ) : (
         <Loading />
       )}
-    </div>
+    </>
   );
 };
 

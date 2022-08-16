@@ -12,7 +12,7 @@ const RoomThumbnail = ({ direction, room }) => {
   return (
     <div
       className={`${direction === 'v' ? 'thumbnail-vertical' : 'thumbnail-horizontal'}`}
-      onClick={() => navigate(`../${room.idx}/share`)}
+      onClick={() => navigate(`/room/${room.idx}/share`)}
     >
       <div className='thumbnail-box'>
         <div
@@ -21,7 +21,7 @@ const RoomThumbnail = ({ direction, room }) => {
           {room.matchDto.participants
             .filter((participant) => participant.teamId === 100)
             .map((participant, idx) =>
-              <div className='thumbnail-participant'>
+              <div className='thumbnail-participant' key={idx}>
                 <div className='thumbnail-participant-data'>
                   <div className='thumbnail-participant-text'>
                     {championKorean[participant.championName]}
@@ -30,8 +30,7 @@ const RoomThumbnail = ({ direction, room }) => {
                     {participant.kills} / {participant.deaths} / {participant.assists}
                   </div>
                 </div>
-                <img
-                  key={idx}
+                <img                  
                   src={`/assets/champion/${participant.championName}.png`}
                   className='thumbnail-champion-image'
                 />
@@ -47,7 +46,7 @@ const RoomThumbnail = ({ direction, room }) => {
           {room.matchDto.participants
             .filter((participant) => participant.teamId === 200)
             .map((participant, idx) =>
-              <div className='thumbnail-participant'>
+              <div className='thumbnail-participant' key={idx}>
                 <img
                   key={idx}
                   src={`/assets/champion/${participant.championName}.png`}

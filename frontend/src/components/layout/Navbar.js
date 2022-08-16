@@ -9,17 +9,15 @@ const Navbar = () => {
     ['자유게시판', '/board/list'],
   ];
 
-  return (
-    <div className='nav-bar'>
-      {pages.map((page, idx) => (
-        <Link to={page[1]} key={idx}>
-          <Button sx={{ mr: 4, color: 'black', display: 'block' }}>
-            {page[0]}
-          </Button>
-        </Link>
-      ))}
-    </div>
-  );
-};
+    return (
+        <div className='nav-bar'>
+            {pages.map((page, idx) => (
+                <Link to={page[1]} key={idx} className={`nav-menu ${idx === 1 ? "nav-menu-middle" : ""}`}>
+                        {page[0]}
+                </Link>
+            ))}
+        </div>
+    )
+}
 
 export default Navbar;

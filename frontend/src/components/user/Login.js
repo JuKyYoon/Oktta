@@ -1,14 +1,17 @@
 import { Button } from "@mui/material";
 import { TextField } from "@mui/material";
-import React, { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useRef, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SocialLogin from "./SocialLogin";
 import { loginRequest } from "../../services/userService.js";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const login = useSelector((state) => state.user.isLogin);
+
 
   const onEmailHandler = (event) => {
     setEmail(event.target.value);
@@ -41,6 +44,13 @@ const Login = () => {
         navigate("/error");
       }
   };
+
+  useEffect(() => {
+    if (login) {
+      navigate('/');
+    }
+  }, []);
+
 
   return (
     <div className="login">
@@ -75,9 +85,9 @@ const Login = () => {
             입력하신 내용을 다시 확인해주세요.
           </div>
           <br />
-          <Button type="submit" variant="contained" fullWidth>
-            로그인
-          </Button>
+            <Button type = "submit" color="veryperi" variant="contained" fullWidth>
+              로그인
+            </Button>
         </form>
         <br />
         <div>

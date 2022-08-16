@@ -58,6 +58,12 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomComment> comments;
 
+    @Column(name = "host_summoner_name")
+    private String hostSummonerName;
+
+    @Column(name = "host_team_id")
+    private int hostTeamId;
+
     public Long getIdx() {
         return idx;
     }
@@ -116,6 +122,18 @@ public class Room {
         return match;
     }
 
+    public List<RoomComment> getComments() {
+        return comments;
+    }
+
+    public String getHostSummonerName() {
+        return hostSummonerName;
+    }
+
+    public int getHostTeamId() {
+        return hostTeamId;
+    }
+
     protected Room() {
     }
 
@@ -124,6 +142,8 @@ public class Room {
         this.title = builder.title;
         this.content = builder.content;
         this.match = builder.match;
+        this.hostSummonerName = builder.hostSummonerName;
+        this.hostTeamId = builder.hostTeamId;
     }
 
     public static Room.Builder builder() {
@@ -136,6 +156,8 @@ public class Room {
         private String title;
         private String content;
         private Match match;
+        private String hostSummonerName;
+        private int hostTeamId;
 
         public Room.Builder idx(long idx) {
             this.idx = idx;
@@ -149,6 +171,15 @@ public class Room {
             this.title = title;
             this.content = content;
             this.match = match;
+        }
+
+        public Builder(User user, String title, String content, Match match, String hostSummonerName, int hostTeamId) {
+            this.user = user;
+            this.title = title;
+            this.content = content;
+            this.match = match;
+            this.hostSummonerName = hostSummonerName;
+            this.hostTeamId = hostTeamId;
         }
 
         public Room build() {
