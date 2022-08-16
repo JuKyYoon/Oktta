@@ -12,7 +12,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import dayjs from 'dayjs'; 
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 const RoomList = () => {
@@ -20,7 +20,7 @@ const RoomList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
   const [rooms, setRooms] = useState(false);
-  const nowTime = dayjs(); 
+  const nowTime = dayjs();
   dayjs.extend(utc);
 
   const createRoomList = async (currentPage) => {
@@ -46,7 +46,7 @@ const RoomList = () => {
     date = dayjs.utc(date).local();
     let diffDate = nowTime.diff(date, "d");
     if (diffDate == 0) {
-      return `${ nowTime.diff(date, "h") }시간 전`;
+      return `${nowTime.diff(date, "h")}시간 전`;
     } else {
       return date.format("YYYY년 MM월 DD일");
     }
@@ -65,37 +65,37 @@ const RoomList = () => {
   return (
     <>
       {rooms ? (
-      <div className='room'>
-        <h1>현재 방 목록</h1>
-        <Link
-          className='create-button'
-          to={`../create`}
-          style={{ textDecoration: 'none' }}
-        >
-          <Button variant='contained' color='veryperi'>
-            방 만들기
-          </Button>
-        </Link>
-        <div className='table-container'>
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ borderBottom: 'solid' }}>
-                <TableRow>
-                  <TableCell align='center' width="10%">라이브</TableCell>
-                  <TableCell align='center' width="42%">제목</TableCell>
-                  <TableCell align='center' width="16%">작성자</TableCell>
-                  <TableCell align='center' width="16%">작성일</TableCell>
-                  <TableCell align='center' width="8%">조회수</TableCell>
-                </TableRow>
-              </TableHead>
+        <div className='room'>
+          <h1>현재 방 목록</h1>
+          <Link
+            className='create-button'
+            to={`../create`}
+            style={{ textDecoration: 'none' }}
+          >
+            <Button variant='contained' color='veryperi'>
+              방 만들기
+            </Button>
+          </Link>
+          <div className='table-container'>
+            <TableContainer>
+              <Table>
+                <TableHead sx={{ borderBottom: 'solid' }}>
+                  <TableRow>
+                    <TableCell align='center' width="10%">라이브</TableCell>
+                    <TableCell align='center' width="42%">제목</TableCell>
+                    <TableCell align='center' width="16%">작성자</TableCell>
+                    <TableCell align='center' width="16%">작성일</TableCell>
+                    <TableCell align='center' width="10%">조회수</TableCell>
+                  </TableRow>
+                </TableHead>
                 <TableBody>
                   {rooms.map((room) => (
                     <TableRow key={room.idx} onClick={() => roomHit(`${room.idx}`)} hover>
                       <TableCell align='center'>
                         {room.live ? '🔊' : '🔈'}
-                      </TableCell>                
+                      </TableCell>
                       <TableCell align='left'>
-                          {room.title}
+                        {room.title.length > 50 ? room.title.slice(0, 50) + '...' : room.title}
                       </TableCell>
                       <TableCell align='left'>{room.nickname}</TableCell>
                       <TableCell align='center'>

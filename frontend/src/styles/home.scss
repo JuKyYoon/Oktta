@@ -1,3 +1,4 @@
+$veryperi: #6667ab;
 
 .main-content {
   display: flex;
@@ -38,4 +39,23 @@
 }
 .thumbnail {
 
+}
+
+.main-content-item {
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  padding: 5px;
+  margin: 5px;
+}
+
+.main-content-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 50%;
+}
+
+.main-content-item-info {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
