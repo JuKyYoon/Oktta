@@ -45,9 +45,18 @@ $lose: #ff968d;
 }
 
 // RoomCreate, RoomEdit관련
+.room-head-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.room-title-container {
+  width: 495px;
+}
+
 .room-title-form{
-  width: 991px;
-  margin-top: 20px;
+  width: 100%;
+  margin: 20px 0;
 }
 
 .room-button{
@@ -59,15 +68,17 @@ $lose: #ff968d;
 }
 
 @media (max-width: 991px) {
-  .room-title-form{
+  .room-head-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .room-title-container{
     width: 100%;
   }
   .room-editor{
     width: 100%;
-  }
-
-  .create-room-selected {
-
   }
 }
 
@@ -349,28 +360,41 @@ $lose: #ff968d;
   margin-top: 2%;
 }
 
+.room-get-match {
+  width: 450px;
+  margin: 20px 0;
+}
+
 .create-room-selected-box {
   display: flex;
-  justify-content: center;
-  padding: 1%;
   align-items: center;
-  justify-content: start;
-  // div {
-  //   margin: 0 20px;
-  // }
-  p {
-    width: 30%;
-    text-align: center;
-  }
+  justify-content: center;
+  width: 450px;
+  height: 150px;
+  border: $veryperi 2px solid;
+  border-radius: 20px;
+  margin: auto 0;
+}
+
+.create-room-no-selected-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 450px;
+  height: 150px;
+  border: darkgray 2px dashed;
+  border-radius: 20px;
+  margin: auto 0;
 }
 
 .create-room-selected {
   display: flex;
   justify-content: start;
   align-items: center;
-  padding: 1%;
-  height: 30px;
-  // width: 100px;
+  padding: 10px;
+  height: 30%;
+  border-radius: 10px;
   p {
     white-space: nowrap;
     color: white;
@@ -378,6 +402,29 @@ $lose: #ff968d;
   }
   div {
     padding : 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .room-get-match {
+    width: 100%;
+  }
+
+  .create-room-selected-box {
+    display: flex;
+    flex-direction: column;
+    height: 250px;
+    width: 100%;
+  }
+  
+  .create-room-no-selected-box {
+    height: 250px;
+    width: 100%;
+  }
+
+  .create-room-selected {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -401,10 +448,6 @@ $lose: #ff968d;
 
 .team-select-radio-group {
   width: auto;
-}
-
-.team-select-champion-img{
-
 }
 
 .create-room-champion-image {

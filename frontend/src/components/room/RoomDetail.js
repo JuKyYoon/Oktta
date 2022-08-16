@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { lolPosition, position } from '@/const/position';
 import '@/styles/room.scss';
-import { championKorean } from '@/const/champion';
+import { championKorean } from '@/const/lolKorean';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
