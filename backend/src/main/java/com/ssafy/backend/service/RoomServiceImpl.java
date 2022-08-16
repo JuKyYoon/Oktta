@@ -124,9 +124,7 @@ public class RoomServiceImpl implements RoomService {
                 () -> new RoomNotFoundException("Room Not Found in DeleteRoom")
         );
 
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
+        User user = room.getUser();
 
         if(user.getRole().equals(UserRole.ROLE_USER) && !room.getUser().getId().equals(userId)) {
             return false;

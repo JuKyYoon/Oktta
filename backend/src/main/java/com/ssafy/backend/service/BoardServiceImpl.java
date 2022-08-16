@@ -33,8 +33,12 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
+
+        User user = board.getUser();
+
         String nickname = userRepository.findNicknameByIdx(board.getUser().getIdx());
         BoardDto boardDto = new BoardDto(nickname, board);
+        boardDto.setProfileImage(user.getProfileImg());
 
         return boardDto;
     }
@@ -89,9 +93,7 @@ public class BoardServiceImpl implements BoardService {
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
+        User user = board.getUser();
 
         // 본인이 작성한 글이 아닌 경우, ROLE_USER의 경우
         if(user.getRole().equals(UserRole.ROLE_USER) && !board.getUser().getId().equals(id)) {
