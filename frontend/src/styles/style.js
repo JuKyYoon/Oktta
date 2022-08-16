@@ -6,5 +6,8 @@ export const theme = createTheme({
       main: '#6667AB',
       contrastText: '#fff',
     },
+    red: {
+      main: '#ff0000',
+    }
   },
 });

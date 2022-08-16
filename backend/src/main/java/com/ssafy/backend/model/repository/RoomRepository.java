@@ -17,8 +17,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // Modifying의 return은 void or int(Integer)만 가능
     @Transactional
     @Modifying
-    @Query("UPDATE Room room SET room.title = :title, room.content = :content, room.modifyDate = :date, room.match = :match  WHERE room.idx = :idx and room.user = :user")
-    int updateRoom(String title, String content, long idx, User user, LocalDateTime date, Match match);
+    @Query("UPDATE Room room SET room.title = :title, room.content = :content, room.modifyDate = :date, room.match = :match, room.hostSummonerName = :hostSummonerName, room.hostTeamId = :hostTeamId WHERE room.idx = :idx and room.user = :user")
+    int updateRoom(String title, String content, long idx, User user, LocalDateTime date, Match match, String hostSummonerName, int hostTeamId);
 
     @Query(nativeQuery = true, value = "SELECT * FROM room ORDER BY idx DESC LIMIT :limit OFFSET :page")
     List<Room> findRooms(int limit, int page);
