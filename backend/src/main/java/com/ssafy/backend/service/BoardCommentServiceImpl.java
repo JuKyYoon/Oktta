@@ -89,9 +89,7 @@ public class BoardCommentServiceImpl implements BoardCommentService {
                 () -> new CommentNotFoundException("Comment Not Found")
         );
 
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
+        User user = boardComment.getUser();
 
         if(user.getRole().equals(UserRole.ROLE_USER) && !boardComment.getUser().getId().equals(id)){
             return false;

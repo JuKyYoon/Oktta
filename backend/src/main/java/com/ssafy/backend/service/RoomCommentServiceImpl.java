@@ -97,9 +97,7 @@ public class RoomCommentServiceImpl implements RoomCommentService {
                 () -> new CommentNotFoundException("Comment Not Found")
         );
 
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("User Not Found")
-        );
+        User user = roomComment.getUser();
 
         if(user.getRole().equals(UserRole.ROLE_USER) && !roomComment.getUser().getId().equals(id)){
             return false;
