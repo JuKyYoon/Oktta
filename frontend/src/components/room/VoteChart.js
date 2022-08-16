@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { championKorean } from '@/const/champion';
-import { range } from "lodash";
+import { championKorean } from '@/const/lolKorean';
 
 const VoteChart = (props) => {
 
