@@ -7,7 +7,7 @@ import "@/styles/home.scss"
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const state = useSelector(state => state);
+  const user = useSelector(state => state.user);
   const [onAirTopList, setOnAirTopList] = useState(false);
   const [roomList, setRoomList] = useState([]);
   const [boardList, setBoardList] = useState([]);
@@ -47,7 +47,9 @@ const Home = () => {
   };
 
   const roomHit = async (roomIdx) => {
-    roomHitRequest(roomIdx);
+    if (user.isLogin) {
+      roomHitRequest(roomIdx);
+    }
   }
 
   const boardHit = async (boardIdx) => {
@@ -55,7 +57,7 @@ const Home = () => {
   }
 
   return (
-    <div className={`main-content ${state.user.auth === '0' ? "user-no-auth" : null}`}>
+    <div className={`main-content ${user.auth === '0' ? "user-no-auth" : null}`}>
       <div className="main-content-top">
         <div className="main-content-title">
           <div className="block-box">
@@ -82,7 +84,7 @@ const Home = () => {
             </div>
           </div>
           {roomList.map((room, idx) => (
-            <Link to={`../../room/${room.idx}`} onClick={() => roomHit(`${room.idx}`)} key={idx} >
+            <Link to={`${user.isLogin ? `../../room/${room.idx}` : '/user/login'}`} onClick={() => roomHit(`${room.idx}`)} key={idx} >
               <div className='main-content-item'>
                 <span className="main-content-item-title">{room.title}</span>
                 <span className="main-content-item-info">{room.createDate.slice(0, 10)}</span>
@@ -99,7 +101,7 @@ const Home = () => {
             </div>
           </div>
           {boardList.map((board, idx) => (
-            <Link to={`../../board/${board.idx}`} onClick={() => boardHit(`${board.idx}`)} key={idx} >
+            <Link to={`${user.isLogin ? `../../board/${board.idx}` : '/user/login'}`} onClick={() => boardHit(`${board.idx}`)} key={idx} >
               <div className='main-content-item'>
                 <span className="main-content-item-title">{board.title}</span>
                 <span className="main-content-item-info">{board.createDate.slice(0, 10)}</span>
