@@ -64,6 +64,10 @@ public class Room {
     @Column(name = "host_team_id")
     private int hostTeamId;
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<Video> videos;
+
+
     public Long getIdx() {
         return idx;
     }

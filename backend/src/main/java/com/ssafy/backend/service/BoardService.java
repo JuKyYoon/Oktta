@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BoardService {
     public BoardDto detailBoard(Long boardIdx);
-    public void createBoard(String id, BoardDto boardDto);
+    public Long createBoard(String id, BoardDto boardDto);
     public int updateHit(Long idx);
     public List<BoardDto> getBoardList(int category, int limit, int page);
     public int getLastPage(int category, int limit);

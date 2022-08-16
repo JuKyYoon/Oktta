@@ -14,6 +14,7 @@ import com.ssafy.backend.service.VoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,13 +96,6 @@ public class RoomController {
         return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, roomDto, list, lastPage));
     }
 
-    @GetMapping("/comment/{idx}")
-    public ResponseEntity<BaseResponseBody> getCommentList(@PathVariable("idx") Long roomIdx) {
-        List<RoomCommentDto> list = roomCommentService.getRoomCommentList(roomIdx);
-        return ResponseEntity.status(200).body(RoomResponse.of(200, successMsg, list));
-    }
-
-
     @PutMapping("/hit/{idx}")
     public ResponseEntity<BaseResponseBody> updateHit(@PathVariable("idx") Long roomIdx) {
         roomService.updateHit(roomIdx);
@@ -147,7 +141,7 @@ public class RoomController {
             voteService.deleteVote(Long.parseLong(idx));
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
         } else {
-            return ResponseEntity.status(200).body(BaseResponseBody.of(403, failMsg));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(BaseResponseBody.of(403, failMsg));
         }
     }
 

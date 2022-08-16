@@ -39,11 +39,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void createBoard(String id, BoardDto boardDto) {
+    public Long createBoard(String id, BoardDto boardDto) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
-        boardRepository.save(new Board.Builder(user, boardDto.getTitle(), boardDto.getContent(), boardDto.getCategory()).build());
+        Board board = boardRepository.save(new Board.Builder(user, boardDto.getTitle(), boardDto.getContent(), boardDto.getCategory()).build());
+        return board.getIdx();
     }
 
     @Override
