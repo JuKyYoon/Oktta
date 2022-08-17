@@ -658,7 +658,7 @@ const ScreenShare = (props) => {
                 variant="contained"
                 onClick={openVoteToggle}
               >
-                튜표 하기
+                투표 하기
               </Button>
               <Button
                 className="user-session-button"
