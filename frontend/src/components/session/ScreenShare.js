@@ -214,9 +214,16 @@ const ScreenShare = (props) => {
     })
 
     mySession.on('sessionDisconnected', (event) => {
-      alert("세션이 종료되었습니다.")
+      // 수정 중 입니다.
+      if(event?.reaseon === "sessionClosedByServer") {
+        alert("호스트에 의해 종료되었습니다.")
+      } else {
+        alert("연결이 종료되었습니다.")
+      }
       navigate("/")
     })
+
+    mySessino.on('session')
 
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
@@ -345,7 +352,7 @@ const ScreenShare = (props) => {
           publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
           publishVideo: true, // Whether you want to start publishing with your video enabled or not
           resolution: '1280x720', // The resolution of your video
-          frameRate: 30, // The frame rate of your video
+          frameRate: 60, // The frame rate of your video
           insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
         });
@@ -534,7 +541,7 @@ const ScreenShare = (props) => {
       const result = await startRecording(params.id, sessionRef.current.sessionId);
       console.log(result);
       if(result.message === "success") {
-        setRecordingId(result.recording.name);
+        setRecordingId(result.recording.id);
       }
     } else {
       // 레코딩 중단
