@@ -1,0 +1,15 @@
+.body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin: 35px auto;
+    h3{
+        margin-top: 20px;
+    }
+    a{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+}

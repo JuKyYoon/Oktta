@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Pagination } from '@mui/material';
 import { getBoardList, boardHitRequest } from '@/services/boardService';
 import '@/styles/board.scss';
@@ -13,11 +13,13 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import Loading from '../layout/Loading';
 
 const BoardList = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(10);
-  const [boards, setBoards] = useState([]);
+  const [boards, setBoards] = useState(false);
   const nowTime = dayjs();
   dayjs.extend(utc);
 
@@ -57,7 +59,7 @@ const BoardList = () => {
 
   return (
     <div>
-      {/* {boards ? ( */}
+      {boards ? (
       <div className='board'>
         <h1>게시글 목록</h1>
         <Link
@@ -66,7 +68,7 @@ const BoardList = () => {
           style={{ textDecoration: 'none' }}
         >
           <Button variant='contained' color='veryperi'>
-            방 만들기
+            게시글 작성
           </Button>
         </Link>
         <div className='table-container'>
@@ -82,15 +84,9 @@ const BoardList = () => {
               </TableHead>
               <TableBody>
                 {boards.map((board) => (
-                  <TableRow key={board.idx}>
+                  <TableRow key={board.idx} onClick={() => navigate(`../${board.idx}`)} hover>
                     <TableCell align='center'>
-                      <Link
-                        onClick={() => boardHit(`${board.idx}`)}
-                        to={`../${board.idx}`}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        {board.title}
-                      </Link>
+                      {board.title}
                     </TableCell>
                     <TableCell align='center'>
                       {dateFormat(board.createDate)}
@@ -111,9 +107,9 @@ const BoardList = () => {
           onChange={onChangeHandler}
         />
       </div>
-      {/* ) : (
+       ) : (
         <Loading />
-      )} */}
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { championKorean } from "@/const/champion";
+import { championKorean } from "@/const/lolKorean";
 import { useNavigate } from "react-router";
 
 const RoomThumbnail = ({ direction, room }) => {
@@ -12,7 +12,7 @@ const RoomThumbnail = ({ direction, room }) => {
   return (
     <div
       className={`${direction === 'v' ? 'thumbnail-vertical' : 'thumbnail-horizontal'}`}
-      onClick={() => navigate(`/room/${room.idx}/share`)}
+      onClick={() => window.location.replace(`/room/${room.idx}/share`)}
     >
       <div className='thumbnail-box'>
         <div

@@ -7,6 +7,7 @@ import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.response.MatchResponse;
+import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.service.LOLService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +44,18 @@ public class LolController {
      * @return { statusCode, message }
      */
     @PostMapping("")
-    public ResponseEntity<BaseResponseBody> tier(@RequestBody Map<String, String> summonerMap) {
+    public ResponseEntity<MessageResponse> tier(@RequestBody Map<String, String> summonerMap) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        boolean result = lolService.createLolAuth(principal.getUsername(), summonerMap.get("summonerName"));
-        if(result){
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200,successMsg));
-        }else{
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200,failMsg));
+        int result = lolService.createLolAuth(principal.getUsername(), summonerMap.get("summonerName"));
+        if(result == 1){
+            return ResponseEntity.status(200).body(MessageResponse.of(200,successMsg, "success"));
+        } else if (result == -1 ) {
+            return ResponseEntity.status(200).body(MessageResponse.of(200,failMsg, "server error"));
+        } else if (result == 0 ) {
+            return ResponseEntity.status(200).body(MessageResponse.of(200,failMsg, "already"));
+        } else{
+            return ResponseEntity.status(200).body(MessageResponse.of(200,failMsg, ""));
         }
     }
 

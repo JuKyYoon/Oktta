@@ -19,7 +19,7 @@ const BoardCreate = () => {
   const navigate = useNavigate();
 
   const onTitleChanged = (event) => {
-    setTitle(event.target.value.trim());
+    setTitle(event.target.value);
   };
 
   const onSubmitClicked = async (event) => {
@@ -51,7 +51,7 @@ const BoardCreate = () => {
       <span>자유롭게 소통해요!</span>
       <hr className='hrLine'></hr>
 
-      <FormControl className='board-title-form'>
+      <FormControl className='board-title-form' sx={{ width:"50%", margin: '20px 0'}}>
         <InputLabel htmlFor='title' color='veryperi'>
           제목
         </InputLabel>

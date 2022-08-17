@@ -3,6 +3,7 @@ package com.ssafy.backend.service;
 import com.ssafy.backend.model.dto.BoardDto;
 import com.ssafy.backend.model.entity.Board;
 import com.ssafy.backend.model.entity.User;
+import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.BoardNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
@@ -32,8 +33,12 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
                 () -> new BoardNotFoundException("Board Not Found")
         );
+
+        User user = board.getUser();
+
         String nickname = userRepository.findNicknameByIdx(board.getUser().getIdx());
         BoardDto boardDto = new BoardDto(nickname, board);
+        boardDto.setProfileImage(user.getProfileImg());
 
         return boardDto;
     }
@@ -43,6 +48,14 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User Not Found")
         );
+
+        int category = boardDto.getCategory();
+
+        // 공지사항 작성, ROLE 비교
+        if(category == 1 && !user.getRole().equals(UserRole.ROLE_ADMIN)){
+            return -1L;
+        }
+
         Board board = boardRepository.save(new Board.Builder(user, boardDto.getTitle(), boardDto.getContent(), boardDto.getCategory()).build());
         return board.getIdx();
     }
@@ -80,8 +93,10 @@ public class BoardServiceImpl implements BoardService {
                 () -> new BoardNotFoundException("Board Not Found")
         );
 
-        // 본인이 작성한 글이 아닌 경우
-        if(!board.getUser().getId().equals(id)) {
+        User user = board.getUser();
+
+        // 본인이 작성한 글이 아닌 경우, ROLE_USER의 경우
+        if(user.getRole().equals(UserRole.ROLE_USER) && !board.getUser().getId().equals(id)) {
             return false;
         } else {
             boardRepository.delete(board);

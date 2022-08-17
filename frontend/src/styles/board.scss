@@ -2,13 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
+  margin: 35px auto;
+  width: 80%;
 }
 
 .hrLine {
+  margin: 10px;
   width: 80%;
 }
+
 
 // RoomList 관련
 .create-button {
@@ -21,16 +23,23 @@
 
 // RoomCreate, RoomEdit관련
 .board-title-form {
-  margin-bottom: 10px;
-  margin-top: 5px;
-  width: 30%;
+  width: 100%;
 }
+
 .board-button {
   margin: 10px;
 }
 .board-editor {
-  margin: 20px auto;
+  margin-bottom: 10px;
+  width: 991px;
 }
+
+@media (max-width: 991px) {
+  .board-editor{
+    width: 100%;
+  }
+}
+
 .ck-editor__editable {
   min-height: 400px;
 }
@@ -40,12 +49,29 @@
 }
 
 // RoomDetail 관련
-.detail-editor {
-  width: 50%;
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  p {
+    font-size: large;
+  }
+
+  span {
+    font-size: large;
+    margin-right: 10px;
+  }
+
+  img {
+    border-radius: 50%;
+    height: 20px;
+    transform: translateY(2px);
+  }
 }
 
-.detail-button {
-  // margin: 5px !important;
+.board-detail-editor {
+  width: 80%;
+  margin: 10px;
 }
 
 .modal {

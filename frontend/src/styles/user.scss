@@ -176,6 +176,18 @@ $shadow-color: rgba(0, 0, 0, 0.322);
 }
 
 /* 이메일 인증 메시지 */
+.email-auth {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.email-auth-button {
+  display: flex;
+  justify-content: center;
+  margin: 0 10px;
+}
+
 .email-auth-notice {
   display: flex;
   justify-content: center;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public interface LOLService {
     Flux<LolInfoDto> getTierInfo(String summonerName);
     Mono<LolInfoDto> getUserInfo(String summonerName);
-    boolean createLolAuth(String userId, String summonerName);
+    int createLolAuth(String userId, String summonerName);
     Mono<ArrayList> getRecentGames(String summonerId, int start);
 
     LolAuth getUserLolAuth(String userId);

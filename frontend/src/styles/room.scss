@@ -28,8 +28,10 @@ $lose: #ff968d;
 }
 
 .hrLine {
+  margin: 10px;
   width: 80%;
 }
+
 
 // RoomList 관련
 .create-button {
@@ -45,9 +47,18 @@ $lose: #ff968d;
 }
 
 // RoomCreate, RoomEdit관련
+.room-head-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.room-title-container {
+  width: 495px;
+}
+
 .room-title-form{
-  width: 991px;
-  margin-top: 20px;
+  width: 100%;
+  margin: 20px 0;
 }
 
 .room-button{
@@ -59,20 +70,22 @@ $lose: #ff968d;
 }
 
 @media (max-width: 991px) {
-  .room-title-form{
+  .room-head-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .room-title-container{
     width: 100%;
   }
   .room-editor{
     width: 100%;
   }
-
-  .create-room-selected {
-
-  }
 }
 
 .ck-editor__editable{
-  min-height: 400px;
+  min-height: 200px;
 }
 
 .myBtn {
@@ -91,11 +104,34 @@ $lose: #ff968d;
 .detail-component {
   margin-bottom: 20px;
 }
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  p {
+    font-size: large;
+  }
+
+  span {
+    font-size: large;
+    margin-right: 10px;
+  }
+
+  img {
+    border-radius: 50%;
+    height: 20px;
+    transform: translateY(2px);
+  }
+}
+
 .detail-body {
   display: flex;
-  width: 80%;
   flex-direction: row;
+  width: 80%;
+  margin: 10px;
 }
+
 .radio-button {
   display: flex;
   flex-direction: column;
@@ -148,6 +184,9 @@ $lose: #ff968d;
 }
 
 .vote-component-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 50%;
 }
 
@@ -158,16 +197,31 @@ $lose: #ff968d;
 
 .donut-chart {
   align-items: center;
-  width: 200px;
-  height: 200px;
+  width: 80%;
   aspect-ratio: 1;
   margin: 5%;
 }
+
 .current-vote {
   text-align: center;
   margin-bottom: 5px;
   color: gray;
 }
+
+@media (max-width: 991px) {
+  .detail-body {
+    flex-direction: column;
+  }
+
+  .detail-editor {
+    width: 100%;
+  }
+
+  .vote-body {
+    width: 100%;
+  }
+}
+
 .modal {
   .modal-title {
     font-size: 2rem;
@@ -358,28 +412,41 @@ $lose: #ff968d;
   margin-top: 2%;
 }
 
+.room-get-match {
+  width: 450px;
+  margin: 20px 0;
+}
+
 .create-room-selected-box {
   display: flex;
-  justify-content: center;
-  padding: 1%;
   align-items: center;
-  justify-content: start;
-  // div {
-  //   margin: 0 20px;
-  // }
-  p {
-    width: 30%;
-    text-align: center;
-  }
+  justify-content: center;
+  width: 450px;
+  height: 150px;
+  border: $veryperi 2px solid;
+  border-radius: 20px;
+  margin: auto 0;
+}
+
+.create-room-no-selected-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 450px;
+  height: 150px;
+  border: darkgray 2px dashed;
+  border-radius: 20px;
+  margin: auto 0;
 }
 
 .create-room-selected {
   display: flex;
   justify-content: start;
   align-items: center;
-  padding: 1%;
-  height: 30px;
-  // width: 100px;
+  padding: 10px;
+  height: 30%;
+  border-radius: 10px;
   p {
     white-space: nowrap;
     color: white;
@@ -387,6 +454,29 @@ $lose: #ff968d;
   }
   div {
     padding : 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .room-get-match {
+    width: 100%;
+  }
+
+  .create-room-selected-box {
+    display: flex;
+    flex-direction: column;
+    height: 250px;
+    width: 100%;
+  }
+  
+  .create-room-no-selected-box {
+    height: 250px;
+    width: 100%;
+  }
+
+  .create-room-selected {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -412,10 +502,6 @@ $lose: #ff968d;
   width: auto;
 }
 
-.team-select-champion-img{
-
-}
-
 .create-room-champion-image {
   height: 30px;
 }
@@ -423,6 +509,20 @@ $lose: #ff968d;
 
 .create-room-notice {
   color: red;
+}
+
+.main-on-air-list {
+  width: 100%;
+}
+
+.no-on-air {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 270px;
+  width : 90%;
+  border: #d7d7fa dotted 2px;
+  border-radius: 20px;
 }
 
 .on-air-list {
