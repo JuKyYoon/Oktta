@@ -511,11 +511,18 @@ $lose: #ff968d;
   color: red;
 }
 
+.main-on-air-list {
+  width: 100%;
+}
+
 .no-on-air {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 270px;
+  width : 90%;
+  border: #d7d7fa dotted 2px;
+  border-radius: 20px;
 }
 
 .on-air-list {
