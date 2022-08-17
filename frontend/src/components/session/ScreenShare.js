@@ -657,28 +657,33 @@ const ScreenShare = (props) => {
               {/* <Button onClick={scrollDown}>
                 채팅창다운
               </Button> */}
-              <Button
+              {/* <Button
                 className="user-session-button"
                 variant="contained"
                 onClick={showUserList}
               >
                 유저 목록 보기 (Debug)
-              </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
+              </Button> */}
+              <img
+                src={`/assets/icons/vote.png`}
+                className='session-button'
                 onClick={openVoteToggle}
-              >
-                투표 하기
-              </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
+                width="50"
+                />
+              {audioEnabled ? 
+                <img
+                src={`/assets/icons/mic.png`}
+                className='session-button'
                 onClick={audioToggle}
-              >
-                {audioEnabled ? '음소거 하기' : '마이크 켜기'}
-              </Button>
-             
+                width="50"
+                /> :
+                <img
+                src={`/assets/icons/mic-off.png`}
+                className='session-button'
+                onClick={audioToggle}
+                width="50"
+                />}
+
               {/* <Button
                 className="user-session-button"
                 variant="contained"
@@ -688,41 +693,49 @@ const ScreenShare = (props) => {
               </Button> */}
               {owner ? 
                 <>
-                  <Button
-                    className="user-session-button"
-                    variant="contained"
+                  {videoEnabled ? 
+                    <img
+                    src={`/assets/icons/share-video-off.png`}
+                    className='session-button'
                     onClick={screenToggle}
-                  >
-                    {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
-                  </Button>
-                  <Button
-                    className="user-session-button"
-                    variant="contained"
+                    width="50"
+                    /> : 
+                    <img
+                    src={`/assets/icons/share-video.png`}
+                    className='session-button'
+                    onClick={screenToggle}
+                    width="50"
+                    />
+                  }
+                  {recordingStatus ?
+                    <img
+                    src={`/assets/icons/record-off.png`}
+                    className='session-button'
                     onClick={recordingToggle}
-                    sx={{
-                      backgroundColor: recordingStatus ? '#e53e3e' : '#4249df',
-                      "&:hover":{
-                        backgroundColor: recordingStatus ? '#e53e3e' : '#4249df'
-                      },
-                    }}
-                  >
-                    {recordingStatus ? '녹화 중단' : '녹화 시작'}
-                  </Button>
-                  <Button
-                    className="user-session-button"
-                    variant="contained"
-                    onClick={destroySession}
-                  >
-                    세션 종료하기
-                  </Button>
+                    width="50"
+                    />
+                    :
+                    <img
+                    src={`/assets/icons/record.png`}
+                    className='session-button'
+                    onClick={recordingToggle}
+                    width="50"
+                    />
+                  }
+                  <img
+                  src={`/assets/icons/exit.png`}
+                  className='session-button'
+                  onClick={destroySession}
+                  width="45"
+                  />
                 </> : 
-                <Button
-                  className="user-session-button"
-                  variant="contained"
-                  onClick={handsUp}
-                >
-                  손들기
-                </Button> }
+                <img
+                src={`/assets/icons/hand-up.png`}
+                className='session-button'
+                onClick={handsUp}
+                width="50"
+                />
+                }
               </div>
             </div>
           </Box>
