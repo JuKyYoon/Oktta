@@ -29,7 +29,7 @@ const championKorean = {
   Elise: '엘리스',
   Evelynn: '이블린',
   Ezreal: '이즈리얼',
-  FiddleSticks: '피들스틱',
+  Fiddlesticks: '피들스틱',
   Fiora: '피오라',
   Fizz: '피즈',
   Galio: '갈리오',
