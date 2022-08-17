@@ -10,6 +10,7 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import { useSelector } from 'react-redux';
 import VoteChart from './VoteChart';
 import RoomComment from './RoomComment';
+
 import {
   Button,
   Dialog,
@@ -20,13 +21,28 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import { lolPosition } from '@/const/position';
 import '@/styles/room.scss';
 import { championKorean } from '@/const/lolKorean';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 const RoomDetail = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const nowTime = dayjs();
+  dayjs.extend(utc);
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return '';
+    }
+    date = dayjs.utc(date).local();
+    let diffDate = nowTime.diff(date, 'd');
+    if (diffDate == 0) {
+      return `${nowTime.diff(date, 'h')}시간 전`;
+    } else {
+      return date.format('YYYY년 MM월 DD일');
+    }
+  };
 
   const { idx } = useParams();
   const [room, setRoom] = useState(null);
@@ -38,7 +54,6 @@ const RoomDetail = () => {
   // 댓글 정보
   const [commentList, setCommentList] = useState([]);
 
-
   const getDetailRoom = async (idx) => {
     const result = await detailRoom(idx);
     if (result?.data?.message !== 'success') {
@@ -47,25 +62,29 @@ const RoomDetail = () => {
       }
       navigate('../list');
     }
-   
+
     // 투표가 종료된 방이면 voteDto값 설정해주기
+    // console.log(result.data);
     const rawData = result?.data?.result;
     if (rawData.voteDto) {
       setVoteDto(rawData.voteDto);
-    } 
+    }
     // 방 정보 room에 저장
     setRoom(rawData);
-    console.log(rawData)
     // 댓글 정보
     setCommentList(result?.data?.list);
     const participants = rawData.matchDto.participants;
-    const candidateList = participants.filter((participant) => participant.teamId === parseInt(rawData.hostTeamId));
+    const candidateList = participants.filter(
+      (participant) => participant.teamId === parseInt(rawData.hostTeamId)
+    );
     setCandidates([...candidateList]);
-    if(rawData.myVote !== 0){
-      setCurrentVote(championKorean[candidateList[rawData.myVote-1].championName]);
+    if (rawData.myVote !== 0) {
+      setCurrentVote(
+        championKorean[candidateList[rawData.myVote - 1].championName]
+      );
     }
   };
-  
+
   useEffect(() => {
     getDetailRoom(idx);
   }, []);
@@ -102,7 +121,9 @@ const RoomDetail = () => {
   const onVoteButtonClicked = async () => {
     const result = await createVote(idx, vote);
     if (result?.data?.message === 'success') {
-      setCurrentVote(championKorean[candidates[parseInt(vote)-1].championName]);
+      setCurrentVote(
+        championKorean[candidates[parseInt(vote) - 1].championName]
+      );
       alert('투표하였습니다.');
     } else {
       alert('투표에 실패하였습니다...');
@@ -130,26 +151,37 @@ const RoomDetail = () => {
           <hr className='hrLine'></hr>
           <div className='detail-header'>
             <div className='detail-header-left'>
-              <p><img src={room.profileImage} /> {room.nickname}</p>
-              {room.live ?
+              <p>
+                <img src={room.profileImage} /> {room.nickname}
+              </p>
+              {room.live ? (
                 <div>
                   <span>라이브 참여인원: {room.people}명</span>
                   <Button
                     variant='contained'
                     color='error'
-                    onClick={() => navigate('share')}
-                  >
+                    onClick={() => navigate('share')}>
                     입장하기
                   </Button>
                 </div>
-              : null}
+              ) : (
+                <div>
+                  <Button
+                    variant='contained'
+                    color='veryperi'
+                    onClick={() => (location.href = `room/${idx}/share`)}>
+                    라이브 시작하기
+                  </Button>
+                </div>
+              )}
             </div>
             <div className='detail-header-right'>
               <p>조회수: {room.hit}</p>
-              {room.createDate === room.modifyDate ?
-                <p>작성일: {room.createDate.substr(0, 10)}</p>
-                : <p>수정일: {room.modifyDate.substr(0, 10)}</p>
-              }
+              {room.createDate === room.modifyDate ? (
+                <p>작성일: {dateFormat(room.createDate)}</p>
+              ) : (
+                <p>수정일: {dateFormat(room.createDate)}</p>
+              )}
             </div>
           </div>
           <hr className='hrLine'></hr>
@@ -178,47 +210,61 @@ const RoomDetail = () => {
                   candidates={candidates}
                 />
               ) : (
-                <div className="vote-box">
+                <div className='vote-box'>
                   <div>
-                      <h3>투표가 진행중입니다!</h3>
-                      <div className='current-vote'>
+                    <h3>투표가 진행중입니다!</h3>
+                    <div className='current-vote'>
                       {currentVote === ''
-                      ? '투표를 진행해주세요'
-                      : `현재 투표한 챔피언: ${currentVote}`}
+                        ? '투표를 진행해주세요'
+                        : `현재 투표한 챔피언: ${currentVote}`}
                     </div>
                   </div>
                   <div className='vote-component'>
-                    <div className="vote-component-left">
+                    <div className='vote-component-left'>
                       <img
                         src='../assets/donut_chart.png'
-                        className="donut-chart"
+                        className='donut-chart'
                         alt='도넛차트'
                       />
                     </div>
-                    <div className="vote-component-right">
+                    <div className='vote-component-right'>
                       <h3>범인 고르기</h3>
-                      <FormControl sx={{ width: "50px", margin: "0" }}>
-                          <RadioGroup
+                      <FormControl sx={{ width: '50px', margin: '0' }}>
+                        <RadioGroup
                           value={vote}
-                          className="team-select-radio-group"
-                          onChange={handleVoteChanged}
-                        >
-                          {candidates.map((candidate, idx) => (<FormControlLabel value={idx + 1} key={idx} control={<Radio />}
-                            label={
-                              <>
-                                <div className="vote-candidate-box">
-                                  <img src={`/assets/champion/${candidate.championName}.png`} width="40px" height="auto" style={{ marginRight: "5px" }} />
-                                  <p style={{ whiteSpace: "nowrap", height: "auto" }}>
-                                    {championKorean[candidate.championName]}
-                                  </p>
-                                </div>
-                              </>}
-                          />))}
+                          className='team-select-radio-group'
+                          onChange={handleVoteChanged}>
+                          {candidates.map((candidate, idx) => (
+                            <FormControlLabel
+                              value={idx + 1}
+                              key={idx}
+                              control={<Radio />}
+                              label={
+                                <>
+                                  <div className='vote-candidate-box'>
+                                    <img
+                                      src={`/assets/champion/${candidate.championName}.png`}
+                                      width='40px'
+                                      height='auto'
+                                      style={{ marginRight: '5px' }}
+                                    />
+                                    <p
+                                      style={{
+                                        whiteSpace: 'nowrap',
+                                        height: 'auto',
+                                      }}>
+                                      {championKorean[candidate.championName]}
+                                    </p>
+                                  </div>
+                                </>
+                              }
+                            />
+                          ))}
                         </RadioGroup>
                       </FormControl>
                     </div>
                   </div>
-                  <div className="vote-box-bottom">
+                  <div className='vote-box-bottom'>
                     <Button
                       className='detail-button'
                       size='small'
@@ -242,26 +288,31 @@ const RoomDetail = () => {
             </div>
           </div>
 
-          <div className="room-detail-button-div">
+          <div className='room-detail-button-div'>
+            <Link to={'recording'}>
+              <Button
+                className='detail-button'
+                variant='outlined'
+                color='veryperi'>
+                녹화된 영상보러가기
+              </Button>
+            </Link>
             <Link to={`../list`} style={{ textDecoration: 'none' }}>
               <Button
                 className='detail-button'
                 variant='outlined'
-                color='veryperi'
-              >
+                color='veryperi'>
                 목록으로
               </Button>
             </Link>
             {room.nickname === user.nickname ? (
               <Link
                 to={`../edit/${room.idx}`}
-                style={{ textDecoration: 'none' }}
-              >
+                style={{ textDecoration: 'none' }}>
                 <Button
                   className='detail-button'
                   variant='outlined'
-                  color='veryperi'
-                >
+                  color='veryperi'>
                   수정하기
                 </Button>
               </Link>
@@ -272,8 +323,7 @@ const RoomDetail = () => {
                 className='detail-button'
                 variant='contained'
                 color='veryperi'
-                onClick={() => setShowDeleteModal(true)}
-              >
+                onClick={() => setShowDeleteModal(true)}>
                 방 삭제하기
               </Button>
             ) : null}
@@ -282,8 +332,7 @@ const RoomDetail = () => {
                 className='detail-button'
                 variant='contained'
                 color='veryperi'
-                onClick={onVoteEndButtonClicked}
-              >
+                onClick={onVoteEndButtonClicked}>
                 투표 종료하기
               </Button>
             ) : null}
@@ -294,18 +343,16 @@ const RoomDetail = () => {
             <DialogContent style={{ position: 'relative' }}>
               <IconButton
                 style={{ position: 'absolute', top: '0', right: '0' }}
-                onClick={() => setShowDeleteModal(false)}
-              >
+                onClick={() => setShowDeleteModal(false)}>
                 <DisabledByDefaultOutlinedIcon />
               </IconButton>
               <div className='modal'>
                 <div className='modal-title'> 정말 삭제하시겠습니까 ?</div>
                 <div className='modal-button'>
-                <Button
+                  <Button
                     variant='outlined'
                     color='error'
-                    onClick={onDeleteButtonClicked}
-                  >
+                    onClick={onDeleteButtonClicked}>
                     예
                   </Button>
                   <Button
@@ -313,8 +360,7 @@ const RoomDetail = () => {
                     color='primary'
                     onClick={() => {
                       setShowDeleteModal(false);
-                    }}
-                  >
+                    }}>
                     아니오
                   </Button>
                 </div>
