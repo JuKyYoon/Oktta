@@ -79,20 +79,20 @@ const BoardList = () => {
             <Table>
               <TableHead sx={{ borderBottom: 'solid' }}>
                 <TableRow>
-                  <TableCell align='center'>제목</TableCell>
-                  <TableCell align='center'>작성자</TableCell>
-                  <TableCell align='center'>작성일</TableCell>
-                  <TableCell align='center'>조회수</TableCell>
+                  <TableCell align='center' width="50%">제목</TableCell>
+                  <TableCell align='center'  width="24%">작성자</TableCell>
+                  <TableCell align='center'  width="16%">작성일</TableCell>
+                  <TableCell align='center'  width="10%">조회수</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {boards.map((board) => (
-                  <TableRow key={board.idx} onClick={() => boardHit(`${board.idx}`)} hover>
-                    <TableCell align='center'>
+                  <TableRow key={board.idx} onClick={() => navigate(`../${board.idx}`)} hover>
+                    <TableCell>
                       {board.title}
                     </TableCell>
-                    <TableCell align='center'>{board.nickname}</TableCell>
-                    <TableCell align='center'>
+                    <TableCell>{board.nickname}</TableCell>
+                    <TableCell  align='center'>
                       {dateFormat(board.createDate)}
                     </TableCell>
                     <TableCell align='center'>{board.hit}</TableCell>
