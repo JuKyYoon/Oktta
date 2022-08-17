@@ -1,4 +1,3 @@
-import { Stack } from '@mui/material';
 import React from 'react';
 const SocialLogin = () => {
   const base_uri = process.env.REACT_APP_SERVER_URL + "/api/v1/oauth2/authorization/"
@@ -10,13 +9,13 @@ const SocialLogin = () => {
   return (
     <div className="social-login-form">  
         <a href={google_uri}>
-          <img src='../assets/google_button.png' className="social-login-button" alt="구글 로그인 버튼" />
+          <img src='../assets/login_button/google_button.png' className="social-login-button" alt="구글 로그인 버튼" />
         </a>
         <a href={naver_uri}>
-          <img src='../assets/naver_button.png' className="social-login-button" alt="네이버 로그인 버튼" />
+          <img src='../assets/login_button/naver_button.png' className="social-login-button" alt="네이버 로그인 버튼" />
         </a>
         <a href={kakao_uri}>
-          <img src='../assets/kakao_button.png' className="social-login-button" alt="카카오 로그인 버튼" />
+          <img src='../assets/login_button/kakao_button.png' className="social-login-button" alt="카카오 로그인 버튼" />
         </a>
     </div>
   );
