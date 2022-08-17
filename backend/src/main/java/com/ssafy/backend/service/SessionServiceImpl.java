@@ -1,5 +1,6 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.SessionEventDto;
 import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
@@ -233,7 +234,7 @@ public class SessionServiceImpl implements SessionService {
             return result;
         }
 
-        RecordingProperties properties = new RecordingProperties.Builder().build();
+        RecordingProperties properties = new RecordingProperties.Builder().name(roomIdx.toString()).build();
 
         String sessionId = (String) params.get("sessionId");
         try {
@@ -270,16 +271,19 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public boolean saveRecordUrl(Long roomIdx, Recording result) {
+    public boolean saveRecordUrl(Long roomIdx, SessionEventDto dto) {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found Exception")
         );
 
         // 녹화 시간 검사
-        if(result.getDuration() < 60)
+        if(dto.getDuration() < 60)
             return false;
 
-        videoRepository.save(new Video.Builder(room, result.getUrl()).build());
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://i7a104.p.ssafy.io/recordigns/" + dto.getId() + "/" + dto.getName() + ".mp4");
+
+        videoRepository.save(new Video.Builder(room, sb.toString()).build());
         return true;
     }
 

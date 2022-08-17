@@ -1,7 +1,7 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.SessionEventDto;
 import com.ssafy.backend.model.entity.Room;
-import com.ssafy.backend.model.entity.User;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
@@ -25,6 +25,6 @@ public interface SessionService {
     void clearSession();
     Map<Boolean, Recording> recordingStart(String userId, Long roomIdx, Map<String, Object> params);
     Map<Boolean, Recording> recordingStop(String userId, Long roomIdx, Map<String, Object> params);
-    boolean saveRecordUrl(Long roomIdx, Recording result);
+    boolean saveRecordUrl(Long roomIdx, SessionEventDto dto);
     List<String> getVideos(Long roomIdx);
 }

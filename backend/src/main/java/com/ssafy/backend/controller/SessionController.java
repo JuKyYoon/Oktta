@@ -2,9 +2,6 @@ package com.ssafy.backend.controller;
 
 import com.ssafy.backend.model.dto.SessionEventDto;
 import com.ssafy.backend.model.entity.Room;
-import com.ssafy.backend.model.entity.User;
-import com.ssafy.backend.model.exception.UserNotFoundException;
-import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.response.*;
 import com.ssafy.backend.service.SessionService;
 import io.openvidu.java.client.OpenViduHttpException;
@@ -20,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -140,10 +137,11 @@ public class SessionController {
             if(dto.getReason() != null) {
                 if(dto.getResolution() != null) {
                     System.out.println("recordingStatusChanged");
-                    if("stopped".equals(dto.getStatus())) {
+                    System.out.println(dto.toString());
+                    if("ready".equals(dto.getStatus())) {
                         System.out.println(dto.getStatus());
-
                         System.out.println(dto.getReason());
+                        sessionService.saveRecordUrl(Long.parseLong(dto.getName()), dto);
                     } else {
                         System.out.println(dto.getStatus());
                         System.out.println(dto.getReason());
@@ -251,11 +249,6 @@ public class SessionController {
 
         Recording recordingResult = map.get(true);
         if(recordingResult != null) {
-            
-            // 최소 5분 이상의 녹화만 저장
-            if(!sessionService.saveRecordUrl(roomIdx, recordingResult))
-                return ResponseEntity.status(200).body(RecordingResponse.of(200,"Not Enough Recording Time"));
-
             return ResponseEntity.status(200).body(RecordingResponse.of(200, successMsg, recordingResult));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(400, failMsg));
