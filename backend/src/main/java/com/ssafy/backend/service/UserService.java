@@ -6,6 +6,7 @@ import com.ssafy.backend.model.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.util.Map;
 
 public interface UserService {
     boolean registUser(UserDto user, MultipartFile profileImage) throws MessagingException;
@@ -22,4 +23,5 @@ public interface UserService {
     boolean resetPassword(String password, String token);
     void registProfileImage(String userId, MultipartFile multipartFile);
     void deleteProfileImage(String userId);
+    Map<String, String> getMyTier(String userId);
 }

@@ -2,11 +2,13 @@ package com.ssafy.backend.service;
 
 import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.dto.UserDto;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.UserAuthToken;
 import com.ssafy.backend.model.entity.UserRole;
 import com.ssafy.backend.model.exception.*;
 import com.ssafy.backend.model.mapper.UserMapper;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.UserAuthTokenRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.util.AwsService;
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final UserAuthTokenRepository userAuthTokenRepository;
+
+    private final LolAuthRepository lolAuthRepository;
 
     private final MailService mailService;
 
@@ -58,9 +64,10 @@ public class UserServiceImpl implements UserService {
     private final int PASSWORD_MIN_LENGTH = 8;
     private final int PASSWORD_MAX_LENGTH = 16;
 
-    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService, AwsService awsService) {
+    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, LolAuthRepository lolAuthRepository, MailService mailService, RedisService redisService, AwsService awsService) {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
+        this.lolAuthRepository = lolAuthRepository;
         this.mailService = mailService;
         this.redisService = redisService;
         this.awsService = awsService;
@@ -408,4 +415,18 @@ public class UserServiceImpl implements UserService {
             awsService.fileDelete(oldFileName);
         }
     }
+
+    @Override
+    public Map<String, String> getMyTier(String userId) {
+        Map<String, String> result = new HashMap<>();
+        result.put("tier", "");
+        result.put("summonerName", "");
+        LolAuth lolAuth = lolAuthRepository.findByUserId(userId).orElse(null);
+        if(lolAuth != null){
+            result.put("tier", String.valueOf(lolAuth.getTier()));
+            result.put("summonerName", lolAuth.getSummonerName());
+        }
+        return result;
+    }
+
 }
