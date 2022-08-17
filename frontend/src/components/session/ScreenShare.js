@@ -370,7 +370,13 @@ const ScreenShare = (props) => {
               session.unpublish(screenPublisher);
               setPublisher(null);
               setVideoEnabled(false);
+              setAudioEnabled(false);
               publishOnlyAudio();
+              setParticipants((participants) => 
+                participants.map(e => 
+                  e.nickname == myName ? {...e, audioActive : false } : e
+                )
+              )
           });
           // 만약 뭔가 publish 하고 있다면 취소한다.
           if(publisher) {
@@ -528,7 +534,7 @@ const ScreenShare = (props) => {
       const result = await startRecording(params.id, sessionRef.current.sessionId);
       console.log(result);
       if(result.message === "success") {
-        setRecordingId(result.recording.id);
+        setRecordingId(result.recording.name);
       }
     } else {
       // 레코딩 중단
