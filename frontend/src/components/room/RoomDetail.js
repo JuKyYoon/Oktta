@@ -60,7 +60,6 @@ const RoomDetail = () => {
     }
 
     // 투표가 종료된 방이면 voteDto값 설정해주기
-    // console.log(result.data);
     const rawData = result?.data?.result;
     if (rawData.voteDto) {
       setVoteDto(rawData.voteDto);
@@ -94,7 +93,6 @@ const RoomDetail = () => {
       // 200 실패이면 남의 글 삭제
       alert('잘못된 요청입니다.');
     } else {
-      alert('잘못된 요청입니다.');
       navigate('../list');
     }
   };
