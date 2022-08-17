@@ -528,7 +528,7 @@ const ScreenShare = (props) => {
       const result = await startRecording(params.id, sessionRef.current.sessionId);
       console.log(result);
       if(result.message === "success") {
-        setRecordingId(result.recording.name);
+        setRecordingId(result.recording.id);
       }
     } else {
       // 레코딩 중단
