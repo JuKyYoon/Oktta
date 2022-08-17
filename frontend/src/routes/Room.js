@@ -7,6 +7,7 @@ import RoomDetail from '../components/room/RoomDetail';
 import RoomEdit from '../components/room/RoomEdit';
 import NotFound from '../components/error/NotFound';
 import OnAir from '../components/room/OnAir';
+import Recording from '@/components/recording/Recording';
 
 const Room = () => {
   return (
@@ -17,7 +18,8 @@ const Room = () => {
       <Route path='popular' element={<OnAir />} />
       <Route path='/:idx' element={<RoomDetail />} />
       <Route path=':id/share' element={<ScreenShare />} />
-      <Route path="*" element={<NotFound />} />
+      <Route path=':id/recording' element={<Recording />} />
+      <Route path='*' element={<NotFound />} />
     </Routes>
   );
 };
