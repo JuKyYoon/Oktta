@@ -32,13 +32,13 @@ const Recording = () => {
           <h3>녹화된 영상이 없습니다.</h3>
         ) : (
           <List>
-            {recordings.map((recording) => (
+            {recordings.map((recording, index) => (
               <ListItem key={recording.idx}>
                 <a href={recording} target='_blank'>
                   <ListItemIcon>
                     <VideocamIcon />
                   </ListItemIcon>
-                  <ListItemText primary={item} />
+                  <ListItemText primary={`${index+1}번 영상`} />
                 </a>
               </ListItem>
             ))}

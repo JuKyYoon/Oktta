@@ -132,6 +132,7 @@ public class RoomServiceImpl implements RoomService {
             return false;
         } else {
             roomRepository.delete(room);
+            // 레디스에서 방 세션 있
             return true;
         }
     }
