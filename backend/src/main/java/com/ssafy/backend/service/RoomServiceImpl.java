@@ -13,6 +13,7 @@ import com.ssafy.backend.model.repository.MatchRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.util.DeleteUserService;
+import io.openvidu.java.client.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,16 @@ public class RoomServiceImpl implements RoomService {
     private final MatchMapper matchMapper;
     private final LolAuthRepository lolAuthRepository;
     private final DeleteUserService deleteUserService;
+    private final SessionService sessionService;
 
-    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper, LolAuthRepository lolAuthRepository, DeleteUserService deleteUserService) {
+    public RoomServiceImpl(UserRepository userRepository, RoomRepository roomRepository, MatchRepository matchRepository, MatchMapper matchMapper, LolAuthRepository lolAuthRepository, DeleteUserService deleteUserService, SessionService sessionService) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.matchRepository = matchRepository;
         this.matchMapper = matchMapper;
         this.lolAuthRepository = lolAuthRepository;
         this.deleteUserService = deleteUserService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -125,6 +128,12 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found in DeleteRoom")
         );
+        
+        // 세션 켜져 있으면 제거 불가능
+        Session session = sessionService.searchSession(roomIdx);
+        if(session != null) {
+            return false;
+        }
 
         User user = room.getUser();
 
@@ -132,7 +141,6 @@ public class RoomServiceImpl implements RoomService {
             return false;
         } else {
             roomRepository.delete(room);
-            // 레디스에서 방 세션 있
             return true;
         }
     }

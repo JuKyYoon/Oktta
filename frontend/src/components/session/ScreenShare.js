@@ -80,6 +80,7 @@ const ScreenShare = (props) => {
   const [openVote, setOpenVote] = useState(false);
 
   const [recordingId, setRecordingId] = useState('');
+  const [recordingResponse, setRecordingResponse] = useState(false);
 
   const scrollRef = useRef();
 
@@ -220,6 +221,7 @@ const ScreenShare = (props) => {
       } else {
         alert("연결이 종료되었습니다.")
       }
+      sessionRef.current = null;
       navigate("/")
     })
 
@@ -379,11 +381,6 @@ const ScreenShare = (props) => {
               setVideoEnabled(false);
               setAudioEnabled(false);
               publishOnlyAudio();
-              setParticipants((participants) => 
-                participants.map(e => 
-                  e.nickname == myName ? {...e, audioActive : false } : e
-                )
-              )
           });
           // 만약 뭔가 publish 하고 있다면 취소한다.
           if(publisher) {
@@ -427,6 +424,7 @@ const ScreenShare = (props) => {
     console.log(sessionRef.current)
     if (sessionRef.current) {
       sessionRef.current.disconnect();
+      sessionRef.current = null;
     }
   };
 
@@ -435,7 +433,8 @@ const ScreenShare = (props) => {
    */
   const closeWindow = (e) => {
     if(sessionRef.current) {
-      sessionRef.current.disconnect()
+      sessionRef.current.disconnect();
+      sessionRef.current = null;
     }
   };
 
@@ -462,8 +461,11 @@ const ScreenShare = (props) => {
   }
 
   const destroySession = async () => {
-    const result = await closeSession(params.id);
-    console.log(result);
+    let res = confirm("진짜로 세션을 종료하시겠습니까?");
+    if(res) {
+      const result = await closeSession(params.id);
+      console.log(result);
+    }
   }
   
   const onChangeMessage = (event) => {
@@ -534,26 +536,38 @@ const ScreenShare = (props) => {
   }
 
   const recordingToggle = async () => {
+    if(recordingResponse) {
+      return;
+    }
     // console.log(sessionRef.current)
     if(!recordingStatus) {
       console.log("---------------------recording start----------------------")
+      setRecordingResponse(true);
       // 레코딩 시작
       const result = await startRecording(params.id, sessionRef.current.sessionId);
+      setRecordingResponse(false);
+      
       console.log(result);
       if(result.message === "success") {
         setRecordingId(result.recording.id);
+        setRecordingStatus(!recordingStatus);
+      } else {
+        alert('녹화 시작 실패')
       }
     } else {
       // 레코딩 중단
       console.log("---------------------recording stopppppppppp----------------------")
-
+      setRecordingResponse(true);
       const result = await stopRecording(params.id, recordingId);
+      setRecordingResponse(false);
       console.log(result);
       if(result.message === "success") {
-
+        setRecordingStatus(!recordingStatus);
+      } else {
+        alert('녹화 중단 실패')
+        setRecordingStatus(!recordingStatus);
       }
     }
-    setRecordingStatus(!recordingStatus);
   }
 
   // 세션 상태 업데이트
@@ -720,21 +734,27 @@ const ScreenShare = (props) => {
                     width="50"
                     />
                   }
-                  {recordingStatus ?
+                  {recordingResponse ? 
                     <img
-                    src={`/assets/icons/record-off.png`}
-                    className='session-button'
-                    onClick={recordingToggle}
-                    width="50"
-                    />
-                    :
-                    <img
-                    src={`/assets/icons/record.png`}
-                    className='session-button'
-                    onClick={recordingToggle}
-                    width="50"
-                    />
-                  }
+                      src={`/assets/icons/record-disable.png`}
+                      className='session-button'
+                      width="50"
+                    /> : <>{recordingStatus ?
+                      <img
+                      src={`/assets/icons/record-off.png`}
+                      className='session-button'
+                      onClick={recordingToggle}
+                      width="50"
+                      />
+                      :
+                      <img
+                      src={`/assets/icons/record.png`}
+                      className='session-button'
+                      onClick={recordingToggle}
+                      width="50"
+                      />
+                    }</> }
+                  
                   <img
                   src={`/assets/icons/exit.png`}
                   className='session-button'

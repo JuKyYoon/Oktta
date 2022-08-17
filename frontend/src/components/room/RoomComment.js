@@ -12,19 +12,15 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 const RoomComment = ({ idx, list }) => {
-  const nowTime = dayjs();
   dayjs.extend(utc);
   const dateFormat = (date) => {
     if (date == undefined) {
-      return '';
-    }
-    date = dayjs.utc(date).local();
-    let diffDate = nowTime.diff(date, 'd');
-    if (diffDate == 0) {
-      return `${nowTime.diff(date, 'h')}시간 전`;
+      date = dayjs.utc().local();
     } else {
-      return date.format('YYYY년 MM월 DD일');
-    }
+    date = dayjs.utc(date).local();
+}
+    return date.format('YYYY-MM-DD HH: mm');
+
   };
 
   // 댓글 리스트
@@ -73,9 +69,7 @@ const RoomComment = ({ idx, list }) => {
         location.reload();
       }
       const commentIdx = lastIdx + 1;
-      const createTime = new Date(+new Date() + 3240 * 10000)
-        .toISOString()
-        .split('T')[0];
+      const createTime = dateFormat();
 
       const newComment = {
         idx: commentIdx,

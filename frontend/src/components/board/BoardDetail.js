@@ -25,7 +25,7 @@ const BoardDetail = () => {
   const [commentList, setCommentList] = useState([]);
 
 
-  const nowTime = dayjs();
+  
   dayjs.extend(utc);
   const dateFormat = (date) => {
     if (date == undefined) {
@@ -65,7 +65,6 @@ const BoardDetail = () => {
       // 200 실패이면 남의 글 삭제
       alert('잘못된 요청입니다.');
     } else {
-      alert('잘못된 요청입니다.');
       // console.log(result?.response?.status);
       navigate('../list');
     }
