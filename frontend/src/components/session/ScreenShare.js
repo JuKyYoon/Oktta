@@ -223,7 +223,7 @@ const ScreenShare = (props) => {
       navigate("/")
     })
 
-    mySessino.on('session')
+    // mySessino.on('session')
 
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
