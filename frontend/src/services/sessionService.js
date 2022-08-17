@@ -54,3 +54,13 @@ export const stopRecording = async (idx, recordingId) => {
     return err.response.data;
   }
 }
+
+
+export const closeSession = async (idx) => {
+  try {
+    const res = await axiosAuth.delete(`${SESSION_URL}/${idx}`)
+    return res.data;
+  } catch (err) {
+    return err.response.data;
+  }
+}

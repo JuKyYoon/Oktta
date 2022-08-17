@@ -138,7 +138,18 @@ public class SessionController {
         try {
             System.out.println("--------------------------------");
             if(dto.getReason() != null) {
-                if(dto.getConnection() != null) {
+                if(dto.getResolution() != null) {
+                    System.out.println("recordingStatusChanged");
+                    if("stopped".equals(dto.getStatus())) {
+                        System.out.println(dto.getStatus());
+
+                        System.out.println(dto.getReason());
+                    } else {
+                        System.out.println(dto.getStatus());
+                        System.out.println(dto.getReason());
+                    }
+                }
+                else if(dto.getConnection() != null) {
                     System.out.println("webrtcConnectionDestroyed");
                     if("OUTBOUND".equals(dto.getConnection())) {
                         System.out.printf("%s , 나 자신의 WebRTC 연결을 끊음\n", dto.getConnectionId());

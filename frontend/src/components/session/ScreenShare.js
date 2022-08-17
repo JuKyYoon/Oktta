@@ -17,7 +17,7 @@ import Slide from '@mui/material/Slide';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import Typography from '@mui/material/Typography';
-import { createSessionRequest, startRecording, stopRecording } from '@/services/sessionService';
+import { createSessionRequest, startRecording, stopRecording, closeSession } from '@/services/sessionService';
 import { tier } from '@/const/tier';
 import SessionVote from '@/components/session/SessionVote';
 import '@/styles/session.scss';
@@ -211,6 +211,11 @@ const ScreenShare = (props) => {
         )
       )
       // console.log("-----------------------------------")
+    })
+
+    mySession.on('sessionDisconnected', (event) => {
+      alert("세션이 종료되었습니다.")
+      navigate("/")
     })
 
 
@@ -441,6 +446,11 @@ const ScreenShare = (props) => {
       navigate("/")
     }
   }
+
+  const destroySession = async () => {
+    const result = await closeSession(params.id);
+    console.log(result);
+  }
   
   const onChangeMessage = (event) => {
     if(event.target.value.length < 50){
@@ -548,13 +558,13 @@ const ScreenShare = (props) => {
           audioContext = new AudioContext();
 
           
-          // if (!session) {
-          //   console.log("세션 입장");
-          //   creaetSession();
-          // }
+          if (!session) {
+            console.log("세션 입장");
+            creaetSession();
+          }
       }).catch(e => {
         alert("소리 권한 허용해주세요")
-          console.error(`Audio permissions denied: ${e}`);
+        console.error(`Audio permissions denied: ${e}`);
       });
     }
 
@@ -696,6 +706,13 @@ const ScreenShare = (props) => {
                     }}
                   >
                     {recordingStatus ? '녹화 중단' : '녹화 시작'}
+                  </Button>
+                  <Button
+                    className="user-session-button"
+                    variant="contained"
+                    onClick={destroySession}
+                  >
+                    세션 종료하기
                   </Button>
                 </> : 
                 <Button
