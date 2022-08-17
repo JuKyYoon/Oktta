@@ -31,9 +31,14 @@ const OnAir = () => {
 
   return (
     <div className='on-air-list'>
-      {onAirList ? onAirList.map((room, idx) =>
-        <RoomThumbnail key={idx} room={room} direction={'h'} />
-      ) : <Loading />}
+      {onAirList ?
+        onAirList.length > 0 ? onAirList.map((room, idx) =>
+          <RoomThumbnail key={idx} room={room} direction={'h'} />
+        )
+        : <div className='no-on-air'>
+          진행중인 라이브가 없습니다.
+        </div>
+      : <Loading />}
       <Pagination
         count={lastPage}
         page={currentPage}

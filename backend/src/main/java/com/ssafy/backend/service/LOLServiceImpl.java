@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -64,7 +65,7 @@ public class LOLServiceImpl implements LOLService {
     }
 
     @Override
-    public boolean createLolAuth(String userId, String summonerName) {
+    public int createLolAuth(String userId, String summonerName) {
 
         LOGGER.info("getUserInfo start");
         try{
@@ -78,12 +79,14 @@ public class LOLServiceImpl implements LOLService {
             LolAuth lolAuth = new LolAuth.Builder(userId, userInfo.getPuuid(),
                     tier, userInfo.getId(), userInfo.getName()).build();
             lolAuthRepository.save(lolAuth);
-            return true;
-        }catch (WebClientResponseException e){
+            return 1;
+        } catch (WebClientResponseException e){
             LOGGER.error(e.getMessage());
-            return false;
+            return -1;
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.error(e.getMessage());
+            return 0;
         }
-
     }
 
     @Override

@@ -39,8 +39,10 @@ const RoomList = () => {
   };
 
   const roomHit = async (roomIdx) => {
-    roomHitRequest(roomIdx);
-    navigate(`../${roomIdx}`);
+    const result = await roomHitRequest(roomIdx);
+    if (result?.data?.message === 'success') {
+      navigate(`../${roomIdx}`);
+    }
   }
 
   const dateFormat = (date) => {

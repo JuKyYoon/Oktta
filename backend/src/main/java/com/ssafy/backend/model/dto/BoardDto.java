@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class BoardDto {
     private Long idx;
     private String nickname;
+    private String profileImage;
     private String title;
     private String content;
     private LocalDateTime createDate;
@@ -92,5 +93,13 @@ public class BoardDto {
 
     public void setHit(long hit) {
         this.hit = hit;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

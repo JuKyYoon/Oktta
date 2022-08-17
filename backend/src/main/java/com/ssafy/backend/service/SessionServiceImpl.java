@@ -1,9 +1,12 @@
 package com.ssafy.backend.service;
 
+import com.ssafy.backend.model.dto.SessionEventDto;
+import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.entity.Room;
 import com.ssafy.backend.model.entity.User;
 import com.ssafy.backend.model.entity.Video;
 import com.ssafy.backend.model.exception.*;
+import com.ssafy.backend.model.repository.LolAuthRepository;
 import com.ssafy.backend.model.repository.RoomRepository;
 import com.ssafy.backend.model.repository.UserRepository;
 import com.ssafy.backend.model.repository.VideoRepository;
@@ -36,6 +39,8 @@ public class SessionServiceImpl implements SessionService {
 
     private final VideoRepository videoRepository;
 
+    private final LolAuthRepository lolAuthRepository;
+
     /**
      * < 게시글 번호, 세션 객체 >
      */
@@ -45,11 +50,12 @@ public class SessionServiceImpl implements SessionService {
 
     private Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
-    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository) {
+    public SessionServiceImpl(@Value("${openvidu.url}") String openViduUrl, @Value("${openvidu.secret}") String openViduSecret, RoomRepository roomRepository, RedisService redisService, UserRepository userRepository, VideoRepository videoRepository, LolAuthRepository lolAuthRepository) {
         this.openViduUrl = openViduUrl;
         this.openViduSecret = openViduSecret;
         this.roomRepository = roomRepository;
         this.redisService = redisService;
+        this.lolAuthRepository = lolAuthRepository;
         this.openVidu = new OpenVidu(openViduUrl, openViduSecret);
         this.userRepository = userRepository;
         this.videoRepository = videoRepository;
@@ -100,9 +106,12 @@ public class SessionServiceImpl implements SessionService {
                 () -> new UserNotFoundException("User Not Found")
         );
 
+        LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+        int tier = lolAuth != null ? lolAuth.getTier() : 0;
+
         try {
             // 연결 정보를 설정한다.
-            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"0\", \"idx\":\"%d\"}", user.getNickname(), sessionIdx);
+            String userData = String.format("{\"nickname\": \"%s\", \"rank\":\"%d\", \"idx\":\"%d\"}", user.getNickname(), tier,sessionIdx);
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                     .role(role).data(userData).build();
 
@@ -225,7 +234,7 @@ public class SessionServiceImpl implements SessionService {
             return result;
         }
 
-        RecordingProperties properties = new RecordingProperties.Builder().build();
+        RecordingProperties properties = new RecordingProperties.Builder().name(roomIdx.toString()).build();
 
         String sessionId = (String) params.get("sessionId");
         try {
@@ -262,16 +271,19 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public boolean saveRecordUrl(Long roomIdx, Recording result) {
+    public boolean saveRecordUrl(Long roomIdx, SessionEventDto dto) {
         Room room = roomRepository.findById(roomIdx).orElseThrow(
                 () -> new RoomNotFoundException("Room Not Found Exception")
         );
 
         // 녹화 시간 검사
-        if(result.getDuration() < 60)
+        if(dto.getDuration() < 60)
             return false;
 
-        videoRepository.save(new Video.Builder(room, result.getUrl()).build());
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://i7a104.p.ssafy.io/recordigns/" + dto.getId() + "/" + dto.getName() + ".mp4");
+
+        videoRepository.save(new Video.Builder(room, sb.toString()).build());
         return true;
     }
 
@@ -325,18 +337,34 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void closeSession(long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
+    public void closeSession(long sessionIdx, Room room) {
         // 세션을 찾는다.
         Session session = this.searchSession(sessionIdx);
         room.closeRoomLive();
         roomRepository.save(room);
 
+
         if(session != null) {
-            String sessionId = session.getSessionId();
-            session.close();
-            this.mapSessions.remove(sessionIdx);
-            this.mapSessionNamesTokens.remove(sessionIdx);
-            redisService.deleteKey(sessionId);
+            try {
+                String sessionId = session.getSessionId();
+                session.close();
+                this.mapSessions.remove(sessionIdx);
+                this.mapSessionNamesTokens.remove(sessionIdx);
+                redisService.deleteKey(sessionId);
+            } catch (OpenViduHttpException  e) {
+            // 404이면 OpenVidu 서버에서 세션이 없다는 뜻!
+                if ( 404 == e.getStatus() ) {
+                    String sessionId = this.mapSessions.get(sessionIdx).getSessionId();
+                    // 메모리 초기화
+                    this.mapSessions.remove(sessionIdx);
+                    this.mapSessionNamesTokens.remove(sessionIdx);
+
+                    //Redis 도 초기화시켜준다.
+                    redisService.deleteKey(sessionId);
+                }
+            } catch (OpenViduJavaClientException e) {
+                e.printStackTrace();
+            }
         }
     }
 

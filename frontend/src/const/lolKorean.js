@@ -29,7 +29,7 @@ const championKorean = {
   Elise: '엘리스',
   Evelynn: '이블린',
   Ezreal: '이즈리얼',
-  Fiddlesticks: '피들스틱',
+  FiddleSticks: '피들스틱',
   Fiora: '피오라',
   Fizz: '피즈',
   Galio: '갈리오',
@@ -162,6 +162,15 @@ const championKorean = {
   Zyra: '자이라'
 };
 
+const positionKorean = {
+  TOP: '탑',
+  JUNGLE: '정글',
+  MIDDLE: '미드',
+  BOTTOM: '원딜',
+  UTILITY: '서폿',
+};
+
 export {
   championKorean,
+  positionKorean,
 };

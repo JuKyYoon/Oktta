@@ -3,9 +3,10 @@ import { axiosAuth, riotRequest, request } from './axios.js';
 const ROOM_URL = 'api/v1/room';
 
 const ROOM_COMMENT_URL = 'api/v1/roomComments';
+const SESSION_URL = 'api/v1/session';
 
 const LOL_URL = 'api/v1/lol';
-const RIOT_MATCH = 'match/v5/matches'
+const RIOT_MATCH = 'match/v5/matches';
 
 // room 댓글 목록 불러오기
 export const getRoomCommentList = async (idx) => {
@@ -15,7 +16,7 @@ export const getRoomCommentList = async (idx) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 // room 생성
 export const createRoom = async (dataToSubmit) => {
@@ -114,7 +115,9 @@ export const getMyRoom = async () => {
 // 소환사명으로 최근 게임 가져오기
 export const getMatchBySummoner = async (dataToSubmit, pageNum) => {
   try {
-    const payload = await axiosAuth.get(`${LOL_URL}/match/${dataToSubmit}?page=${pageNum}`);
+    const payload = await axiosAuth.get(
+      `${LOL_URL}/match/${dataToSubmit}?page=${pageNum}`
+    );
     return payload;
   } catch (err) {
     return err;
@@ -124,25 +127,30 @@ export const getMatchBySummoner = async (dataToSubmit, pageNum) => {
 // 라이엇 API에서 매치 상세정보 가져오기
 export const getMatchDetail = async (dataToSubmit) => {
   try {
-    const payload = await riotRequest.get(`${RIOT_MATCH}/${dataToSubmit}?api_key=${process.env.REACT_APP_RIOT_API_KEY}`);
+    const payload = await riotRequest.get(
+      `${RIOT_MATCH}/${dataToSubmit}?api_key=${process.env.REACT_APP_RIOT_API_KEY}`
+    );
     return payload;
   } catch (err) {
     return err;
-  };
+  }
 };
 
-export const roomHitRequest = (dataToSubmit) => {
+export const roomHitRequest = async (dataToSubmit) => {
   try {
-    axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+    const payload = await axiosAuth.put(`${ROOM_URL}/hit/${dataToSubmit}`);
+    return payload;
   } catch (err) {
-
+    return err;
   }
 };
 
 // 온에어
 export const onAirListRequest = async (dataToSubmit) => {
   try {
-    const payload = await axiosAuth.get(`${ROOM_URL}/live?page=${dataToSubmit}`);
+    const payload = await axiosAuth.get(
+      `${ROOM_URL}/live?page=${dataToSubmit}`
+    );
     return payload;
   } catch (err) {
     console.log(err);
@@ -154,6 +162,17 @@ export const onAirListRequest = async (dataToSubmit) => {
 export const onAirTopListRequest = async () => {
   try {
     const payload = await request.get(`${ROOM_URL}/top`);
+    return payload;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+// 녹화된 영상 불러오기
+export const getRecordings = async (idx) => {
+  try {
+    const payload = await axiosAuth.get(`${SESSION_URL}/recording/get/${idx}`);
     return payload;
   } catch (err) {
     console.log(err);

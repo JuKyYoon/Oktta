@@ -21,8 +21,8 @@ function App() {
         <Route path='/room/*' element={<Room />} />
         <Route path='/error' element={<ServerError />} />
         <Route path='*' element={<NotFound />} />
+        <Route path="/user/auth/:token" element={<EmailAuth />} />
       </Route>
-      <Route path="/user/auth/:token" element={<EmailAuth />} />
       <Route path="/oauth/*" element={<SocialAuth />} />
       <Route path="/electron/social/auth" element={< ElectronSocialLogin/>} />
     </Routes>

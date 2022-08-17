@@ -5,16 +5,32 @@ import {
   createBoardComment,
   deleteBoardComment,
   editBoardComment,
-  detailBoard,
 } from '@/services/boardService';
 import '@/styles/board.scss';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 const BoardComment = ({ idx, list }) => {
+  const nowTime = dayjs();
+  dayjs.extend(utc);
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return '';
+    }
+    date = dayjs.utc(date).local();
+    let diffDate = nowTime.diff(date, 'd');
+    if (diffDate == 0) {
+      return `${nowTime.diff(date, 'h')}시간 전`;
+    } else {
+      return date.format('YYYY년 MM월 DD일');
+    }
+  };
+
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
   // 페이지네이션 마지막 페이지
-  const [lastPage, setLastPage] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
 
   // 현재 보고 있는 댓글 페이지
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,9 +53,9 @@ const BoardComment = ({ idx, list }) => {
 
   useEffect(() => {
     setCommentList([...list]);
-    if (commentList.length != 0) {
-      setLastIdx(commentList[commentList.length - 1].idx);
-      setLastPage(Math.ceil(commentList.length / 5));
+    if (list.length != 0) {
+      setLastIdx(list[list.length - 1].idx);
+      setLastPage(Math.ceil(list.length / 5));
     }
   }, [list]);
 
@@ -48,9 +64,11 @@ const BoardComment = ({ idx, list }) => {
 
     const result = await createBoardComment(idx, body);
     if (result?.data?.message === 'success') {
-      console.log('??');
       const nickname = user.nickname;
       setLastIdx((curr) => curr + 1);
+      if (lastIdx === 0) {
+        location.reload();
+      }
       const commentIdx = lastIdx + 1;
       const createTime = new Date(+new Date() + 3240 * 10000)
         .toISOString()
@@ -66,7 +84,9 @@ const BoardComment = ({ idx, list }) => {
       setContent('');
       if (commentList.length / 5 >= lastPage) {
         setLastPage((curr) => curr + 1);
+        setCurrentPage((curr) => curr + 1);
       }
+      if (currentPage < lastPage) setCurrentPage(lastPage);
       alert('댓글 작성 완료!');
     } else {
       setContent('');
@@ -104,8 +124,9 @@ const BoardComment = ({ idx, list }) => {
         commentList.filter((comment) => comment.idx !== commentIdx)
       );
 
-      if (commentList.length / 5 < lastPage) {
+      if (lastPage != 1 && commentList.length / 5 < lastPage) {
         setLastPage((curr) => curr - 1);
+        setCurrentPage((curr) => curr - 1);
       }
       alert('댓글 삭제 완료');
     } else {
@@ -147,8 +168,7 @@ const BoardComment = ({ idx, list }) => {
             onClick={commentSubmit}
             disabled={content.trim().length < 2}
             size='large'
-            color='veryperi'
-          >
+            color='veryperi'>
             등록하기
           </Button>
         </div>
@@ -161,7 +181,7 @@ const BoardComment = ({ idx, list }) => {
               return (
                 <div key={comment.idx} className='comments-comment'>
                   <div className='comment-date'>
-                    {comment.createTime.substr(0, 10)}
+                    {dateFormat(comment.createTime)}
                   </div>
 
                   {currentIdx === comment.idx ? (
@@ -181,16 +201,14 @@ const BoardComment = ({ idx, list }) => {
                         variant='outlined'
                         onClick={commentEdit}
                         disabled={editInput.trim().length < 2}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         수정하기
                       </Button>
                       <Button
                         sx={{ ml: 1, mr: 1 }}
                         variant='outlined'
                         onClick={cancel}
-                        color='veryperi'
-                      >
+                        color='veryperi'>
                         취소
                       </Button>
                       <hr></hr>
@@ -205,8 +223,7 @@ const BoardComment = ({ idx, list }) => {
                               sx={{ m: 1 }}
                               variant='outlined'
                               onClick={() => handleDeleteButton(comment.idx)}
-                              color='veryperi'
-                            >
+                              color='veryperi'>
                               삭제
                             </Button>
                             <Button
@@ -215,8 +232,7 @@ const BoardComment = ({ idx, list }) => {
                               onClick={() =>
                                 handleToggleEdit(comment.idx, comment.content)
                               }
-                              color='veryperi'
-                            >
+                              color='veryperi'>
                               수정
                             </Button>
                           </>
