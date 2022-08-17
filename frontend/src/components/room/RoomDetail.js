@@ -36,12 +36,8 @@ const RoomDetail = () => {
       return '';
     }
     date = dayjs.utc(date).local();
-    let diffDate = nowTime.diff(date, 'd');
-    if (diffDate == 0) {
-      return `${nowTime.diff(date, 'h')}시간 전`;
-    } else {
-      return date.format('YYYY년 MM월 DD일');
-    }
+    return date.format('YYYY년 MM월 DD일 HH시 mm분');
+
   };
 
   const { idx } = useParams();
@@ -160,7 +156,7 @@ const RoomDetail = () => {
                   <Button
                     variant='contained'
                     color='error'
-                    onClick={() => navigate('share')}>
+                    onClick={() => (location.href = `room/${idx}/share`)}>
                     입장하기
                   </Button>
                 </div>
@@ -180,7 +176,7 @@ const RoomDetail = () => {
               {room.createDate === room.modifyDate ? (
                 <p>작성일: {dateFormat(room.createDate)}</p>
               ) : (
-                <p>수정일: {dateFormat(room.createDate)}</p>
+                <p>수정일: {dateFormat(room.modifyDate)}</p>
               )}
             </div>
           </div>

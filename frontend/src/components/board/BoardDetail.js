@@ -10,6 +10,8 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import { useSelector } from 'react-redux';
 import BoardComment from './BoardComment.js';
 import '@/styles/board.scss';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 const BoardDetail = () => {
   const navigate = useNavigate();
@@ -21,6 +23,18 @@ const BoardDetail = () => {
 
   // 댓글 정보 저정
   const [commentList, setCommentList] = useState([]);
+
+
+  const nowTime = dayjs();
+  dayjs.extend(utc);
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return '';
+    }
+    date = dayjs.utc(date).local();
+    return date.format('YYYY년 MM월 DD일 HH시 mm분');
+
+  };
 
   const getDetailBoard = async (idx) => {
     const result = await detailBoard(idx);
@@ -70,8 +84,8 @@ const BoardDetail = () => {
             <div className='detail-header-right'>
               <p>조회수: {board.hit}</p>
               {board.createDate === board.modifyDate ?
-                <p>작성일: {board.createDate.substr(0, 10)}</p>
-                : <p>수정일: {board.modifyDate.substr(0, 10)}</p>
+                <p>작성일: {dateFormat(board.createDate)}</p>
+                : <p>수정일: {dateFormat(board.modifyDate)}</p>
               }
             </div>
           </div>
