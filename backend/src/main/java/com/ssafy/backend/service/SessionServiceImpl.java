@@ -333,18 +333,34 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void closeSession(long sessionIdx, Room room) throws OpenViduJavaClientException, OpenViduHttpException {
+    public void closeSession(long sessionIdx, Room room) {
         // 세션을 찾는다.
         Session session = this.searchSession(sessionIdx);
         room.closeRoomLive();
         roomRepository.save(room);
 
+
         if(session != null) {
-            String sessionId = session.getSessionId();
-            session.close();
-            this.mapSessions.remove(sessionIdx);
-            this.mapSessionNamesTokens.remove(sessionIdx);
-            redisService.deleteKey(sessionId);
+            try {
+                String sessionId = session.getSessionId();
+                session.close();
+                this.mapSessions.remove(sessionIdx);
+                this.mapSessionNamesTokens.remove(sessionIdx);
+                redisService.deleteKey(sessionId);
+            } catch (OpenViduHttpException  e) {
+            // 404이면 OpenVidu 서버에서 세션이 없다는 뜻!
+                if ( 404 == e.getStatus() ) {
+                    String sessionId = this.mapSessions.get(sessionIdx).getSessionId();
+                    // 메모리 초기화
+                    this.mapSessions.remove(sessionIdx);
+                    this.mapSessionNamesTokens.remove(sessionIdx);
+
+                    //Redis 도 초기화시켜준다.
+                    redisService.deleteKey(sessionId);
+                }
+            } catch (OpenViduJavaClientException e) {
+                e.printStackTrace();
+            }
         }
     }
 

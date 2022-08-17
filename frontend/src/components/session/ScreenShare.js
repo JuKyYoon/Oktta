@@ -370,6 +370,7 @@ const ScreenShare = (props) => {
               session.unpublish(screenPublisher);
               setPublisher(null);
               setVideoEnabled(false);
+              publishOnlyAudio();
           });
           // 만약 뭔가 publish 하고 있다면 취소한다.
           if(publisher) {
