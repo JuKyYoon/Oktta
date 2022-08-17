@@ -281,7 +281,7 @@ public class SessionServiceImpl implements SessionService {
             return false;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("https://i7a104.p.ssafy.io/recordigns/" + dto.getId() + "/" + dto.getName() + ".mp4");
+        sb.append("https://i7a104.p.ssafy.io/recordings/" + dto.getId() + "/" + dto.getName() + ".mp4");
 
         videoRepository.save(new Video.Builder(room, sb.toString()).build());
         return true;

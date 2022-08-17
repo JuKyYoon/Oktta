@@ -162,12 +162,13 @@ const RoomDetail = () => {
                 </div>
               ) : (
                 <div>
-                  <Button
+                  {room.nickname === user.nickname ? <Button
                     variant='contained'
                     color='veryperi'
                     onClick={() => (location.href = `room/${idx}/share`)}>
                     라이브 시작하기
-                  </Button>
+                  </Button> : null }
+                  
                 </div>
               )}
             </div>
