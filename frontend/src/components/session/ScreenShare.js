@@ -214,9 +214,11 @@ const ScreenShare = (props) => {
     })
 
     mySession.on('sessionDisconnected', (event) => {
-      alert("세션이 종료되었습니다.")
+      alert("퇴장 했습니다.")
       navigate("/")
     })
+
+    mySessino.on('session')
 
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
@@ -534,7 +536,7 @@ const ScreenShare = (props) => {
       const result = await startRecording(params.id, sessionRef.current.sessionId);
       console.log(result);
       if(result.message === "success") {
-        setRecordingId(result.recording.name);
+        setRecordingId(result.recording.id);
       }
     } else {
       // 레코딩 중단
