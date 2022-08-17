@@ -7,8 +7,25 @@ import {
   editBoardComment,
 } from '@/services/boardService';
 import '@/styles/board.scss';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 const BoardComment = ({ idx, list }) => {
+  const nowTime = dayjs();
+  dayjs.extend(utc);
+  const dateFormat = (date) => {
+    if (date == undefined) {
+      return '';
+    }
+    date = dayjs.utc(date).local();
+    let diffDate = nowTime.diff(date, 'd');
+    if (diffDate == 0) {
+      return `${nowTime.diff(date, 'h')}시간 전`;
+    } else {
+      return date.format('YYYY년 MM월 DD일');
+    }
+  };
+
   // 댓글 리스트
   const [commentList, setCommentList] = useState([]);
 
@@ -164,7 +181,7 @@ const BoardComment = ({ idx, list }) => {
               return (
                 <div key={comment.idx} className='comments-comment'>
                   <div className='comment-date'>
-                    {comment.createTime.substr(0, 10)}
+                    {dateFormat(comment.createTime)}
                   </div>
 
                   {currentIdx === comment.idx ? (

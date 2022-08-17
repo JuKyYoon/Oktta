@@ -55,20 +55,39 @@ const EmailAuth = () => {
   }, []);
 
   return (
-    <>
-      {msg === "success" ?
+    <div className="email-auth">
+      {msg === "success" ? login ?
         <h1>
           {time}초 후 메인 페이지로 이동합니다. <br />
           인증이 완료되었습니다. <br />
-          <Button><a href='/user/login'>로그인하기</a></Button>
-          <Link to='/'>홈으로</Link>
+          <div className="email-auth-button">
+            <Link to='/'>
+                <Button color="veryperi" variant="contained" sx={{paddingLeft: 2, paddingRight: 2}}>홈으로</Button>
+            </Link>
+          </div>
+        </h1> :
+          <h1>
+          {time}초 후 로그인 페이지로 이동합니다. <br />
+          인증이 완료되었습니다. <br />
+          <div className="email-auth-button">
+            <Link to='/user/login'>
+              <Button color="veryperi" variant="contained" sx={{paddingLeft: 2, paddingRight: 2}}>
+                로그인하기
+              </Button>
+            </Link>
+          </div>
         </h1> :
         <h1>잘못된 인증 요청입니다. <br />
           다시 이메일 인증을 요청하세요. <br />
-          <Link to='/'>홈으로</Link>
+          <div className="email-auth-button">
+            <Link to='/'>
+              <Button color="veryperi" variant="contained" sx={{paddingLeft: 2, paddingRight: 2}}>홈으로</Button>
+            </Link>
+          </div>
+                
         </h1>
       }
-    </>
+    </div>
   );
 };
 

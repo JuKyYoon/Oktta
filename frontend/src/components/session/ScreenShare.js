@@ -17,7 +17,7 @@ import Slide from '@mui/material/Slide';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import Typography from '@mui/material/Typography';
-import { createSessionRequest, startRecording, stopRecording } from '@/services/sessionService';
+import { createSessionRequest, startRecording, stopRecording, closeSession } from '@/services/sessionService';
 import { tier } from '@/const/tier';
 import SessionVote from '@/components/session/SessionVote';
 import '@/styles/session.scss';
@@ -213,6 +213,11 @@ const ScreenShare = (props) => {
       // console.log("-----------------------------------")
     })
 
+    mySession.on('sessionDisconnected', (event) => {
+      alert("세션이 종료되었습니다.")
+      navigate("/")
+    })
+
 
     // 통신 중단 ( 내가 구독하는 것만 이벤트 받음)
     // 스스로 통신을 중단할 수 없으며, 스스로 stream 교체 만 가능하다.
@@ -365,6 +370,13 @@ const ScreenShare = (props) => {
               session.unpublish(screenPublisher);
               setPublisher(null);
               setVideoEnabled(false);
+              setAudioEnabled(false);
+              publishOnlyAudio();
+              setParticipants((participants) => 
+                participants.map(e => 
+                  e.nickname == myName ? {...e, audioActive : false } : e
+                )
+              )
           });
           // 만약 뭔가 publish 하고 있다면 취소한다.
           if(publisher) {
@@ -440,6 +452,11 @@ const ScreenShare = (props) => {
       alert('방 들어가기를 실패했습니다.');
       navigate("/")
     }
+  }
+
+  const destroySession = async () => {
+    const result = await closeSession(params.id);
+    console.log(result);
   }
   
   const onChangeMessage = (event) => {
@@ -548,13 +565,13 @@ const ScreenShare = (props) => {
           audioContext = new AudioContext();
 
           
-          // if (!session) {
-          //   console.log("세션 입장");
-          //   creaetSession();
-          // }
+          if (!session) {
+            console.log("세션 입장");
+            creaetSession();
+          }
       }).catch(e => {
         alert("소리 권한 허용해주세요")
-          console.error(`Audio permissions denied: ${e}`);
+        console.error(`Audio permissions denied: ${e}`);
       });
     }
 
@@ -646,28 +663,33 @@ const ScreenShare = (props) => {
               {/* <Button onClick={scrollDown}>
                 채팅창다운
               </Button> */}
-              <Button
+              {/* <Button
                 className="user-session-button"
                 variant="contained"
                 onClick={showUserList}
               >
                 유저 목록 보기 (Debug)
-              </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
+              </Button> */}
+              <img
+                src={`/assets/icons/vote.png`}
+                className='session-button'
                 onClick={openVoteToggle}
-              >
-                튜표 하기
-              </Button>
-              <Button
-                className="user-session-button"
-                variant="contained"
+                width="50"
+                />
+              {audioEnabled ? 
+                <img
+                src={`/assets/icons/mic.png`}
+                className='session-button'
                 onClick={audioToggle}
-              >
-                {audioEnabled ? '음소거 하기' : '마이크 켜기'}
-              </Button>
-             
+                width="50"
+                /> :
+                <img
+                src={`/assets/icons/mic-off.png`}
+                className='session-button'
+                onClick={audioToggle}
+                width="50"
+                />}
+
               {/* <Button
                 className="user-session-button"
                 variant="contained"
@@ -677,34 +699,49 @@ const ScreenShare = (props) => {
               </Button> */}
               {owner ? 
                 <>
-                  <Button
-                    className="user-session-button"
-                    variant="contained"
+                  {videoEnabled ? 
+                    <img
+                    src={`/assets/icons/share-video-off.png`}
+                    className='session-button'
                     onClick={screenToggle}
-                  >
-                    {videoEnabled ? '화면공유 끄기' : '화면공유 켜기'}
-                  </Button>
-                  <Button
-                    className="user-session-button"
-                    variant="contained"
+                    width="50"
+                    /> : 
+                    <img
+                    src={`/assets/icons/share-video.png`}
+                    className='session-button'
+                    onClick={screenToggle}
+                    width="50"
+                    />
+                  }
+                  {recordingStatus ?
+                    <img
+                    src={`/assets/icons/record-off.png`}
+                    className='session-button'
                     onClick={recordingToggle}
-                    sx={{
-                      backgroundColor: recordingStatus ? '#e53e3e' : '#4249df',
-                      "&:hover":{
-                        backgroundColor: recordingStatus ? '#e53e3e' : '#4249df'
-                      },
-                    }}
-                  >
-                    {recordingStatus ? '녹화 중단' : '녹화 시작'}
-                  </Button>
+                    width="50"
+                    />
+                    :
+                    <img
+                    src={`/assets/icons/record.png`}
+                    className='session-button'
+                    onClick={recordingToggle}
+                    width="50"
+                    />
+                  }
+                  <img
+                  src={`/assets/icons/exit.png`}
+                  className='session-button'
+                  onClick={destroySession}
+                  width="45"
+                  />
                 </> : 
-                <Button
-                  className="user-session-button"
-                  variant="contained"
-                  onClick={handsUp}
-                >
-                  손들기
-                </Button> }
+                <img
+                src={`/assets/icons/hand-up.png`}
+                className='session-button'
+                onClick={handsUp}
+                width="50"
+                />
+                }
               </div>
             </div>
           </Box>
