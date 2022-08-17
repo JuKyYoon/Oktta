@@ -163,10 +163,14 @@ const MyPage = () => {
     setMode("board");
   };
 
+  const tierHandler = () => {
+    navigate('/user/tierAuth')
+  }
+
   const tierInfo =
     "../assets/lol_tier_250/" + parseInt(user.tier / 10) + ".webp";
 
-  const tierHandler = () => {};
+
 
   return (
     <div className="mypage">
@@ -294,11 +298,7 @@ const MyPage = () => {
                       </>
                     ) : (
                       <>
-                        <img
-                          className="mypage-image-tier"
-                          src="../../assets/lol_tiers/unranked.png"
-                          width={200}
-                        />
+                        <img className='mypage-image-tier' src='../../assets/unranked.png' width={200} />
                         <Button onClick={tierHandler}>티어 인증하기</Button>
                       </>
                     )}

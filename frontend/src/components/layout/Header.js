@@ -23,8 +23,8 @@ const Header = () => {
 
   const tierInfo = '../assets/lol_tiers_ico/' + parseInt(state.user.tier / 10) + '.ico'
 
-  const goMypage = () => {
-    navigate('/user/mypage');
+  const goTierAuth = () => {
+    navigate('/user/tierAuth');
   }
 
   return (
@@ -43,7 +43,7 @@ const Header = () => {
               </Button> :
                 <Button
                   sx={{ my: 2, color: "black", display: "block" }}
-                  onClick={goMypage}
+                  onClick={goTierAuth}
                 >
                   티어 인증하기
                 </Button>
