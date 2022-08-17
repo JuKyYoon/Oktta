@@ -4,6 +4,7 @@ import com.ssafy.backend.model.dto.PasswordDto;
 import com.ssafy.backend.model.entity.LolAuth;
 import com.ssafy.backend.model.response.BaseResponseBody;
 import com.ssafy.backend.model.dto.UserDto;
+import com.ssafy.backend.model.response.LoginResponse;
 import com.ssafy.backend.model.response.MessageResponse;
 import com.ssafy.backend.model.response.UserInfoResponse;
 import com.ssafy.backend.service.LOLService;
@@ -209,5 +210,15 @@ public class UserController {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userService.deleteProfileImage(principal.getUsername());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, successMsg));
+    }
+
+    /**
+     * 내 티어 정보 가져오기
+     */
+    @GetMapping("/tier")
+    public ResponseEntity<LoginResponse> getMyTier() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, String> result = userService.getMyTier(principal.getUsername());
+        return ResponseEntity.status(200).body(LoginResponse.of(200, successMsg, result));
     }
 }
