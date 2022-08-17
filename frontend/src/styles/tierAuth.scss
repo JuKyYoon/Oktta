@@ -1,10 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap');
 
-* {
+.tier-auth-page {
   text-align: center;
 }
 
-.title {
+.tier-auth-title {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.tier-auth-content {
   font-family: 'Noto Sans KR', sans-serif;
 }
 
