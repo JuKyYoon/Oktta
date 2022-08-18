@@ -11,6 +11,7 @@ import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.BoardCommentRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.DeleteUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,13 @@ public class BoardCommentServiceImpl implements BoardCommentService {
     private final BoardCommentRepository boardCommentRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final DeleteUserService deleteUserService;
 
-    public BoardCommentServiceImpl(BoardCommentRepository boardCommentRepository, UserRepository userRepository, BoardRepository boardRepository) {
+    public BoardCommentServiceImpl(BoardCommentRepository boardCommentRepository, UserRepository userRepository, BoardRepository boardRepository, DeleteUserService deleteUserService) {
         this.boardCommentRepository = boardCommentRepository;
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
+        this.deleteUserService = deleteUserService;
     }
 
     /**
@@ -41,7 +44,7 @@ public class BoardCommentServiceImpl implements BoardCommentService {
         List<BoardCommentDto> list = new ArrayList<>();
 
         for(BoardComment c : boardCommentList){
-            String nickname = userRepository.findNicknameByIdx(c.getUser().getIdx());
+            String nickname = deleteUserService.checkNickName(c.getUser().getNickname());
             list.add(new BoardCommentDto(c.getIdx(), nickname, c.getContent(), c.getCreateTime()));
         }
 
