@@ -8,6 +8,7 @@ import com.ssafy.backend.model.exception.BoardNotFoundException;
 import com.ssafy.backend.model.exception.UserNotFoundException;
 import com.ssafy.backend.model.repository.BoardRepository;
 import com.ssafy.backend.model.repository.UserRepository;
+import com.ssafy.backend.util.DeleteUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,12 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final DeleteUserService deleteUserService;
 
-    public BoardServiceImpl(BoardRepository boardRepository, UserRepository userRepository) {
+    public BoardServiceImpl(BoardRepository boardRepository, UserRepository userRepository, DeleteUserService deleteUserService) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
+        this.deleteUserService = deleteUserService;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
         List<BoardDto> list = new ArrayList<>();
 
         for(Board b : boardList) {
-            String nickname = userRepository.findNicknameByIdx(b.getUser().getIdx());
+            String nickname = deleteUserService.checkNickName(b.getUser().getNickname());
             list.add(new BoardDto(nickname, b.getIdx(), b.getTitle(), b.getCreateDate(), b.getHit()));
         }
         return list;
