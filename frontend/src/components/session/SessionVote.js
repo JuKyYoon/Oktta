@@ -106,7 +106,7 @@ const SessionVote = (props) => {
             />
         )  : (<div className="vote-box">
         <div>
-          <h3>투표가 진행중입니다!</h3>
+          <h3 className="vote-modal-h3-title">투표가 진행중입니다!</h3>
           <div className="current-vote">
             {currentVote === ""
               ? "투표를 진행해주세요"
