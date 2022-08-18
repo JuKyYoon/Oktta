@@ -253,7 +253,7 @@ const RoomCreate = () => {
     }
   };
 
-  const isValid = title.trim().length >= 2 && content.trim().length >= 2;
+  const isValid = title.trim().length >= 2 && title.trim().length < 50 && content.trim().length >= 2;
 
   return (
     <div className='room'>
