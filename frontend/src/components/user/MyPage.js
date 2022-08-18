@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   getProfileRequest,
   setDefaultImg,
   setProfileImg,
+  tierReauth,
 } from "../../services/userService";
 import FlipCameraIosIcon from "@mui/icons-material/FlipCameraIos";
 import { getMyRoom } from "../../services/roomService";
@@ -23,6 +24,7 @@ import "@/styles/mypage.scss";
 
 const MyPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const [open_profile, setOpenProfile] = useState(false);
   const [mode, setMode] = useState("info");
@@ -165,12 +167,17 @@ const MyPage = () => {
 
   const tierHandler = () => {
     navigate('/user/tierAuth')
-  }
+  };
+
+  const getTier = async () => {
+    const result = await tierReauth();
+    if (result?.payload?.data?.message === 'success') {
+      dispatch(result);
+    };
+  };
 
   const tierInfo =
     "../assets/lol_tier_250/" + parseInt(user.tier / 10) + ".webp";
-
-
 
   return (
     <div className="mypage">
@@ -302,6 +309,7 @@ const MyPage = () => {
                         <Button onClick={tierHandler}>티어 인증하기</Button>
                       </>
                     )}
+                    <Button onClick={getTier}>티어 정보 갱신하기</Button>
                   </>
                 )}
                 {mode === "room" && (
