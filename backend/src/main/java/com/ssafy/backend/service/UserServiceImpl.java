@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     private final int PASSWORD_MIN_LENGTH = 8;
     private final int PASSWORD_MAX_LENGTH = 16;
 
-    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, LolAuthRepository lolAuthRepository, MailService mailService, RedisService redisService, AwsService awsService) {
+    public UserServiceImpl(UserRepository userRepository, UserAuthTokenRepository userAuthTokenRepository, MailService mailService, RedisService redisService, AwsService awsService, LolAuthRepository lolAuthRepository) {
         this.userRepository = userRepository;
         this.userAuthTokenRepository = userAuthTokenRepository;
         this.lolAuthRepository = lolAuthRepository;
@@ -177,6 +177,10 @@ public class UserServiceImpl implements UserService {
 
         String password = user.getPassword();
         int snsType = user.getSnsType();
+        LolAuth lolAuth = lolAuthRepository.findByUserId(user.getId()).orElse(null);
+        if(lolAuth != null){
+            lolAuthRepository.deleteById(lolAuth.getUserId());
+        }
         user.deleteUser();
         if(snsType != 0){
             userRepository.save(user);
