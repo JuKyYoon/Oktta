@@ -103,7 +103,7 @@ const BoardDetail = () => {
             />
           </div>
 
-          <div>
+          <div className='board-detail-button-list'>
             <Link to={`../list`} style={{ textDecoration: 'none' }}>
               <Button
                 className='detail-button'

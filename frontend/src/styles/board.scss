@@ -19,6 +19,7 @@
 }
 .table-container {
   width: 80%;
+  white-space: nowrap;
 }
 
 // RoomCreate, RoomEdit관련
@@ -72,6 +73,12 @@
 .board-detail-editor {
   width: 80%;
   margin: 10px;
+}
+
+.board-detail-button-list {
+  button {
+    margin: 5px;
+  }
 }
 
 .modal {

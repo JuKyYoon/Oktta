@@ -40,6 +40,7 @@ $lose: #ff968d;
 }
 .table-container {
   width: 80%;
+  white-space: nowrap;
 }
 
 .MuiTableRow-hover {
@@ -144,9 +145,7 @@ $lose: #ff968d;
   width: 50%;
 }
 
-.detail-button {
-  margin: 5px;
-}
+
 
 .vote-box {
   width: 100%;
@@ -174,6 +173,10 @@ $lose: #ff968d;
   h3 {
     text-align: center;
   }
+}
+
+.vote-modal-h3-title {
+  text-align: center;
 }
 
 .vote-component {
