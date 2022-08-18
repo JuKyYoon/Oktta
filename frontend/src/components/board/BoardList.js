@@ -32,8 +32,10 @@ const BoardList = () => {
   };
 
   const boardHit = async (boardIdx) => {
-     await boardHitRequest(boardIdx);
+    const result = await boardHitRequest(boardIdx);
+    if(result?.data?.message === 'success'){
       navigate(`../${boardIdx}`);
+    }
 
 
   };
@@ -87,7 +89,7 @@ const BoardList = () => {
               </TableHead>
               <TableBody>
                 {boards.map((board) => (
-                  <TableRow key={board.idx} onClick={() => navigate(`../${board.idx}`)} hover>
+                  <TableRow key={board.idx} onClick={() => boardHit(`${board.idx}`)} hover>
                     <TableCell>
                       {board.title}
                     </TableCell>
