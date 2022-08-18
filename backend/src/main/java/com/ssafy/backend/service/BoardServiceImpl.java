@@ -39,7 +39,7 @@ public class BoardServiceImpl implements BoardService {
 
         User user = board.getUser();
 
-        String nickname = userRepository.findNicknameByIdx(board.getUser().getIdx());
+        String nickname = deleteUserService.checkNickName(board.getUser().getNickname());
         BoardDto boardDto = new BoardDto(nickname, board);
         boardDto.setProfileImage(user.getProfileImg());
 
