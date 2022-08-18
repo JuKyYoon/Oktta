@@ -1,3 +1,4 @@
+import { tierReAuth } from "@/services/userService.js";
 import {
   EMAIL_AUTH,
   SET_TOKEN,
@@ -5,7 +6,8 @@ import {
   SOCIAL_LOGIN,
   LOGOUT,
   UPDATE_NICKNAME,
-  TOKEN_DELETE
+  TOKEN_DELETE,
+  TIER_REAUTH
 } from "../modules/types.js";
 
 export const initState = {
@@ -66,6 +68,12 @@ export default function (state = initState, action) {
       };
     case TOKEN_DELETE:
       return initState;    
+    case TIER_REAUTH:
+      return {
+        ...state,
+        tier: action.payload.data.result.tier,
+        summonerName: action.payload.data.result.summonerName,
+      }
     default:
       return state;
   }
