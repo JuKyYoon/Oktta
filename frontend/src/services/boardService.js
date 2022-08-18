@@ -22,8 +22,10 @@ export const getBoardList = async (pageNum) => {
 // board 게시글 조회수 증가
 export const boardHitRequest = async (idx) => {
   try {
-    axiosAuth.put(`${BOARD_URL}/hit/${idx}`);
-  } catch (err) {}
+    const payload = await axiosAuth.put(`${BOARD_URL}/hit/${idx}`);
+    return payload;
+  } catch (err) { return payload;
+  }
 };
 
 // board 게시글 작성

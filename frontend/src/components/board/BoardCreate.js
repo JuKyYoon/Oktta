@@ -31,9 +31,7 @@ const BoardCreate = () => {
 
     const result = await createBoard(body);
     if (result?.data?.message === 'success') {
-      // api 생성되면 변경해야함
       navigate(`/board/list`);
-      //   navigate(`/board/${result.data.result}`);
     } else if (result?.response?.status === 403) {
       console.log('no token입니다');
     } else {
