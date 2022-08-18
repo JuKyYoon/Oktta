@@ -234,7 +234,7 @@ public class SessionServiceImpl implements SessionService {
             return result;
         }
 
-        RecordingProperties properties = new RecordingProperties.Builder().name(roomIdx.toString()).build();
+        RecordingProperties properties = new RecordingProperties.Builder().recordingLayout(RecordingLayout.CUSTOM).name(roomIdx.toString()).build();
 
         String sessionId = (String) params.get("sessionId");
         try {
