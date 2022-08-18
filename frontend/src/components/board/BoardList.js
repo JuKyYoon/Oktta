@@ -91,7 +91,7 @@ const BoardList = () => {
                 {boards.map((board) => (
                   <TableRow key={board.idx} onClick={() => boardHit(`${board.idx}`)} hover>
                     <TableCell>
-                      {board.title}
+                    {board.title.length > 50 ? board.title.slice(0, 50) + '...' : board.title}
                     </TableCell>
                     <TableCell>{board.nickname}</TableCell>
                     <TableCell  align='center'>
