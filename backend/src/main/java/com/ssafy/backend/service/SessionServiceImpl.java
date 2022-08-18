@@ -277,7 +277,7 @@ public class SessionServiceImpl implements SessionService {
         );
 
         // 녹화 시간 검사
-        if(dto.getDuration() < 60)
+        if(dto.getDuration() < 30)
             return false;
 
         StringBuilder sb = new StringBuilder();
