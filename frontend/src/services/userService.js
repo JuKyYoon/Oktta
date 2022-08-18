@@ -3,7 +3,8 @@ import {
   LOGIN,
   LOGOUT,
   UPDATE_NICKNAME,
-  TOKEN_DELETE
+  TOKEN_DELETE,
+  TIER_REAUTH
 } from "../modules/types.js";
 import { store } from "..";
 
@@ -185,6 +186,19 @@ export const setDefaultImg = async () => {
   try {
     const payload = await axiosAuth.delete(`${USER_URL}/profile-img`);
     return payload;
+  } catch (err) {
+    return err
+  }
+};
+
+// 티어 재인증
+export const tierReauth = async () => {
+  try {
+    const payload = await axiosAuth.get(`${USER_URL}/tier`);
+    return {
+      type: TIER_REAUTH,
+      payload
+    };
   } catch (err) {
     return err
   }
