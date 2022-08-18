@@ -36,7 +36,7 @@ public class BoardDto {
         this.createDate = board.getCreateDate();
         this.modifyDate = board.getModifyDate();
         this.category = board.getCategory();
-        this.hit = board.getHit() + 1;
+        this.hit = board.getHit();
     }
 
     public Long getIdx() { return idx; }
