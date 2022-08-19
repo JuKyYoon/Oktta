@@ -1,0 +1,49 @@
+<html>
+
+<head>
+    <script src="./openvidu-browser-2.22.0.min.js"></script>
+    <style>
+        #videos {
+            width: 100%;
+            height: 100%;
+        }
+        #audios {
+            width: 0;
+            height: 0;
+        }
+
+        #audios > video {
+            width: 0;
+            height: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- OpenVidu Recording Custom Layout -->
+    <div id="videos"></div>
+    <div id="audios"></div>
+</body>
+
+<script>
+    var url = new URL(window.location.href);
+    var SESSION_ID = url.searchParams.get("sessionId");
+    var SECRET = url.searchParams.get("secret");
+    var TOKEN = 'wss://' + location.host + '?sessionId=' + SESSION_ID + '&secret=' + SECRET + '&recorder=true';
+
+    var OV = new OpenVidu();
+    var session = OV.initSession();
+
+    session.on("streamCreated", (event) => {
+        if(event.stream.hasVideo) {
+            session.subscribe(event.stream, 'videos');
+        } else {
+            session.subscribe(event.stream, 'audios');
+        }
+    });
+    session.connect(TOKEN)
+        .then(() => { console.log('Recorder participant connected') })
+        .catch(error => { console.error(error) });
+</script>
+
+</html>
