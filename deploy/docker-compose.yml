@@ -1,0 +1,58 @@
+version: '3.7'
+services:
+  nginx:
+    network_mode: host
+    container_name: nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    expose:
+      - "80"
+    volumes:
+      - /home/ubuntu/jenkins_build/jenkins_home/workspace/oktta/deploy/front:/front
+      - /home/ubuntu/jenkins_build/jenkins_home/workspace/oktta/deploy/data/cert:/cert
+      - /opt/openvidu/custom-layout:/opt/openvidu/custom-layout
+  db:
+    image: mysql:8.0.28
+    network_mode: host
+    expose:
+      - "3306"
+    container_name: db
+    volumes:
+      - /home/ubuntu/jenkins_build/jenkins_home/workspace/oktta/deploy/db/conf.d:/etc/mysql/conf.d
+      - /home/ubuntu/jenkins_build/jenkins_home/workspace/oktta/deploy/db/data:/var/lib/mysql
+      - /home/ubuntu/jenkins_build/jenkins_home/workspace/oktta/deploy/db/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: webdb
+      MYSQL_ROOT_PASSWORD: "eq4jafgo!23QzG05^^2a"
+  backend:
+    container_name: backend
+    network_mode: host
+    restart: on-failure
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    expose:
+      - "8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/webdb?serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=true&characterEncoding=utf8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "eq4jafgo!23QzG05^^2a"
+      SPRING_REDIS_HOST: localhost
+      OPENVIDU_URL: http://localhost:5443/
+      OPENVIDU_SECRET: "MY_SECRET"
+    depends_on:
+      - db
+      - redis_boot
+  redis_boot:
+    image: redis:alpine
+    network_mode: host
+    command: redis-server --port 9999
+    container_name: redis_boot
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    expose:
+      - "9999"
