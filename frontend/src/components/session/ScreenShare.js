@@ -93,7 +93,7 @@ const ScreenShare = (props) => {
     console.log(token)
     // OpenVidu 객체 생성.
     const openVidu = new OpenVidu();
-    // openVidu.enableProdMode();
+    openVidu.enableProdMode();
     setOpenVidu(openVidu);
 
     // 세션 초기화
